@@ -1,11 +1,11 @@
 ---
-description: Load documentation from their respective websites into local markdown files our agents can use as context.
+description: Sync documentation from source websites to local markdown files for agent context.
 allowed-tools: Task, WebFetch, Write, Edit, Bash(ls*), Bash(mkdir*), Bash(find*), Bash(rm*), Read, Glob, mcp__firecrawl-mcp__firecrawl_scrape
 ---
 
-# Load AI Docs
+# Sync AI Docs
 
-Load documentation from their respective websites into local markdown files our agents can use as context.
+Sync documentation from source websites to local markdown files for agent context.
 
 ## Variables
 
