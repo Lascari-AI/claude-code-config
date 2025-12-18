@@ -190,3 +190,5 @@ scripts/bg_claude_code_test_idd.sh
 ai_docs/research/
 
 specs/
+
+agents/

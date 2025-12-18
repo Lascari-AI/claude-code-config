@@ -5,5 +5,6 @@
       "Bash(git commit:*)",
       "Bash(git push)"
     ]
-  }
+  },
+  "outputStyle": "Bullet Points"
 }
