@@ -1,0 +1,47 @@
+{
+  "$schema": "Session state schema for agent-session skill",
+
+  "session_id": "{{SESSION_ID}}",
+  "created_at": "{{CREATED_AT}}",
+  "updated_at": "{{UPDATED_AT}}",
+  "topic": "{{TOPIC}}",
+  "description": "{{DESCRIPTION}}",
+
+  "granularity": "feature",
+  "parent_session": null,
+
+  "current_phase": "spec",
+  "phases": {
+    "spec": {
+      "status": "draft",
+      "started_at": "{{CREATED_AT}}",
+      "finalized_at": null
+    },
+    "plan": {
+      "status": null,
+      "started_at": null,
+      "finalized_at": null
+    },
+    "build": {
+      "status": null,
+      "started_at": null,
+      "completed_at": null
+    }
+  },
+
+  "goals": {
+    "high_level": [],
+    "mid_level": []
+  },
+
+  "open_questions": [],
+
+  "key_decisions": [
+    {
+      "_example": true,
+      "decision": "Example: Use REST API instead of GraphQL",
+      "rationale": "Team familiarity and existing patterns",
+      "made_at": "2025-12-23T10:30:00Z"
+    }
+  ]
+}
