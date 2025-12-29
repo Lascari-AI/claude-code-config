@@ -1,5 +1,5 @@
 ---
-description: Interactive build - execute checkpoint tasks with user confirmation at each step
+description: Interactive build - walk through checkpoint tasks one by one with user confirmation
 argument-hint: [session-id] [checkpoint]
 allowed-tools: Read, Glob, Grep, Bash, Edit, Write, AskUserQuestion
 model: opus
@@ -7,13 +7,14 @@ model: opus
 
 # Build Mode
 
-Execute a checkpoint interactively, presenting each task for user confirmation before execution.
+Walk through a checkpoint task-by-task, executing each one directly in this conversation with user confirmation.
 
-## Skill Reference
+## CRITICAL RULES
 
-- Skill: `.claude/skills/agent-session/SKILL.md`
-- Build docs: `.claude/skills/agent-session/build/OVERVIEW.md`
-- Working directory: `agents/sessions/`
+1. **NO SUB-AGENTS** - Do NOT use the Task tool. Execute everything directly in this conversation.
+2. **ONE TASK AT A TIME** - Complete each task fully before moving to the next.
+3. **USER CONFIRMS EACH EDIT** - Show what you'll change, wait for approval, then edit.
+4. **UPDATE STATE AFTER EACH TASK** - Write to state.json after completing each task.
 
 ## Variables
 
@@ -23,253 +24,169 @@ $2 = checkpoint   (optional - auto-discovers next incomplete if not provided)
 SESSIONS_DIR = agents/sessions
 ```
 
-## Workflow
+## Execution Flow
 
+Follow these steps IN ORDER, directly in this conversation:
+
+### Step 1: Load Session
+
+1. Read `SESSIONS_DIR/$1/state.json`
+2. Read `SESSIONS_DIR/$1/plan.json`
+3. Verify plan is finalized (`phases.plan.status === "finalized"`)
+4. If $2 provided, use that checkpoint. Otherwise, find first incomplete checkpoint from `plan_state.checkpoints_completed`
+
+### Step 2: Show Checkpoint Overview
+
+Display to user:
 ```
-1. Load session and validate
-     ↓
-2. Present checkpoint overview → User confirms start
-     ↓
-3. For each task:
-     ├── Present task details
-     ├── User confirms → Execute → Show result
-     └── User validates → Continue or adjust
-     ↓
-4. Run verification → User confirms
-     ↓
-5. Update state and report
+## Checkpoint [ID]: [Title]
+
+**Goal**: [checkpoint goal]
+
+**Tasks**:
+1. [task 1 summary]
+2. [task 2 summary]
+...
+
+Ready to begin?
 ```
 
-<workflow>
-    <phase name="1_load_and_validate">
-        <steps>
-            <step>Validate $1 (session-id) is provided</step>
-            <step>Load state.json, plan.json from SESSIONS_DIR/$1</step>
-            <step>Verify plan is finalized</step>
-            <step>Determine target checkpoint ($2 or auto-discover next incomplete)</step>
-            <step>Load checkpoint details and task list</step>
-        </steps>
-    </phase>
+Use AskUserQuestion to confirm start.
 
-    <phase name="2_present_overview">
-        <description>Show checkpoint overview and get user buy-in</description>
-        <output>
-```markdown
-## Build - Checkpoint {{CHECKPOINT_ID}}
+### Step 3: Execute Each Task (THE MAIN LOOP)
 
-**Session**: `{{SESSION_ID}}`
-**Checkpoint**: {{CHECKPOINT_TITLE}}
+For each task in the checkpoint, do ALL of the following in sequence:
 
-### Goal
-{{CHECKPOINT_GOAL}}
-
-### Tasks Preview
-{{TASK_LIST_WITH_BRIEF_DESCRIPTIONS}}
-
-### Files That Will Be Modified
-{{FILE_LIST}}
+#### 3a. Present the Task
 ```
-        </output>
-        <action>
-            Use AskUserQuestion:
-            - Question: "Ready to start this checkpoint?"
-            - Options:
-              - "Start" - Begin task-by-task execution
-              - "Skip to task" - Jump to specific task
-              - "Cancel" - Exit build
-        </action>
-    </phase>
-
-    <phase name="3_task_loop">
-        <description>Execute each task with user confirmation</description>
-
-        <for_each_task>
-            <step name="present">
-                Display task details:
-```markdown
 ---
-## Task {{TASK_ID}}: {{TASK_TITLE}}
+## Task [ID]: [Title]
 
-**Tranche**: {{TRANCHE_ID}}
-**Action**: {{TASK_ACTION}}
-
-### Context Files
-{{CONTEXT_READ_BEFORE_LIST}}
-
-### Files to Modify
-{{FILES_TO_CHANGE}}
-
-### What This Task Does
-{{TASK_DESCRIPTION_EXPANDED}}
+**Action**: [what this task does]
+**Files to read first**: [list]
+**Files to modify**: [list]
 ---
 ```
-            </step>
 
-            <step name="confirm_execution">
-                Use AskUserQuestion:
-                - Question: "Execute this task?"
-                - Options:
-                  - "Execute" - Proceed with this task
-                  - "Show more" - Read context files first, then ask again
-                  - "Skip" - Skip this task, continue to next
-                  - "Pause" - Stop here, save progress
-            </step>
+#### 3b. Read Context Files
+Actually read the files listed in `task.context.read_before` using the Read tool.
+Show relevant snippets to the user.
 
-            <step name="execute_if_confirmed">
-                If "Execute" or after "Show more":
-                1. Read any context files (task.context.read_before)
-                2. Execute the task action using appropriate tools
-                3. Display what was changed:
-```markdown
-### Changes Made
+#### 3c. Confirm Before Editing
+Use AskUserQuestion:
+- "Ready to execute this task?"
+- Options: Execute, Skip, Pause
 
-**File**: {{FILE_PATH}}
-```diff
-{{DIFF_OR_SUMMARY}}
-```
-```
-            </step>
+#### 3d. Make the Edits
+If user confirms:
+1. Use Edit or Write tool to make the changes
+2. Show what was changed (the actual diff or new content)
 
-            <step name="validate_result">
-                Use AskUserQuestion:
-                - Question: "Does this look correct?"
-                - Options:
-                  - "Looks good" - Continue to next task
-                  - "Adjust" - Make modifications before continuing
-                  - "Revert" - Undo this change
-                  - "Pause" - Stop and review
-            </step>
+#### 3e. Confirm the Result
+Use AskUserQuestion:
+- "Does this look correct?"
+- Options: Looks good, Adjust, Revert
 
-            <step name="handle_response">
-                - "Looks good": Update plan_state.current_task, continue
-                - "Adjust": Ask what to change, apply, re-validate
-                - "Revert": Undo changes, ask if retry or skip
-                - "Pause": Save exact position, exit with resume command
-            </step>
-
-            <step name="track_devnotes">
-                If any deviations, discoveries, or decisions occurred:
-                - Create DevNote with appropriate category
-                - Show user the DevNote being added
-            </step>
-        </for_each_task>
-    </phase>
-
-    <phase name="4_verification">
-        <description>Run verification steps interactively</description>
-        <steps>
-            <step>Display verification steps from checkpoint's testing_strategy</step>
-            <step>Run each verification step, showing output</step>
-            <step>
-                Use AskUserQuestion:
-                - Question: "Verification complete. Does everything look correct?"
-                - Options:
-                  - "All good" - Mark checkpoint complete
-                  - "Issues found" - Document issues, decide next steps
-            </step>
-        </steps>
-    </phase>
-
-    <phase name="5_complete">
-        <description>Update state and report</description>
-        <steps>
-            <step>Mark checkpoint complete in plan_state</step>
-            <step>Add checkpoint to checkpoints_completed</step>
-            <step>Append any DevNotes to dev-notes.json</step>
-            <step>Display completion summary</step>
-        </steps>
-        <output>
-```markdown
-## Checkpoint {{CHECKPOINT_ID}} Complete
-
-**Tasks Completed**: {{COMPLETED_COUNT}}/{{TOTAL_COUNT}}
-**Tasks Skipped**: {{SKIPPED_COUNT}}
-
-### DevNotes Added
-{{DEVNOTES_SUMMARY}}
-
-### Next Steps
-- Run `/session:build {{SESSION_ID}}` for next checkpoint
-- Or `/session:build-background {{SESSION_ID}}` for autonomous execution
-```
-        </output>
-    </phase>
-</workflow>
-
-<user_interaction_patterns>
-## Interaction Patterns
-
-### Before Each Task
-Always present:
-1. Task ID and title
-2. What action will be taken
-3. Which files will be affected
-4. Option to see more context
-
-### After Each Task
-Always show:
-1. What changed (diff or summary)
-2. Validation question
-3. Options to adjust, revert, or continue
-
-### On Pause
-Save exact position:
-- Current checkpoint
-- Current tranche
-- Current task
-- Any partial progress
-
-Provide resume command:
-```
-/session:build {{SESSION_ID}} {{CHECKPOINT}}
+#### 3f. Update State
+After user confirms, update `state.json`:
+```json
+{
+  "plan_state": {
+    "current_task": "[next task id]",
+    "last_updated": "[timestamp]"
+  }
+}
 ```
 
-### On Skip
-- Document skip in DevNote
-- Continue to next task
-- Track skipped count for summary
-</user_interaction_patterns>
+#### 3g. Move to Next Task
+Repeat from 3a for the next task.
 
-<devnotes_in_loop>
-## DevNotes During Build
+### Step 4: Checkpoint Complete
 
-Create DevNotes for:
-- **deviation**: User chose to do something differently
-- **discovery**: Found something unexpected during execution
-- **decision**: User made a choice (skip, adjust, etc.)
+After all tasks:
+1. Update state.json:
+   - Add checkpoint to `plan_state.checkpoints_completed`
+   - Set `plan_state.current_checkpoint` to next (or null if done)
+2. Show completion summary
+3. Provide command for next checkpoint
 
-Show each DevNote to user as it's created:
-```markdown
-📝 **DevNote Added**
-- Category: {{CATEGORY}}
-- Scope: Task {{TASK_ID}}
-- Content: {{CONTENT}}
+## Example Execution
+
+Here's exactly how a task execution should look:
+
 ```
-</devnotes_in_loop>
+---
+## Task 1.1: Add validation function
 
-<behavior_constraints>
-DURING BUILD:
-- DO present each task before execution
-- DO wait for user confirmation before any writes
-- DO show results after each task
-- DO ask for validation before continuing
-- DO save progress on pause
-- DO track all user decisions as DevNotes
-- DO allow skipping, adjusting, or reverting
+**Action**: Create a new validation function in utils.ts
+**Files to read first**: src/utils.ts
+**Files to modify**: src/utils.ts
+---
 
-NEVER:
-- Execute writes without user confirmation
-- Skip the validation step after execution
-- Lose progress on pause or error
-- Proceed to next task without user acknowledgment
-</behavior_constraints>
+Let me read the current file first...
 
-<error_handling>
-On error during task execution:
-1. Show the error to user
-2. Offer options:
-   - "Retry" - Try the task again
-   - "Skip" - Move to next task (add DevNote)
-   - "Pause" - Stop and investigate
-3. Save state regardless of choice
-</error_handling>
+[Uses Read tool on src/utils.ts]
+
+Here's the current state of the file:
+[shows relevant code]
+
+I'll add the validation function after line 45. Here's what I'll add:
+[shows the new code]
+
+Ready to execute this task?
+```
+
+[User confirms]
+
+```
+[Uses Edit tool to make the change]
+
+Done! Here's what changed:
+[shows the edit]
+
+Does this look correct?
+```
+
+[User confirms]
+
+```
+✓ Task 1.1 complete
+
+Updating state...
+[Updates state.json]
+
+Moving to Task 1.2...
+```
+
+## Behavior
+
+- Execute ALL tool calls directly - no spawning agents
+- Show your work - let user see each read, each edit
+- Wait for confirmation before each edit
+- Update state.json after EACH completed task
+- If user says "Pause", save current position and stop
+
+## State Updates
+
+After each task, edit state.json to update:
+```json
+{
+  "plan_state": {
+    "status": "in_progress",
+    "current_checkpoint": [current],
+    "current_task": [next task or null],
+    "last_updated": "[ISO timestamp]"
+  }
+}
+```
+
+After checkpoint complete:
+```json
+{
+  "plan_state": {
+    "checkpoints_completed": [..., completed_id],
+    "current_checkpoint": [next or null],
+    "current_task": null
+  }
+}
+```
