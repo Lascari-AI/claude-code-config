@@ -1,15 +1,47 @@
 # Build Phase
 
-Execute the plan checkpoint by checkpoint with verification, spawning dedicated agents per checkpoint.
+Execute the plan one checkpoint at a time with verification.
+
+## Build Modes
+
+Two commands for different workflows:
+
+| Command | Mode | Best For |
+|---------|------|----------|
+| `/session:build` | Interactive | Learning, validation, complex/risky changes (default) |
+| `/session:build-background` | Autonomous | Trusted plans, speed, straightforward changes |
+
+### `/session:build` - Interactive Mode (Default)
+
+Task-by-task execution with confirmation at each step.
+
+```
+For each task:
+  Present task → User confirms → Execute → Show result → User validates → Next
+```
+
+User controls:
+- Confirm before each write
+- Validate each change in real-time
+- Skip, adjust, or revert individual tasks
+- Pause at any point
+
+### `/session:build-background` - Autonomous Mode
+
+Executes all tasks in a checkpoint directly, reports results at end.
+
+```
+User invokes → Checkpoint executes → Results reported → User re-invokes for next
+```
 
 ## Purpose
 
 The build phase executes the planned transformation:
-- Spawns checkpoint agents for clean context per checkpoint
-- Follows checkpoints sequentially with verification
+- Executes checkpoint tasks directly (no sub-agents)
+- One checkpoint per invocation, user re-invokes for next
 - Tracks progress in state.json for pause/resume capability
 - Captures implementation learnings in DevNotes
-- Allows user-in-loop validation after each checkpoint
+- User-in-loop control (between checkpoints or per-task)
 
 ## Prerequisites
 
@@ -28,32 +60,32 @@ The build phase executes the planned transformation:
      ├── Explicit checkpoint ($2)
      └── Explicit tranche ($2.$3)
      ↓
-4. Spawn checkpoint agent (Task tool)
-     ├── Assemble context (checkpoint, spec goals, prior DevNotes)
-     ├── Execute tasks in tranches
-     └── Return results + DevNotes
+4. Execute checkpoint directly
+     ├── Load context (checkpoint, spec goals, prior DevNotes)
+     ├── Execute tasks in tranches using tools
+     └── Track progress + DevNotes
      ↓
 5. Run verification steps
-     ├── Pass → Mark complete, continue
+     ├── Pass → Mark complete
      └── Fail → User decides: override or pause
      ↓
 6. Update state (plan_state, dev-notes.json)
      ↓
-7. Report to user, wait for confirmation
-     ↓
-8. Repeat for next checkpoint or complete build
+7. Report to user with next checkpoint command
 ```
+
+Note: User re-invokes the build command to continue to next checkpoint.
 
 ## Execution Model
 
-### Checkpoint Agents
+### Direct Execution
 
-Each checkpoint spawns a dedicated agent via the Task tool:
-- **Clean context**: Agent starts fresh with only relevant information
-- **Self-contained**: All needed context included in prompt
-- **Focused**: Only executes tasks for that checkpoint
+Checkpoint tasks execute directly within the build command context:
+- **Same context**: Tasks run in current conversation context
+- **User control**: One checkpoint per invocation
+- **Focused**: Only executes tasks for the target checkpoint
 
-Agent receives:
+Build command loads:
 - Checkpoint goal and tasks from plan.json
 - Relevant spec goals
 - Prior DevNotes that might affect this work
@@ -61,9 +93,9 @@ Agent receives:
 
 ### Task Execution
 
-For each task within the checkpoint agent:
+For each task within the checkpoint:
 1. Load pre-read context from `task.context.read_before`
-2. Execute action using IDK commands
+2. Execute action using available tools (Read, Write, Edit, Glob, Grep, Bash)
 3. Verify file changes match expectations
 4. Track any deviations as DevNotes
 
@@ -130,8 +162,25 @@ DevNotes capture implementation learnings in `dev-notes.json`:
 
 ## Commands
 
+### Interactive Build (Default)
+
 ```
-/session:build [session-id] [checkpoint] [tranche]
+/session:build [session-id] [checkpoint]
+
+Arguments:
+  $1 = session-id   (required)
+  $2 = checkpoint   (optional - auto-discovers if not provided)
+```
+
+| Command | Description |
+|---------|-------------|
+| `/session:build my-session` | Interactive execution of next checkpoint |
+| `/session:build my-session 2` | Interactive execution of checkpoint 2 |
+
+### Autonomous Build
+
+```
+/session:build-background [session-id] [checkpoint] [tranche]
 
 Arguments:
   $1 = session-id   (required)
@@ -139,13 +188,11 @@ Arguments:
   $3 = tranche      (optional - specific tranche id)
 ```
 
-### Examples
-
 | Command | Description |
 |---------|-------------|
-| `/session:build my-session` | Auto-discover next checkpoint |
-| `/session:build my-session 2` | Execute checkpoint 2 |
-| `/session:build my-session 2 2.1` | Execute only tranche 2.1 |
+| `/session:build-background my-session` | Auto-discover next checkpoint |
+| `/session:build-background my-session 2` | Execute checkpoint 2 |
+| `/session:build-background my-session 2 2.1` | Execute only tranche 2.1 |
 
 ## Error Handling
 

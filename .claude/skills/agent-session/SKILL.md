@@ -99,7 +99,9 @@ Design HOW to implement with checkpoints and IDK tasks.
 → **Read**: [plan/OVERVIEW.md](plan/OVERVIEW.md)
 
 ### Build Phase
-Execute the plan checkpoint by checkpoint.
+Execute the plan checkpoint by checkpoint. Two modes available:
+- **Interactive** (`/session:build`) - Task-by-task with confirmation (default)
+- **Autonomous** (`/session:build-background`) - Execute and report
 → **Read**: [build/OVERVIEW.md](build/OVERVIEW.md)
 
 ## Commands
@@ -111,7 +113,8 @@ Execute the plan checkpoint by checkpoint.
 | `/session:spec [session-id] finalize` | Finalize session spec |
 | `/session:plan [session-id]` | Start/resume planning |
 | `/session:plan [session-id] finalize` | Finalize the plan |
-| `/session:build [session-id]` | Start/resume build |
+| `/session:build [session-id]` | Interactive build - task-by-task with confirmation |
+| `/session:build-background [session-id]` | Autonomous build - execute checkpoint |
 
 ## Session Directory Structure
 
