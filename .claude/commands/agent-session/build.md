@@ -104,11 +104,30 @@ Repeat from 3a for the next task.
 ### Step 4: Checkpoint Complete
 
 After all tasks:
-1. Update state.json:
-   - Add checkpoint to `plan_state.checkpoints_completed`
-   - Set `plan_state.current_checkpoint` to next (or null if done)
-2. Show completion summary
-3. Provide command for next checkpoint
+
+#### 4a. Create Git Commit (checkpoint = commit boundary)
+```bash
+git add <changed-files>
+git commit -m "checkpoint-N: <checkpoint-title>"
+```
+
+Show commit hash to user.
+
+#### 4b. Update State
+Update state.json:
+- Add checkpoint to `plan_state.checkpoints_completed`
+- Set `plan_state.current_checkpoint` to next (or null if done)
+
+#### 4c. Report Completion
+```
+## Checkpoint N Complete ✅
+
+**Commit**: <commit-hash>
+**Tasks Completed**: X/X
+
+### Next
+Run `/session:build <session-id>` to continue to Checkpoint N+1.
+```
 
 ## Example Execution
 

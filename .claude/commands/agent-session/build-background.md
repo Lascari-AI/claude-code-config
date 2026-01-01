@@ -1,6 +1,6 @@
 ---
 description: Autonomous build - execute checkpoint without user confirmation at each step
-argument-hint: [session-id] [checkpoint] [tranche]
+argument-hint: [session-id] [checkpoint] [task_group]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task, AskUserQuestion
 model: opus
 ---
@@ -21,7 +21,7 @@ Read the agent-session skill for templates and full documentation:
 ```
 $1 = session-id   (required - the session to build)
 $2 = checkpoint   (optional - specific checkpoint number, e.g., "2")
-$3 = tranche      (optional - specific tranche id, e.g., "2.1")
+$3 = task_group   (optional - specific task_group id, e.g., "2.1")
 SESSIONS_DIR = agents/sessions
 ```
 
@@ -31,7 +31,7 @@ Parse `$1`, `$2`, and `$3` to determine the build target:
 
 1. **`$1` only**: Auto-discover next incomplete checkpoint from plan_state
 2. **`$1` and `$2`**: Execute specific checkpoint
-3. **`$1`, `$2`, and `$3`**: Execute specific tranche within checkpoint
+3. **`$1`, `$2`, and `$3`**: Execute specific task_group within checkpoint
 
 ## Core Principles
 
@@ -51,7 +51,7 @@ Build mode:
             <inputs>
                 - `$1`: session-id (REQUIRED)
                 - `$2`: checkpoint number (optional) - e.g., "2"
-                - `$3`: tranche id (optional) - e.g., "2.1"
+                - `$3`: task_group id (optional) - e.g., "2.1"
             </inputs>
             <actions>
                 <action>Validate $1 is provided</action>
@@ -80,15 +80,15 @@ Build mode:
         </phase>
 
         <phase name="3_determine_target">
-            <description>Determine which checkpoint/tranche to execute</description>
+            <description>Determine which checkpoint/task_group to execute</description>
             <branches>
-                <branch condition="$3 provided (tranche specified)">
-                    <action>Target = Tranche $2.$3</action>
+                <branch condition="$3 provided (task_group specified)">
+                    <action>Target = TaskGroup $2.$3</action>
                     <action>Validate checkpoint $2 exists in plan</action>
-                    <action>Validate tranche $3 exists in checkpoint $2</action>
+                    <action>Validate task_group $3 exists in checkpoint $2</action>
                 </branch>
                 <branch condition="$2 provided (checkpoint specified)">
-                    <action>Target = Checkpoint $2 (all tranches)</action>
+                    <action>Target = Checkpoint $2 (all task_groups)</action>
                     <action>Validate checkpoint $2 exists in plan</action>
                 </branch>
                 <branch condition="Only $1 provided (auto-discover)">
@@ -113,8 +113,8 @@ Build mode:
                     - Prior DevNotes that might affect this checkpoint
                     - File context (read beginning state files)
                 </step>
-                <step id="2">For each tranche in checkpoint (can parallelize independent tranches):
-                    - For each task in tranche:
+                <step id="2">For each task_group in checkpoint (can parallelize independent task_groups):
+                    - For each task in task_group:
                       a. Read context files specified in task.context.read_before
                       b. Execute the action described using appropriate tools
                       c. Verify the change matches expectations
@@ -147,12 +147,22 @@ Build mode:
             </steps>
         </phase>
 
+        <phase name="5b_create_commit">
+            <description>Create git commit (checkpoint = commit boundary)</description>
+            <steps>
+                <step id="1">Stage changed files: git add &lt;changed-files&gt;</step>
+                <step id="2">Create commit: git commit -m "checkpoint-N: &lt;checkpoint-title&gt;"</step>
+                <step id="3">Capture commit hash for reporting</step>
+            </steps>
+            <note>Each checkpoint produces exactly one commit with format: checkpoint-N: description</note>
+        </phase>
+
         <phase name="6_update_state">
             <description>Persist progress to state files</description>
             <steps>
                 <step id="1">Update plan_state in state.json:
                     - current_checkpoint: next checkpoint (or null if done)
-                    - current_tranche: null (reset for next checkpoint)
+                    - current_task_group: null (reset for next checkpoint)
                     - current_task: null (reset for next checkpoint)
                     - checkpoints_completed: [..., completed_id]
                     - last_updated: now()
@@ -185,8 +195,8 @@ Build mode:
 Execute tasks directly using available tools (Read, Write, Edit, Glob, Grep, Bash).
 
 ### Execution Order
-1. Execute each task in order within each tranche
-2. Tranches can be executed in parallel if no dependencies exist between them
+1. Execute each task in order within each task_group
+2. Task_groups can be executed in parallel if no dependencies exist between them
 3. For each task:
    - Read the context files specified in task.context.read_before
    - Execute the action described using appropriate tools
@@ -205,7 +215,7 @@ Track any deviations, discoveries, or decisions as DevNotes:
 ### Tracking Progress
 After completing each task:
 - Update plan_state.current_task
-- If task completes a tranche, update plan_state.current_tranche
+- If task completes a task_group, update plan_state.current_task_group
 - Track completed tasks for final summary
 </execution_guidelines>
 
@@ -221,7 +231,7 @@ After completing each task:
 {{CHECKPOINT_GOAL}}
 
 ### Tasks
-{{TASK_COUNT}} tasks in {{TRANCHE_COUNT}} tranches
+{{TASK_COUNT}} tasks in {{TASK_GROUP_COUNT}} task_groups
 
 Executing checkpoint...
 ```
@@ -232,6 +242,7 @@ Executing checkpoint...
 ## Checkpoint {{CHECKPOINT_ID}} Complete ✅
 
 **Title**: {{CHECKPOINT_TITLE}}
+**Commit**: {{COMMIT_HASH}}
 **Tasks Completed**: {{COMPLETED_COUNT}}/{{TOTAL_COUNT}}
 
 ### Verification
@@ -254,7 +265,7 @@ Run `/session:build-background {{SESSION_ID}}` to execute the next checkpoint.
 ## Build Paused ⏸️
 
 **Session**: `{{SESSION_ID}}`
-**Position**: Checkpoint {{CHECKPOINT_ID}}, Tranche {{TRANCHE_ID}}, Task {{TASK_ID}}
+**Position**: Checkpoint {{CHECKPOINT_ID}}, TaskGroup {{TASK_GROUP_ID}}, Task {{TASK_ID}}
 
 ### Status
 {{PAUSE_REASON}}
@@ -314,14 +325,14 @@ Before proceeding with build, validate:
 3. Session has a plan.json file
 4. Plan status is "finalized" (phases.plan.status in state.json)
 5. If $2 provided, checkpoint exists in plan
-6. If $3 provided, tranche exists in specified checkpoint
+6. If $3 provided, task_group exists in specified checkpoint
 
 If validation fails:
-- Missing session ID: "Session ID required. Usage: `/session:build-background [session-id] [checkpoint] [tranche]`"
+- Missing session ID: "Session ID required. Usage: `/session:build-background [session-id] [checkpoint] [task_group]`"
 - Session not found: "Session '{{SESSION_ID}}' not found. Check the ID or use `/session:spec` to create a new session."
 - Plan not finalized: "Plan is not finalized. Use `/session:plan {{SESSION_ID}} finalize` first."
 - Invalid checkpoint: "Checkpoint {{CHECKPOINT_ID}} not found in plan. Available: {{AVAILABLE_CHECKPOINTS}}"
-- Invalid tranche: "Tranche {{TRANCHE_ID}} not found in checkpoint {{CHECKPOINT_ID}}. Available: {{AVAILABLE_TRANCHES}}"
+- Invalid task_group: "TaskGroup {{TASK_GROUP_ID}} not found in checkpoint {{CHECKPOINT_ID}}. Available: {{AVAILABLE_TASK_GROUPS}}"
 </validation>
 
 <error_handling>
@@ -341,7 +352,7 @@ If validation fails:
         Present options to override or pause, document decision in DevNotes.
     </scenario>
     <scenario name="Partial Completion">
-        Save exact position (checkpoint, tranche, task) to plan_state.
+        Save exact position (checkpoint, task_group, task) to plan_state.
         Ensure resume will pick up from exact position.
     </scenario>
 </error_handling>

@@ -97,8 +97,8 @@
     "checkpoints_detailed": 5,
     "checkpoints_completed": [1, 2, 3],
     "current_checkpoint": 4,
-    "current_task_group": null,
-    "current_task": null,
-    "last_updated": "2026-01-01T13:30:00Z"
+    "current_task_group": "4.2",
+    "current_task": "4.2.3",
+    "last_updated": "2026-01-01T14:30:00Z"
   }
 }

@@ -51,27 +51,31 @@ The build phase executes the planned transformation:
 ## Workflow
 
 ```
-1. Parse arguments ($1=session, $2=checkpoint, $3=tranche)
+1. Parse arguments ($1=session, $2=checkpoint, $3=task_group)
      ↓
 2. Load session (state.json, plan.json, dev-notes.json)
      ↓
 3. Determine target
      ├── Auto-discover from plan_state
      ├── Explicit checkpoint ($2)
-     └── Explicit tranche ($2.$3)
+     └── Explicit task_group ($2.$3)
      ↓
 4. Execute checkpoint directly
      ├── Load context (checkpoint, spec goals, prior DevNotes)
-     ├── Execute tasks in tranches using tools
+     ├── Execute tasks in task_groups using tools
      └── Track progress + DevNotes
      ↓
 5. Run verification steps
-     ├── Pass → Mark complete
+     ├── Pass → Continue to commit
      └── Fail → User decides: override or pause
      ↓
-6. Update state (plan_state, dev-notes.json)
+6. Create git commit (checkpoint = commit boundary)
+     ├── git add changed files
+     └── git commit -m "checkpoint-N: description"
      ↓
-7. Report to user with next checkpoint command
+7. Update state (plan_state, dev-notes.json)
+     ↓
+8. Report to user with next checkpoint command
 ```
 
 Note: User re-invokes the build command to continue to next checkpoint.
@@ -108,6 +112,21 @@ After all tasks complete:
    - User can **override** (continues with DevNote documenting decision)
    - User can **pause** (partial completion, exact position saved)
 
+### Git Commit (Checkpoint = Commit Boundary)
+
+After verification passes (or override), create a commit:
+
+```bash
+git add <changed-files>
+git commit -m "checkpoint-N: <checkpoint-title>"
+```
+
+**Commit Message Format**: `checkpoint-N: <short description>`
+- Example: `checkpoint-1: Update plan templates and data models`
+- Example: `checkpoint-2: Add tiered confirmation workflow`
+
+This creates a clear commit history aligned with the plan structure.
+
 ## State Tracking
 
 The `plan_state` in state.json tracks progress:
@@ -117,7 +136,7 @@ The `plan_state` in state.json tracks progress:
   "plan_state": {
     "status": "in_progress",
     "current_checkpoint": 2,
-    "current_tranche": "2.1",
+    "current_task_group": "2.1",
     "current_task": "2.1.3",
     "checkpoints_completed": [1],
     "last_updated": "2025-12-24T12:00:00Z",
@@ -180,26 +199,26 @@ Arguments:
 ### Autonomous Build
 
 ```
-/session:build-background [session-id] [checkpoint] [tranche]
+/session:build-background [session-id] [checkpoint] [task_group]
 
 Arguments:
   $1 = session-id   (required)
   $2 = checkpoint   (optional - specific checkpoint number)
-  $3 = tranche      (optional - specific tranche id)
+  $3 = task_group   (optional - specific task_group id)
 ```
 
 | Command | Description |
 |---------|-------------|
 | `/session:build-background my-session` | Auto-discover next checkpoint |
 | `/session:build-background my-session 2` | Execute checkpoint 2 |
-| `/session:build-background my-session 2 2.1` | Execute only tranche 2.1 |
+| `/session:build-background my-session 2 2.1` | Execute only task_group 2.1 |
 
 ## Error Handling
 
 ### Partial Completion
 
 Errors are treated like a pause:
-- Track exact position (checkpoint, tranche, task)
+- Track exact position (checkpoint, task_group, task)
 - Update plan_state with current progress
 - Add DevNote capturing what went wrong
 - Resume picks up exactly where stopped
