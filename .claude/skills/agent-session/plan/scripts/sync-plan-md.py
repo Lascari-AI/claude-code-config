@@ -106,8 +106,8 @@ def generate_plan_md(plan: dict) -> str:
     total_tasks = sum(
         len(task)
         for cp in checkpoints
-        for tranche in cp.get("tranches", [])
-        for task in [tranche.get("tasks", [])]
+        for task_group in cp.get("task_groups", [])
+        for task in [task_group.get("tasks", [])]
     )
     completed_cps = len([cp for cp in checkpoints if cp.get("status") == "complete"])
 
@@ -186,14 +186,24 @@ def generate_plan_md(plan: dict) -> str:
                     lines.append(f"- [ ] `{step}`")
                 lines.append("")
 
-        # Tranches and Tasks
-        tranches = cp.get("tranches", [])
-        for tranche in tranches:
-            tranche_id = tranche.get("id", "?")
-            lines.append(f"### Tranche {tranche_id}: {tranche.get('goal', 'No goal')}")
+        # Task Groups and Tasks
+        task_groups = cp.get("task_groups", [])
+        for task_group in task_groups:
+            tg_id = task_group.get("id", "?")
+            tg_title = task_group.get("title", "")
+            tg_objective = task_group.get("objective", "No objective")
+            tg_status = format_status_emoji(task_group.get("status", "pending"))
+
+            # Display title if available, otherwise just objective
+            if tg_title:
+                lines.append(f"### {tg_status} Task Group {tg_id}: {tg_title}")
+                lines.append("")
+                lines.append(f"**Objective**: {tg_objective}")
+            else:
+                lines.append(f"### {tg_status} Task Group {tg_id}: {tg_objective}")
             lines.append("")
 
-            tasks = tranche.get("tasks", [])
+            tasks = task_group.get("tasks", [])
             for task in tasks:
                 task_id = task.get("id", "?")
                 task_status = format_status_emoji(task.get("status", "pending"))
@@ -208,15 +218,6 @@ def generate_plan_md(plan: dict) -> str:
                     f"**Description**: {task.get('description', 'No description')}"
                 )
                 lines.append("")
-
-                # Action (IDK format)
-                action = task.get("action", "")
-                if action:
-                    lines.append("**Action**:")
-                    lines.append("```")
-                    lines.append(action)
-                    lines.append("```")
-                    lines.append("")
 
                 # Context
                 context = task.get("context", {})
@@ -238,14 +239,20 @@ def generate_plan_md(plan: dict) -> str:
                     lines.append(f"**Depends On**: Tasks {', '.join(deps)}")
                     lines.append("")
 
-                # Subtasks
-                subtasks = task.get("subtasks", [])
-                if subtasks:
-                    lines.append("**Subtasks**:")
-                    for st in subtasks:
-                        st_status = format_status_emoji(st.get("status", "pending"))
+                # Actions (file-scoped atomic operations)
+                actions = task.get("actions", [])
+                if actions:
+                    lines.append("**Actions**:")
+                    for action in actions:
+                        action_status = format_status_emoji(
+                            action.get("status", "pending")
+                        )
+                        action_id = action.get("id", "?")
+                        action_cmd = action.get("command", "No command")
+                        action_file = action.get("file", "")
+                        file_info = f" (`{action_file}`)" if action_file else ""
                         lines.append(
-                            f"- {st_status} **{st.get('id', '?')}**: {st.get('title', 'Untitled')}"
+                            f"- {action_status} **{action_id}**: {action_cmd}{file_info}"
                         )
                     lines.append("")
 
