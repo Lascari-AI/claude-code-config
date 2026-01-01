@@ -17,20 +17,61 @@ The plan phase builds the **bridge** from current state to desired state:
 
 ## Workflow
 
+### Tiered Progressive Confirmation
+
 ```
-1. Load finalized spec + research
-     ↓
-2. Generate checkpoint outline (3-7 milestones)
-     ↓
-3. User confirms outline
-     ↓
-4. Detail checkpoint 1 tasks → User confirms
-     ↓
-5. Detail checkpoint 2 tasks → User confirms
-     ↓
-6. ... repeat for all checkpoints ...
-     ↓
-7. Finalize plan → Ready for build phase
+┌─────────────────────────────────────────────────────────────────┐
+│  PLAN PHASE - Tiered Approach                                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  TIER 1: Checkpoint Outline                                     │
+│  ─────────────────────────────                                  │
+│  1. Read finalized spec                                         │
+│  2. Generate checkpoint outline (titles, goals, order)          │
+│  3. ─► User confirms outline                                    │
+│                                                                 │
+│  TIER 2: Task Groups (per checkpoint)                           │
+│  ─────────────────────────────────────                          │
+│  4. For Checkpoint N:                                           │
+│     a. Generate task groups (titles, objectives)                │
+│     b. ─► User confirms task groups                             │
+│                                                                 │
+│  TIER 3: Tasks (per task group)                                 │
+│  ──────────────────────────────                                 │
+│  5. For Task Group N.M:                                         │
+│     a. Generate tasks (title, description, file_path)           │
+│     b. ─► User confirms tasks                                   │
+│                                                                 │
+│  TIER 4: Actions (per task)                                     │
+│  ─────────────────────────────                                  │
+│  6. For Task N.M.P:                                             │
+│     a. Generate actions (IDK commands)                          │
+│     b. ─► User confirms actions                                 │
+│                                                                 │
+│  7. Repeat Tiers 2-4 for remaining checkpoints                  │
+│                                                                 │
+│  8. Finalize plan                                               │
+│     └── All checkpoints detailed, ready for build               │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key Principle**: Progressive disclosure with confirmation gates at each tier. Don't generate everything upfront - build detail incrementally with user validation.
+
+### State Tracking
+
+The `plan_state` in state.json tracks progress for resumability:
+
+```json
+{
+  "plan_state": {
+    "status": "in_progress",
+    "current_checkpoint": 2,
+    "current_task_group": "2.1",
+    "current_task": "2.1.1",
+    "last_updated": "2026-01-01T12:00:00Z"
+  }
+}
 ```
 
 ## Key Concepts
@@ -49,29 +90,46 @@ Sequential milestones that incrementally move from current state to target state
 }
 ```
 
-### Task Tranches
+### Task Groups
 
-Parallelizable groups within a checkpoint. Tasks in a tranche can execute concurrently.
+Objective-based grouping of tasks within a checkpoint.
 
 ```json
 {
   "id": "1.1",
-  "goal": "Create base type definitions",
+  "title": "Set up data layer",
+  "objective": "Create foundational data models and repository",
+  "status": "pending",
   "tasks": [...]
+}
+```
+
+### Actions
+
+File-scoped atomic operations within a task. Each action uses IDK format.
+
+```json
+{
+  "id": "1.1.1.1",
+  "command": "CREATE TYPE User with fields: id, name, email",
+  "file": "src/types/user.ts",
+  "status": "pending"
 }
 ```
 
 ### Tasks
 
-Units of work with full execution context. Uses IDK format for precise actions.
+Units of work containing one or more actions. Uses IDK format for precise commands.
 
 ```json
 {
   "id": "1.1.1",
   "title": "Define User type",
   "file_path": "src/types/user.ts",
-  "action": "CREATE TYPE User: ...",
-  "context": { "read_before": [...] }
+  "context": { "read_before": [...] },
+  "actions": [
+    { "id": "1.1.1.1", "command": "CREATE TYPE User...", "file": "src/types/user.ts", "status": "pending" }
+  ]
 }
 ```
 

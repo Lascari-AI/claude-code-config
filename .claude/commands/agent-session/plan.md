@@ -1,265 +1,182 @@
 ---
 description: Enter plan mode to design implementation strategy from a finalized spec
-argument-hint: [session-id] | continue | finalize
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task, AskUserQuestion
+argument-hint: [session-id] [continue|finalize]
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 model: opus
 ---
 
 # Plan Mode
 
-Enter plan mode to design HOW to implement what was defined in the spec phase.
+Design HOW to implement a finalized spec using checkpoint-based planning with IDK tasks.
 
-## Skill Reference
+## CRITICAL RULES
 
-Read the agent-session skill for templates and full documentation:
-- Skill: `.claude/skills/agent-session/SKILL.md`
-- Templates: `.claude/skills/agent-session/templates/`
-- Working directory: `agents/sessions/`
+1. **NO SUB-AGENTS** - Do NOT use the Task tool. Execute everything directly in this conversation.
+2. **ITERATIVE CONFIRMATION** - Get user approval at each stage: outline → each checkpoint's details.
+3. **JSON AS SOURCE OF TRUTH** - Write `plan.json` first; `plan.md` is auto-generated.
+4. **UPDATE STATE** - Update `state.json` with `plan_state` after each stage.
 
 ## Variables
 
 ```
-PLAN_ARGUMENTS = $ARGUMENTS
+$1 = session-id   (required)
+$2 = action       (optional: "continue" or "finalize")
 SESSIONS_DIR = agents/sessions
-TEMPLATES_DIR = .claude/skills/agent-session/templates
+SKILL_DIR = .claude/skills/agent-session
 ```
 
-## Instructions
+## Required Reading
 
-Parse PLAN_ARGUMENTS to determine the action:
+Before proceeding, read these files:
 
-1. **`[session-id]`**: Use specified session (required)
-2. **`[session-id] continue`**: Continue existing plan work for that session
-3. **`[session-id] finalize`**: Finalize the plan (marks it ready for build)
+| File | Purpose | When to Read |
+|------|---------|--------------|
+| `SKILL_DIR/plan/OVERVIEW.md` | Workflow, concepts, IDK reference table | Always (first) |
+| `SKILL_DIR/plan/templates/plan.json` | JSON structure template | When creating plan.json |
+| `SKILL_DIR/plan/idk/*.md` | IDK vocabulary by category | When generating task actions |
 
-**IMPORTANT**: A session ID is always required. Validate that the spec is finalized before proceeding.
+## State Detection
 
-## Core Principles
+Read `state.json` and detect current state:
 
-Plan mode:
-- **Reads the finalized spec** as the foundation
-- **Makes architectural decisions** - Technical approach, patterns
-- **Creates implementation steps** - Ordered, with files identified
-- **Defines testing strategy** - How to verify the implementation
+| State | Condition | Action |
+|-------|-----------|--------|
+| **Not in plan phase** | `current_phase !== "plan"` | Initialize plan phase |
+| **Outline pending** | Plan phase started, no checkpoints | Tier 1: Generate checkpoint outline |
+| **Outline needs approval** | Checkpoints exist, `plan_state.status !== "outline_approved"` | Show outline, get confirmation |
+| **Task groups pending** | Outline approved, checkpoint N has no task_groups | Tier 2: Generate task groups for checkpoint N |
+| **Tasks pending** | Task group N.M has no tasks | Tier 3: Generate tasks for task group N.M |
+| **Actions pending** | Task N.M.P has no actions | Tier 4: Generate actions for task N.M.P |
+| **Ready to finalize** | All checkpoints fully detailed (task_groups→tasks→actions) | Prompt for finalization |
+| **Already finalized** | `phases.plan.status === "finalized"` | Show status, suggest build phase |
 
-<workflow>
-    <phase id="1" name="Load Session">
-        <action>Load specified session (session ID required)</action>
-        <action>Verify spec.status === "finalized"</action>
-        <action>If not finalized, prompt user to finalize spec first</action>
-        <action>Read spec.md thoroughly</action>
-    </phase>
+Track per-checkpoint progress in `plan_state`:
+- `current_checkpoint`: Which checkpoint is being detailed
+- `current_task_group`: Which task group is being detailed
+- `current_task`: Which task is being detailed
 
-    <phase id="2" name="Initialize Plan Phase">
-        <action>Update state.json:
-            - current_phase: "plan"
-            - phases.plan.status: "draft"
-            - phases.plan.started_at: now()
-        </action>
-        <action>Create initial plan.md from template</action>
-    </phase>
+## Execution Flow
 
-    <phase id="3" name="Codebase Analysis">
-        <action>Analyze existing codebase for:
-            - Relevant existing patterns
-            - Files that will need modification
-            - Integration points
-            - Testing patterns in use
-        </action>
-        <action>Summarize findings in plan.md</action>
-    </phase>
+### Step 1: Load Session
 
-    <phase id="4" name="Architecture Design">
-        <action>Design technical approach based on:
-            - Spec requirements
-            - Existing codebase patterns
-            - Technical constraints
-        </action>
-        <action>Document key architectural decisions</action>
-        <action>Create diagrams showing component relationships</action>
-    </phase>
+1. Read `SESSIONS_DIR/$1/state.json`
+2. Verify `phases.spec.status === "finalized"` (error if not)
+3. Read `SESSIONS_DIR/$1/spec.md`
+4. Read `SKILL_DIR/plan/OVERVIEW.md` for workflow guidance
+5. Determine current state from table above
+6. If `$2 === "finalize"`, jump to Step 5
 
-    <phase id="5" name="Implementation Steps">
-        <action>Break down implementation into ordered steps</action>
-        <action>For each step, define:
-            - Files to create/modify
-            - Key changes to make
-            - Dependencies on other steps
-            - Validation criteria
-        </action>
-    </phase>
+### Step 2: Generate Checkpoint Outline
 
-    <phase id="6" name="Testing Strategy">
-        <action>Define testing approach:
-            - Unit tests needed
-            - Integration tests
-            - Manual verification steps
-        </action>
-    </phase>
+If no checkpoints exist:
 
-    <phase id="7" name="Finalization">
-        <trigger>`finalize` command</trigger>
-        <action>Review plan for completeness</action>
-        <action>Update state.json:
-            - phases.plan.status: "finalized"
-            - phases.plan.finalized_at: now()
-        </action>
-        <action>Add finalization header to plan.md</action>
-        <action>Report: "Plan finalized. Ready for build phase."</action>
-    </phase>
-</workflow>
+1. Analyze the spec's goals, requirements, and success criteria
+2. Explore the existing codebase for relevant patterns and files
+3. Design 3-7 sequential checkpoints that bridge current → desired state
+4. Create initial `plan.json` using template from `SKILL_DIR/plan/templates/plan.json`
+   - Include checkpoint titles, goals, prerequisites
+   - Leave task_groups/tasks empty (to be detailed in Step 3)
 
-<plan_template>
-# Implementation Plan: {{TOPIC}}
+Display checkpoint outline to user and use AskUserQuestion:
+- Options: "Approve outline", "Adjust checkpoints", "Add more detail"
 
-> **Session**: `{{SESSION_ID}}`
-> **Status**: Draft
-> **Spec**: [spec.md](./spec.md)
-> **Created**: {{DATE}}
-
-## Summary
-
-*Brief summary of what we're implementing based on the spec*
-
-## Spec Reference
-
-### Goals Being Addressed
-*Pull from spec.md*
-
-### Success Criteria
-*Pull from spec.md*
-
-## Codebase Analysis
-
-### Relevant Existing Patterns
-*What patterns exist that we should follow?*
-
-### Files to Modify
-| File | Purpose | Changes |
-|------|---------|---------|
-
-### Files to Create
-| File | Purpose |
-|------|---------|
-
-### Integration Points
-*Where does this connect to existing systems?*
-
-## Architecture
-
-### Approach
-*High-level technical approach*
-
-### Component Diagram
-```mermaid
-flowchart TD
-    ...
+After approval, update `state.json` with `plan_state`:
+```json
+{
+  "plan_state": {
+    "status": "outline_approved",
+    "checkpoints_total": [N],
+    "checkpoints_detailed": 0,
+    "last_updated": "[timestamp]"
+  }
+}
 ```
 
-### Key Decisions
-| Decision | Rationale | Alternatives Considered |
-|----------|-----------|------------------------|
+### Step 3: Detail Checkpoint (Tiered Approach)
 
-## Implementation Steps
+For each checkpoint that needs detailing, apply tiers 2-4 progressively:
 
-### Phase 1: [Name]
-**Goal**: *What this phase accomplishes*
+#### 3a. Tier 2: Generate Task Groups
 
-1. [ ] Step description
-   - Files: `path/to/file.ts`
-   - Changes: What to change
-   - Validation: How to verify
+1. Analyze checkpoint goal and scope
+2. Generate task groups with titles and objectives
+3. Present to user with AskUserQuestion:
+   - Options: "Approve task groups", "Adjust grouping", "Merge groups"
+4. After approval, update `plan.json` with task_groups (tasks empty)
+5. Update `plan_state.current_task_group` to first group
 
-2. [ ] Step description
-   ...
+#### 3b. Tier 3: Generate Tasks (per Task Group)
 
-### Phase 2: [Name]
-...
+For each task group:
 
-## Testing Strategy
+1. Load IDK vocabulary from `SKILL_DIR/plan/idk/`:
+   - `crud.md`, `actions.md`, `language.md`, `refactoring.md`, `testing.md`, `documentation.md`
+2. Identify file context (beginning/ending states)
+3. Generate tasks with titles, descriptions, file_paths
+4. Present to user with AskUserQuestion:
+   - Options: "Approve tasks", "Split task", "Add task"
+5. After approval, update `plan.json` with tasks (actions empty)
+6. Update `plan_state.current_task` to first task
 
-### Unit Tests
-- [ ] Test description
+#### 3c. Tier 4: Generate Actions (per Task)
 
-### Integration Tests
-- [ ] Test description
+For each task:
 
-### Manual Verification
-- [ ] Verification step
+1. Generate IDK-formatted actions for the task
+2. Present actions to user with AskUserQuestion:
+   - Options: "Approve actions", "Adjust actions", "Add action"
+3. After approval, update `plan.json` with actions
+4. Move to next task in task group
 
-## Risks & Mitigations
+#### 3d. Update State
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-
-## Estimated Scope
-
-*Rough indication of scope - not time estimates*
-
----
-*This plan is based on the finalized spec and will guide implementation.*
-</plan_template>
-
-<user_output>
-When starting plan phase:
-```
-## Plan Phase Started
-
-**Session ID**: `{session_id}`
-**Topic**: {topic}
-**Spec Status**: Finalized
-
-### Spec Summary
-{Brief summary from spec.md}
-
-I'll now analyze the codebase and design an implementation approach.
-{Begin codebase analysis}
+After each tier approval:
+```json
+{
+  "plan_state": {
+    "status": "in_progress",
+    "current_checkpoint": 1,
+    "current_task_group": "1.2",
+    "current_task": "1.2.1",
+    "last_updated": "[timestamp]"
+  }
+}
 ```
 
-When continuing:
+### Step 4: Repeat for All Checkpoints
+
+Loop through Step 3 for each checkpoint until all are detailed.
+
+### Step 5: Finalize Plan
+
+When all checkpoints are detailed or `$2 === "finalize"`:
+
+1. Verify all checkpoints have tasks
+2. Update `plan.json` status to `"complete"`
+3. Update `state.json`:
+```json
+{
+  "phases": {
+    "plan": {
+      "status": "finalized",
+      "finalized_at": "[timestamp]"
+    }
+  },
+  "plan_state": {
+    "status": "finalized",
+    "checkpoints_total": [N],
+    "checkpoints_detailed": [N],
+    "checkpoints_completed": []
+  }
+}
 ```
-## Resuming Plan Session
 
-**Session ID**: `{session_id}`
-**Topic**: {topic}
-**Plan Status**: {plan_status}
+Display summary and suggest: `/session:build [session-id]`
 
-### Current Progress
-{Summary of plan.md so far}
+## Behavior Notes
 
-{Continue where left off}
-```
-
-When finalizing:
-```
-## Plan Finalized
-
-**Session ID**: `{session_id}`
-**Topic**: {topic}
-
-### Implementation Overview
-{Summary of approach}
-
-### Key Files
-{List of files to create/modify}
-
-### Ready for Build
-The plan is now ready for implementation. The implementation steps
-provide a roadmap for building this feature.
-
-**Plan Location**: `agents/sessions/{session_id}/plan.md`
-```
-</user_output>
-
-<validation>
-Before proceeding with planning, validate:
-1. Session ID is provided
-2. Session exists at SESSIONS_DIR/{session-id}
-3. Session has a spec.md file
-4. Spec status is "finalized"
-
-If validation fails:
-- Missing session ID: "Session ID required. Use `/plan [session-id]` to start planning."
-- Session not found: "Session not found. Check the session ID or use `/spec [topic]` to create a new session."
-- Spec not finalized: "Spec is not finalized. Use `/spec [session-id] finalize` first."
-</validation>
+- **Progressive detail**: Start with outline, add detail incrementally
+- **User control**: Get confirmation before committing each stage
+- **Resumable**: State tracking allows stopping and continuing later
+- **Direct execution**: No sub-agents - all work happens in this conversation
+- **IDK precision**: Use IDK vocabulary for unambiguous task definitions
