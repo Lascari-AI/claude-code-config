@@ -40,9 +40,9 @@ Then proceed through: Initialize → Question-driven exploration → Finalize (o
 
 Spec mode is:
 - **Almost read-only** - Only writes to the session directory
-- **Question-driven** - Asks clarifying questions to understand the problem
+- **In-depth interviewing** - Asks thorough, non-obvious clarifying questions about literally anything to understand the problem
 - **Focused on WHAT and WHY** - Not implementation details (that's plan mode)
-- **Iterative** - Refines understanding through conversation
+- **Persistent** - Continues interviewing until the spec is truly complete
 
 <workflows>
     <workflow name="spec_flow">
@@ -119,11 +119,16 @@ Spec mode is:
             <description>The core interaction loop during spec mode</description>
             <principles>
                 - Ask ONE focused question at a time
+                - Be very in-depth - ask about literally anything: technical details, UI/UX, concerns, tradeoffs, edge cases
+                - Avoid obvious questions - dig deeper into non-obvious aspects
                 - Explain WHY you're asking
-                - After each answer, update spec.md incrementally
+                - After each answer, ATOMICALLY update spec.md AND state.json before proceeding
                 - Surface assumptions explicitly
+                - Continue interviewing persistently until the spec is truly complete
                 - Use diagrams when they clarify understanding
-                - Track open questions in state.json
+                - Capture the user's mental model, reasoning, and "taste" - not just requirements
+                - Preserve nuance: the WHY behind each decision matters as much as the WHAT
+                - Use user's own words when they convey important intent or preference
             </principles>
             <question_categories>
                 <category name="problem_space">
@@ -153,14 +158,42 @@ Spec mode is:
                     - Are there similar implementations to reference?
                     - Who else is involved in this decision?
                 </category>
+                <category name="deeper_exploration">
+                    - What concerns you about this approach?
+                    - What tradeoffs are you willing to accept?
+                    - Are there UI/UX considerations that matter?
+                    - What edge cases keep you up at night?
+                    - What would make you consider this a failure even if it "works"?
+                </category>
+                <category name="taste_and_reasoning">
+                    - What's your mental model for how this should work?
+                    - Why does this particular approach resonate with you?
+                    - What's the experience you're trying to create?
+                    - When you imagine using this, what does it feel like?
+                    - What would feel "off" even if it technically worked?
+                    - Can you describe your aesthetic or preference for how this behaves?
+                </category>
             </question_categories>
             <after_each_answer>
-                1. Acknowledge understanding
-                2. Update relevant section in spec.md
-                3. Note any decisions made (add to key_decisions)
-                4. Identify if new questions emerged (add to open_questions)
-                5. Remove answered questions from open_questions
-                6. Ask next question OR summarize progress
+                <critical>Each answer triggers an ATOMIC save cycle - NEVER batch updates</critical>
+
+                1. Acknowledge understanding (capture user's exact phrasing for nuance)
+                2. Update spec.md IMMEDIATELY:
+                   - Add/update relevant section
+                   - Capture the WHY behind user's answer, not just the WHAT
+                   - Preserve user's mental model and "taste" in their own words where valuable
+                3. Update state.json IMMEDIATELY:
+                   - Sync open_questions (add new, remove answered)
+                   - Update key_decisions with rationale if decisions emerged
+                   - Update goals arrays if goals emerged
+                   - Set updated_at timestamp
+                4. THEN ask next question OR summarize progress
+
+                <rationale>
+                This atomic pattern ensures no work is lost. The user's nuanced input
+                is valuable - by saving after each exchange, we preserve context even
+                if the session is interrupted.
+                </rationale>
             </after_each_answer>
             <exit_condition>User signals readiness to finalize OR all key questions answered</exit_condition>
         </phase>
@@ -203,10 +236,13 @@ DURING SPEC MODE:
 - DO NOT write code to non-session directories
 - DO NOT create implementation plans (that's plan mode)
 - DO NOT make architecture decisions (focus on WHAT not HOW)
+- DO NOT batch updates - save after EVERY exchange
 - DO read codebase files for context
 - DO create diagrams in session/context/diagrams/
-- DO update spec.md after each meaningful exchange
-- DO track questions and decisions in state.json
+- DO update spec.md AND state.json after each meaningful exchange (atomically)
+- DO capture the user's reasoning and mental model, not just their answers
+- DO use the user's own phrasing when it conveys important nuance or "taste"
+- DO document WHY decisions were made, not just WHAT was decided
 
 ALLOWED WRITES:
 - agents/sessions/{session_id}/**  (all session files)
@@ -236,8 +272,9 @@ ALLOWED WRITES:
 **Location**: `agents/sessions/{session_id}/`
 {if prior_session}**Prior Context**: `{prior_session}` - {brief summary of prior spec}{/if}
 
-I'll help you clarify what you want to build. I'll ask questions to understand
-the problem, goals, and constraints before we move to planning.
+I'll interview you in-depth about literally anything relevant: technical details,
+UI/UX, concerns, tradeoffs, edge cases, and more. I'll ask non-obvious questions
+and continue until we've thoroughly captured your vision.
 
 {First question based on the topic}
 ```

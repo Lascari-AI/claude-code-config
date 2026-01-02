@@ -55,10 +55,12 @@ This enables building on prior work without duplicating context. The prior spec 
 
 ## Key Principles
 
-1. **Question-driven**: Ask questions to understand before documenting
+1. **In-depth interviewing**: Ask thorough, non-obvious clarifying questions about literally anything to understand the problem
 2. **Almost read-only**: Only write to session directory files
 3. **WHAT not HOW**: Focus on outcomes, not implementation
-4. **Iterative refinement**: Spec evolves through conversation
+4. **Persistent exploration**: Continue interviewing until the spec is truly complete
+5. **Capture the why & user taste**: Don't just record requirements - capture reasoning, mental models, and preferences. Verbose input gets condensed, but nuance must survive.
+6. **Atomic persistence**: After EVERY exchange, update spec.md AND state.json. Never batch updates. This prevents losing work.
 
 ## Spec Document Sections
 

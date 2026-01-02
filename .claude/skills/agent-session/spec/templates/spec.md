@@ -16,15 +16,15 @@
 
 ### High-Level Goals
 
-*The north star - what does ultimate success look like?*
+*The north star - what does ultimate success look like? Include WHY this matters.*
 
 ### Mid-Level Goals
 
-*Major capabilities or milestones needed to achieve high-level goals*
+*Major capabilities or milestones needed to achieve high-level goals. Capture the reasoning behind each.*
 
 ### Detailed Goals
 
-*Specific behaviors or features - added as conversation progresses*
+*Specific behaviors or features - added as conversation progresses. Note user's preferences and "taste".*
 
 ## Non-Goals
 
@@ -40,9 +40,11 @@
 
 ## Context & Background
 
-*Relevant existing systems, prior art, stakeholder input*
+*Relevant existing systems, prior art, stakeholder input. Include user's mental model and design philosophy when relevant.*
 
 ## Key Decisions
+
+*Capture the WHY behind decisions, not just the WHAT. Include user's reasoning and preferences.*
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
