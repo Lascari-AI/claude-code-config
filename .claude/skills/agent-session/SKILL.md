@@ -88,6 +88,31 @@ By separating WHAT from HOW, we gain:
 3. **Verifiability** - Each checkpoint can be validated against the spec
 4. **Resumability** - Clear waypoints mean you can stop and restart anywhere
 
+### Tracer Bullet Planning
+
+Checkpoints should be structured as **vertical slices** (end-to-end), not horizontal layers:
+
+```
+The Bridge: Tracer Bullet Style
+────────────────────────────────
+
+CURRENT STATE                              DESIRED STATE
+     │                                          │
+     │    ┌──────────────────────────────┐      │
+     │    │  CP1: Thin end-to-end slice  │──────┤ ← Working!
+     │    ├──────────────────────────────┤      │
+     │    │  CP2: Add depth/features     │──────┤ ← Working!
+     │    ├──────────────────────────────┤      │
+     │    │  CP3: More complexity        │──────┤ ← Working!
+     │    ├──────────────────────────────┤      │
+     │    │  CP4: Polish & edge cases    │──────┘ ← Complete!
+     │    └──────────────────────────────┘
+     │
+     └── Each checkpoint produces testable, working code
+```
+
+**Principle**: Checkpoint 1 should produce a minimal but complete end-to-end flow. Subsequent checkpoints add to that working foundation. This enables thorough testing and validation at every stage, catching integration issues early rather than at the end.
+
 ## Phases
 
 ### Spec Phase

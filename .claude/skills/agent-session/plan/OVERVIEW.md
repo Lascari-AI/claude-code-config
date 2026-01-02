@@ -90,6 +90,55 @@ Sequential milestones that incrementally move from current state to target state
 }
 ```
 
+### Checkpoint Structuring: Tracer Bullet Approach
+
+Structure checkpoints as **vertical slices** (end-to-end), not horizontal layers. This approach—from "The Pragmatic Programmer"—builds a thin, working end-to-end implementation first, then incrementally adds complexity.
+
+**Why Tracer Bullet?**
+- Validates the entire pipeline works before investing heavily
+- Enables testing and verification from checkpoint 1
+- Catches integration issues early, not at the end
+- Each checkpoint produces working, testable code
+
+```
+❌ AVOID: Layer-by-layer (horizontal slicing)
+┌─────────────────────────────────────────────────────┐
+│ Checkpoint 1: All data models                       │
+│ Checkpoint 2: All API endpoints                     │
+│ Checkpoint 3: All UI components                     │
+│ Checkpoint 4: Integration testing  ← too late!      │
+└─────────────────────────────────────────────────────┘
+
+✅ PREFER: Tracer bullet (vertical slicing)
+┌─────────────────────────────────────────────────────┐
+│ Checkpoint 1: One complete flow (model→API→UI)      │
+│               Minimal but WORKING end-to-end        │
+│ Checkpoint 2: Add second flow or enhance first      │
+│ Checkpoint 3: Add complexity to working system      │
+│ Checkpoint 4: Polish, edge cases, refinement        │
+└─────────────────────────────────────────────────────┘
+```
+
+**Key Principle**: After checkpoint 1, you should have something that works end-to-end, even if minimal. Each subsequent checkpoint adds to that working foundation rather than building components in isolation.
+
+**Example - Building a User Export Feature:**
+
+```
+❌ Horizontal approach:
+  1. Create all export format handlers (CSV, JSON, PDF)
+  2. Build the export API endpoint
+  3. Create the UI export dialog
+  4. Test everything together
+
+✅ Tracer bullet approach:
+  1. Export ONE user to CSV (model→service→API→UI→download)
+  2. Add JSON format to working flow
+  3. Add PDF format to working flow
+  4. Add batch export, progress tracking, error handling
+```
+
+The tracer bullet approach ensures each checkpoint is independently testable and validates assumptions early.
+
 ### Task Groups
 
 Objective-based grouping of tasks within a checkpoint.

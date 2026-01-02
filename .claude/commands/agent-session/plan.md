@@ -72,10 +72,20 @@ If no checkpoints exist:
 
 1. Analyze the spec's goals, requirements, and success criteria
 2. Explore the existing codebase for relevant patterns and files
-3. Design 3-7 sequential checkpoints that bridge current → desired state
+3. Design 3-7 sequential checkpoints using **tracer bullet approach**:
+   - **Checkpoint 1**: Minimal end-to-end flow (thin vertical slice through all layers)
+   - **Subsequent checkpoints**: Add depth, features, complexity to working foundation
+   - Each checkpoint should produce testable, working code
 4. Create initial `plan.json` using template from `SKILL_DIR/plan/templates/plan.json`
    - Include checkpoint titles, goals, prerequisites
    - Leave task_groups/tasks empty (to be detailed in Step 3)
+
+**Tracer Bullet Principle**: Structure checkpoints as vertical slices, not horizontal layers.
+```
+❌ Avoid: CP1=all models, CP2=all APIs, CP3=all UI, CP4=integration test
+✅ Prefer: CP1=one complete flow end-to-end, CP2=add features, CP3=add complexity
+```
+This ensures testing and validation can happen from checkpoint 1 onward.
 
 Display checkpoint outline to user and use AskUserQuestion:
 - Options: "Approve outline", "Adjust checkpoints", "Add more detail"
@@ -175,8 +185,10 @@ Display summary and suggest: `/session:build [session-id]`
 
 ## Behavior Notes
 
+- **Tracer bullet**: Structure checkpoints as vertical slices (end-to-end), not horizontal layers
 - **Progressive detail**: Start with outline, add detail incrementally
 - **User control**: Get confirmation before committing each stage
 - **Resumable**: State tracking allows stopping and continuing later
 - **Direct execution**: No sub-agents - all work happens in this conversation
 - **IDK precision**: Use IDK vocabulary for unambiguous task definitions
+- **Testable checkpoints**: Each checkpoint should produce working, testable code
