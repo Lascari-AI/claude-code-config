@@ -9,6 +9,8 @@ depends-on: [system_prompt/00-overview.md]
 
 The canonical structure for all instruction artifacts. Copy, adapt, and customize for your specific use case. See [Overview](00-overview.md) for artifact types and pattern selection.
 
+> **File Format**: All prompt artifacts are **Markdown files (.md)** that use XML tags for structure—NOT actual XML files. This gives you markdown's flexibility with XML's structural clarity.
+
 ---
 
 ## Canonical Structure

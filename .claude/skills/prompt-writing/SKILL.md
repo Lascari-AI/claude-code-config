@@ -16,6 +16,21 @@ SKILL_ROOT: .claude/skills/prompt-writing/
 
 - Based on the user's request, follow the `Cookbook` to determine which workflow to execute.
 
+## File Format
+
+**All prompt artifacts are Markdown files (.md) that use XML tags for structure.**
+
+- File extension: `.md` (NOT `.xml`)
+- Internal structure: XML tags within markdown
+- Why: Markdown provides flexibility; XML tags provide clear structural boundaries the model can parse
+
+```
+CORRECT:  my-agent.md     (markdown file with XML tags inside)
+WRONG:    my-agent.xml    (actual XML file)
+```
+
+This approach gives you the best of both worlds—human-readable markdown with the structural clarity of XML tags.
+
 ## Workflow
 
 1. Understand the user's request and what type of prompt artifact they need.

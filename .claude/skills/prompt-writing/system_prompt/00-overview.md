@@ -20,7 +20,7 @@ Instructions loaded once, then executed. This covers everything from simple syst
 
 ## What This Covers
 
-All of these share the same underlying structure:
+All of these share the same underlying structure and are written as **Markdown files (.md) with XML tags for structure** (not actual XML files):
 
 | Artifact | What It Is | Examples |
 |----------|------------|----------|
