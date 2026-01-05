@@ -21,7 +21,7 @@ Instruction Artifact
 ├─ Background           # The WHY—differentiator
 ├─ Workflow
 │   ├─ Overview
-│   ├─ Expected Inputs
+│   ├─ Inputs           # Named variables with type + required/optional
 │   ├─ Steps            # Each with description + optional constraints
 │   ├─ Global Constraints
 │   └─ Output Format
@@ -132,16 +132,20 @@ The complete structure with inline documentation. Works for system prompts, agen
     </overview>
 
     <!--
-      EXPECTED INPUTS
-      Format: Typed list with descriptions
+      INPUTS
+      Format: Named inputs with type and required/optional designation
 
-      Clearly define data or information the model will receive.
-      Specify data types, formats, and potential variability.
+      Define the variables the model will receive at runtime.
+      Each input has a name, type, and whether it's required.
     -->
-    <expected_inputs>
-    - [input_name]: [type] - [description]
-    - Optional: [optional_input]: [type] - [when to use]
-    </expected_inputs>
+    <inputs>
+        <input name="[input_name]" type="[type]" required="true">
+            [Description of what this input contains and how to use it]
+        </input>
+        <input name="[optional_input]" type="[type]" required="false">
+            [Description and when this input is provided]
+        </input>
+    </inputs>
 
     <!--
       STEPS
@@ -226,7 +230,7 @@ The complete structure with inline documentation. Works for system prompts, agen
 | `<background>` | The WHY—context and motivation | 3-5 bullet points |
 | `<workflow>` | Execution structure | Nested XML |
 | `<overview>` | High-level phase map | Numbered list |
-| `<expected_inputs>` | Input definitions | Typed list |
+| `<inputs>` | Variables received at runtime | Named input elements with type/required |
 | `<steps>` | Processing steps with constraints | Named step blocks |
 | `<global_constraints>` | Universal rules | Bullet list |
 | `<output_format>` | Output structure | Schema definition |
