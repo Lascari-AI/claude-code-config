@@ -1,0 +1,87 @@
+{
+  "session_id": "2026-01-05_prompt-writing-skill_59607b",
+  "topic": "Update Prompt Writing Skill",
+  "description": "Restructure the system_prompt section to center on workflow design as the core discipline",
+  "granularity": "feature",
+  "parent_session": null,
+  "prior_session": null,
+  "current_phase": "build",
+  "phases": {
+    "spec": {
+      "status": "finalized",
+      "started_at": "2026-01-05T00:00:00Z",
+      "finalized_at": "2026-01-05T00:00:00Z"
+    },
+    "plan": {
+      "status": "finalized",
+      "started_at": "2026-01-05T12:00:00Z",
+      "finalized_at": "2026-01-05T14:00:00Z"
+    },
+    "build": {
+      "status": "in_progress",
+      "started_at": "2026-01-05T18:00:00Z",
+      "completed_at": null,
+      "current_checkpoint": 2
+    }
+  },
+  "open_questions": [],
+  "key_decisions": [
+    {
+      "decision": "Center the skill on workflow design as the core discipline",
+      "rationale": "The workflow IS the product. Purpose/knowledge/goal/background are context. Workflow is what directs model behavior.",
+      "date": "2026-01-05"
+    },
+    {
+      "decision": "Use steps for single-completion, phases for multi-turn",
+      "rationale": "Steps = internal reasoning scaffold (thinking window). Phases = external execution flow (tool calls, state updates).",
+      "date": "2026-01-05"
+    },
+    {
+      "decision": "Use 30-patterns/ subdirectory for pattern-specific files",
+      "rationale": "Groups single-completion and multi-turn as patterns. Keeps top level clean: overview, base-template, workflow-design, then patterns/.",
+      "date": "2026-01-05"
+    },
+    {
+      "decision": "workflow-design.md is dense reference; pattern files are application",
+      "rationale": "workflow-design covers the theory (XML structure, general rules). Pattern files show how to apply those principles for specific use cases (single-completion vs multi-turn).",
+      "date": "2026-01-05"
+    },
+    {
+      "decision": "workflow-design becomes a folder containing patterns",
+      "rationale": "Keeps workflow design as cohesive unit. Overview, base principles, then patterns (single-completion, multi-turn) inside.",
+      "date": "2026-01-05"
+    },
+    {
+      "decision": "Single-completion vs Multi-turn is the fundamental split; techniques within multi-turn",
+      "rationale": "Split is based on execution model (thinking window vs external state). Iterative-loop and parallel-agents are techniques within multi-turn, not separate types.",
+      "date": "2026-01-05"
+    }
+  ],
+  "goals": {
+    "high_level": [
+      "Reframe the skill around workflow design as the central discipline",
+      "Make learning path clear: overview → base template → workflow design → pattern-specific"
+    ],
+    "mid_level": [
+      "system_prompt/00-overview.md: Section entry point + routing",
+      "system_prompt/10-base-template.md: Canonical XML structure",
+      "20-workflow-design/00-overview.md: Introduces workflow design discipline",
+      "20-workflow-design/10-base.md: Core principles for all workflows (dense reference)",
+      "20-workflow-design/20-single-completion.md: Thinking-window pattern",
+      "30-multi-turn/00-base.md: External state pattern",
+      "30-multi-turn/10-iterative-loop.md: User-in-the-loop technique",
+      "30-multi-turn/20-parallel-agents.md: Subagent spawning technique"
+    ]
+  },
+  "created_at": "2026-01-05T00:00:00Z",
+  "updated_at": "2026-01-05T12:00:00Z",
+  "plan_state": {
+    "status": "in_progress",
+    "checkpoints_total": 5,
+    "checkpoints_detailed": 5,
+    "checkpoints_completed": [1, 2, 3, 4],
+    "current_checkpoint": 5,
+    "current_task": null,
+    "last_updated": "2026-01-05T22:00:00Z"
+  }
+}
