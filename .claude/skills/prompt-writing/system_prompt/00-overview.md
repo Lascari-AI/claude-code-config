@@ -10,6 +10,14 @@ Instructions loaded once, then executed. This covers everything from simple syst
 
 ---
 
+## Contents
+
+- [What This Covers](#what-this-covers) — Artifact types that share this structure
+- [Key Distinction](#key-distinction) — Control vs handoff: the fundamental split
+- [Instruction Types](#instruction-types) — Routing to specific patterns
+
+---
+
 ## What This Covers
 
 All of these share the same underlying structure:
@@ -26,232 +34,55 @@ They're all "system prompts" in spirit—static instructions that shape AI behav
 
 **Key principle**: Static instructions define WHAT and HOW. Dynamic context (user prompt) provides the specific inputs and runtime state.
 
-## Canonical Structure
-
-```
-Instruction Artifact
-├─ Purpose              # Mission, not role
-├─ Key Knowledge        # Domain expertise to prioritize
-├─ Goal                 # Ultimate success condition
-├─ Background           # The WHY—differentiator
-├─ Workflow
-│   ├─ Overview
-│   ├─ Expected Inputs
-│   ├─ Steps            # Each with description + optional constraints
-│   ├─ Global Constraints
-│   └─ Output Format
-└─ Important Rules      # (Optional) Critical numbered constraints
-```
-
 ---
 
-## Reference Template
+## Key Distinction
 
-The complete structure with inline documentation. Works for system prompts, agent definitions, skills, and workflow files. Copy and adapt.
+The fundamental split in prompt design: **who controls execution?**
 
-```xml
-<!--
-  PURPOSE
-  Format: Bullet list (2-4 items)
+| Aspect | Single-Completion | Multiturn |
+|--------|-------------------|-----------|
+| **Control** | Your code controls the LLM | Autonomous system controls itself |
+| **Execution** | You call API, process response, decide next | System runs multiple turns on its own |
+| **Loop Owner** | Your application | The agent/system |
+| **Examples** | Classification, extraction, code-orchestrated agents | Claude Code skills, background agents, pipelines |
 
-  Define the model's core reason for being in this interaction.
-  - Use evocative, precise language (not generic roles)
-  - State the mission, not the identity
-  - Include why success matters
+**Single-Completion**: Your code makes the LLM call. Your code processes the response. You decide what happens next. Even if you're doing multi-step agentic work, if YOUR code orchestrates the calls, it's single-completion.
 
-  ❌ "You are a helpful assistant"
-  ✅ "Expert technical writer specializing in simplifying complex cloud concepts"
--->
-<purpose>
-- [Primary mission statement with specific domain]
-- [Secondary objective that supports the mission]
-- [Why successful completion matters]
-</purpose>
+**Multiturn**: You submit instructions to an autonomous system. The system decides what LLM calls to make, what tools to use, and when it's done. You direct; the system executes.
 
-<!--
-  KEY KNOWLEDGE
-  Format: Bullet list (3-6 items)
+**The distinction is about WHO controls the execution loop, not whether tools are involved.**
 
-  Specify the essential skills, expertise, or information to prioritize.
-  - Be specific about domains of knowledge
-  - Include frameworks, methodologies, or standards
-  - List technical competencies if relevant
--->
-<key_knowledge>
-- [Domain expertise area 1]
-- [Specific frameworks or methodologies]
-- [Technical competencies or tools]
-</key_knowledge>
+Tool use is fine in single-completion—you can use structured outputs, function calling, etc. The question is: does your code handle the tool execution, or does an autonomous system?
 
-<!--
-  GOAL
-  Format: Bullet list (2-4 items)
+### Choosing Your Pattern
 
-  State the ultimate, strategic objective—not procedural steps.
-  - Focus on the high-level outcome
-  - What does "done well" look like?
-  - Include quality criteria
--->
-<goal>
-- [Primary deliverable or outcome]
-- [Quality criteria for success]
-- [How to measure completion]
-</goal>
-
-<!--
-  BACKGROUND
-  Format: Bullet list (3-5 items)
-
-  Explain the 'why'—situational context, history, motivation.
-  This is the differentiator that resolves ambiguity toward true objectives.
-
-  Include:
-  - Why the task needs to be done
-  - What larger context it operates within
-  - What pain point it solves
-  - What are the stakes or implications
--->
-<background>
-- [Current situation or problem]
-- [Why this matters / stakes involved]
-- [Larger context or process this fits into]
-- [Pain point being solved]
-</background>
-
-<!--
-  WORKFLOW
-  Format: Nested XML structure
-
-  The explicit steps, constraints, and output format.
-
-  Why explicit steps matter:
-  1. Inject Expertise: Your methodology overrides model defaults
-  2. Control & Reliability: Explicit algorithms constrain processing
-  3. Iteration Points: Test, tweak, and debug specific steps
-
-  DON'T: "1. Read input 2. Think about it 3. Generate output"
-  DO: Describe WHAT to do, HOW to do it, and WHY it matters.
--->
-<workflow>
-    <!--
-      OVERVIEW
-      Format: Numbered list of phases
-
-      High-level outline of main phases or stages.
-      Give the model a mental map of the process.
-    -->
-    <overview>
-    - Phase 1: [First major stage]
-    - Phase 2: [Second major stage]
-    - Phase 3: [Final stage / synthesis]
-    </overview>
-
-    <!--
-      EXPECTED INPUTS
-      Format: Typed list with descriptions
-
-      Clearly define data or information the model will receive.
-      Specify data types, formats, and potential variability.
-    -->
-    <expected_inputs>
-    - [input_name]: [type] - [description]
-    - Optional: [optional_input]: [type] - [when to use]
-    </expected_inputs>
-
-    <!--
-      STEPS
-      Format: Named step blocks with description + optional constraints
-
-      Detail specific reasoning or processing steps.
-      Each step should explain WHAT, HOW, and WHY.
-      Localize constraints (vertical slices) to the steps where they apply.
-    -->
-    <steps>
-        <step name="[action_verb]">
-            <description>
-            - [What to do in this step]
-            - [How to do it - specific logic or transformation]
-            - [Why it matters for the overall goal]
-            </description>
-            <constraints>
-            - [Rules that apply ONLY to this step]
-            - [Limits or edge case handling]
-            </constraints>
-        </step>
-
-        <step name="[next_action]">
-            <description>
-            - [Processing logic for this step]
-            </description>
-            <!-- constraints optional if no step-specific rules -->
-        </step>
-    </steps>
-
-    <!--
-      GLOBAL CONSTRAINTS
-      Format: Bullet list
-
-      Rules that apply universally across all steps.
-      Tone, style, formatting rules, things to avoid.
-    -->
-    <global_constraints>
-    - [Universal tone/style requirement]
-    - [What to always do]
-    - [What to never do]
-    </global_constraints>
-
-    <!--
-      OUTPUT FORMAT
-      Format: Structured schema (bullets, JSON, or XML)
-
-      Specify the required structure of the final output.
-      Define fields, data types, and expected content.
-    -->
-    <output_format>
-    - [Section 1]: [description of content]
-    - [Section 2]: [description of content]
-    - [Section 3]: [description of content]
-    </output_format>
-</workflow>
-
-<!--
-  IMPORTANT RULES (Optional)
-  Format: Numbered list (3-5 items max)
-
-  Critical constraints that must not be violated.
-  Numbered for emphasis and easy reference.
-  Reserve for truly critical rules—overuse dilutes impact.
--->
-<important_rules>
-1. [Critical safety or quality constraint]
-2. [Non-negotiable behavior requirement]
-3. [Hard boundary or limitation]
-</important_rules>
 ```
+Is YOUR code calling the LLM API and processing responses?
+├─ YES → Single-Completion (10-single-completion.md)
+│         Your code orchestrates, LLM completes tasks
+│
+└─ NO → Multiturn (you hand off to an autonomous system)
+         │
+         Does the user provide input each cycle?
+         ├─ YES → Iterative Loop (20-multiturn/10-iterative-loop.md)
+         │         Interviews, spec refinement, requirements
+         │
+         └─ NO → Autonomous (20-multiturn/00-base.md)
+                  Skills, background agents, pipelines
+```
+
+For the canonical XML structure and copy-paste template, see [Base Template](10-base-template.md).
 
 ---
 
 ## Instruction Types
 
-| Type | Who Controls Execution | Examples |
-|------|------------------------|----------|
-| **Single-Completion** | Your code (you call the API) | Classification, extraction, code-orchestrated agents |
-| **Multiturn** | Autonomous system (you hand off) | Claude Code skills, background agents, pipelines |
-| **Iterative Loop** | Autonomous + user each turn | Interviews, spec refinement, knowledge extraction |
+Templates for each pattern. See [Key Distinction](#key-distinction) for when to use each.
 
-### How to Choose
-
-**Single-Completion** → `10-single-completion.md`
-- Your code calls the LLM API directly
-- You process responses and control the loop
-- Use for: API integrations, code-orchestrated agentic loops, any prompt where your application is in control
-
-**Multiturn** → `20-multiturn/00-base.md`
-- You submit to an autonomous system
-- The system controls its own execution across multiple turns
-- Use for: Claude Code commands/skills, background agents, autonomous pipelines
-
-**Iterative Loop** → `20-multiturn/10-iterative-loop.md`
-- Autonomous system, but user provides input each cycle
-- State machine with transitions
-- Use for: Interview prompts, spec refinement, requirements gathering
+| Resource | File | Purpose |
+|----------|------|---------|
+| **Base Template** | `10-base-template.md` | Canonical XML structure to copy and adapt |
+| **Single-Completion** | `10-single-completion.md` | Your code controls execution |
+| **Multiturn Autonomous** | `20-multiturn/00-base.md` | System runs on its own |
+| **Multiturn Iterative** | `20-multiturn/10-iterative-loop.md` | User provides input each cycle |
