@@ -146,16 +146,21 @@ The subagent updates state after EACH file examined:
 
 ```xml
 <phase id="3" name="Investigate">
-    <action>Read high-priority files</action>
-    <action>For EACH file examined, IMMEDIATELY update state file:
-        - Append to examined array:
-          {
-            "file": "path/to/file.ts",
-            "lines": "relevant line ranges",
-            "learned": ["insight 1", "insight 2"]
-          }
+    <action>
+        - Read high-priority files
     </action>
-    <action>Stop when sufficient understanding achieved</action>
+    <action>
+        - For EACH file examined, IMMEDIATELY update state file:
+            - Append to examined array:
+              {
+                "file": "path/to/file.ts",
+                "lines": "relevant line ranges",
+                "learned": ["insight 1", "insight 2"]
+              }
+    </action>
+    <action>
+        - Stop when sufficient understanding achieved
+    </action>
 </phase>
 ```
 
@@ -173,14 +178,15 @@ The subagent updates state after EACH file examined:
 ```xml
 <phase id="2" name="Spawn Subagents">
     <critical>
-    Spawn ALL subagents in a SINGLE message with multiple parallel calls.
-    Do NOT spawn sequentially—this wastes time and prevents true parallelism.
+        - Spawn ALL subagents in a SINGLE message with multiple parallel calls
+        - Do NOT spawn sequentially—this wastes time and prevents true parallelism
     </critical>
 
-    <action>For each query, spawn research-subagent with:
-        - Session path
-        - Subagent file: subagent_{id}.json
-        - Query: id, title, objective, search_hints
+    <action>
+        - For each query, spawn research-subagent with:
+            - Session path
+            - Subagent file: subagent_{id}.json
+            - Query: id, title, objective, search_hints
     </action>
 </phase>
 ```
@@ -208,28 +214,54 @@ After all subagents complete, a report writer synthesizes results:
 ```xml
 <workflow>
     <phase id="1" name="Load Findings">
-        <action>Read ALL subagent state files</action>
-        <action>Extract examined files and learned items</action>
-        <action>Build list of code files to read</action>
+        <action>
+            - Read ALL subagent state files
+        </action>
+        <action>
+            - Extract examined files and learned items
+        </action>
+        <action>
+            - Build list of code files to read
+        </action>
     </phase>
 
     <phase id="2" name="Read Actual Code">
-        <critical>This is what makes the report valuable</critical>
-        <action>Read code files referenced in examined arrays</action>
-        <action>Focus on line ranges specified</action>
-        <action>Select most illustrative snippets</action>
+        <critical>
+            - This is what makes the report valuable
+        </critical>
+        <action>
+            - Read code files referenced in examined arrays
+        </action>
+        <action>
+            - Focus on line ranges specified
+        </action>
+        <action>
+            - Select most illustrative snippets
+        </action>
     </phase>
 
     <phase id="3" name="Synthesize">
-        <action>Identify themes across subagent findings</action>
-        <action>Group related learnings</action>
-        <action>Connect complementary insights</action>
-        <action>Note contradictions or gaps</action>
+        <action>
+            - Identify themes across subagent findings
+        </action>
+        <action>
+            - Group related learnings
+        </action>
+        <action>
+            - Connect complementary insights
+        </action>
+        <action>
+            - Note contradictions or gaps
+        </action>
     </phase>
 
     <phase id="4" name="Write Report">
-        <action>Write comprehensive report with real code snippets</action>
-        <action>Follow template structure</action>
+        <action>
+            - Write comprehensive report with real code snippets
+        </action>
+        <action>
+            - Follow template structure
+        </action>
     </phase>
 </workflow>
 ```
@@ -255,21 +287,27 @@ The report writer reads the actual code when synthesizing. This keeps state file
 ```xml
 <error_handling>
     <scenario name="One Subagent Fails">
-        - Note failure in orchestrator state
-        - Continue with successful subagents
-        - Report writer documents gap from failed subagent
+        <recovery>
+            - Note failure in orchestrator state
+            - Continue with successful subagents
+            - Report writer documents gap from failed subagent
+        </recovery>
     </scenario>
 
     <scenario name="Subagent Partial Results">
-        - Subagent state file contains partial examined[]
-        - Report writer uses available findings
-        - Report notes incomplete investigation
+        <recovery>
+            - Subagent state file contains partial examined[]
+            - Report writer uses available findings
+            - Report notes incomplete investigation
+        </recovery>
     </scenario>
 
     <scenario name="All Subagents Fail">
-        - Report error to user
-        - Include any partial findings
-        - Suggest manual investigation
+        <recovery>
+            - Report error to user
+            - Include any partial findings
+            - Suggest manual investigation
+        </recovery>
     </scenario>
 </error_handling>
 ```
@@ -292,25 +330,33 @@ From the research subagent implementation:
 ```xml
 <principles>
     <principle name="Incremental Updates">
-        Update state file after EACH file is examined.
-        If you fail mid-investigation, partial findings are preserved.
+        <guidance>
+            - Update state file after EACH file is examined
+            - If you fail mid-investigation, partial findings are preserved
+        </guidance>
     </principle>
 
     <principle name="Focused Investigation">
-        Stay laser-focused on your assigned objective.
-        Resist scope creep - investigate only your specific query.
-        Stop when you have sufficient evidence.
+        <guidance>
+            - Stay laser-focused on your assigned objective
+            - Resist scope creep - investigate only your specific query
+            - Stop when you have sufficient evidence
+        </guidance>
     </principle>
 
     <principle name="Reference Over Copy">
-        Record file paths and line numbers, not full code snippets.
-        The report-writer will read the actual code.
-        Keep learned items concise.
+        <guidance>
+            - Record file paths and line numbers, not full code snippets
+            - The report-writer will read the actual code
+            - Keep learned items concise
+        </guidance>
     </principle>
 
     <principle name="State Isolation">
-        Your state file is your contract with the orchestrator.
-        Write everything there, not to response messages.
+        <guidance>
+            - Your state file is your contract with the orchestrator
+            - Write everything there, not to response messages
+        </guidance>
     </principle>
 </principles>
 ```

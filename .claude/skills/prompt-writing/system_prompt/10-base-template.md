@@ -13,6 +13,58 @@ The canonical structure for all instruction artifacts. Copy, adapt, and customiz
 
 ---
 
+## Formatting Rules
+
+### Bullet Points
+
+- All items must use a dash prefix (`-`)
+- Numbered lists (`1.` `2.` `3.`) are allowed for sequential workflows where order matters
+- Favor dashes where sequence is not critical
+
+### Indentation
+
+- All content inside XML tags must be indented (4 spaces)
+- Nested content receives additional indentation per level
+- Maintains clear visual hierarchy
+
+### Example
+
+```xml
+<!-- WRONG: No indentation -->
+<purpose>
+- First item
+- Second item
+</purpose>
+
+<!-- CORRECT: 4-space indentation -->
+<purpose>
+    - First item
+    - Second item
+</purpose>
+
+<!-- Nested content: additional indentation per level -->
+<workflow>
+    <overview>
+        1. First phase
+        2. Second phase
+        3. Third phase
+    </overview>
+
+    <step name="example">
+        <description>
+            - Main instruction point
+            - Another instruction point
+        </description>
+        <constraints>
+            - Constraint that applies to this step
+            - Another constraint
+        </constraints>
+    </step>
+</workflow>
+```
+
+---
+
 ## Canonical Structure
 
 ```
@@ -50,9 +102,9 @@ The complete structure with inline documentation. Works for system prompts, agen
   GOOD: "Expert technical writer specializing in simplifying complex cloud concepts"
 -->
 <purpose>
-- [Primary mission statement with specific domain]
-- [Secondary objective that supports the mission]
-- [Why successful completion matters]
+    - [Primary mission statement with specific domain]
+    - [Secondary objective that supports the mission]
+    - [Why successful completion matters]
 </purpose>
 
 <!--
@@ -65,9 +117,9 @@ The complete structure with inline documentation. Works for system prompts, agen
   - List technical competencies if relevant
 -->
 <key_knowledge>
-- [Domain expertise area 1]
-- [Specific frameworks or methodologies]
-- [Technical competencies or tools]
+    - [Domain expertise area 1]
+    - [Specific frameworks or methodologies]
+    - [Technical competencies or tools]
 </key_knowledge>
 
 <!--
@@ -80,9 +132,9 @@ The complete structure with inline documentation. Works for system prompts, agen
   - Include quality criteria
 -->
 <goal>
-- [Primary deliverable or outcome]
-- [Quality criteria for success]
-- [How to measure completion]
+    - [Primary deliverable or outcome]
+    - [Quality criteria for success]
+    - [How to measure completion]
 </goal>
 
 <!--
@@ -99,10 +151,10 @@ The complete structure with inline documentation. Works for system prompts, agen
   - What are the stakes or implications
 -->
 <background>
-- [Current situation or problem]
-- [Why this matters / stakes involved]
-- [Larger context or process this fits into]
-- [Pain point being solved]
+    - [Current situation or problem]
+    - [Why this matters / stakes involved]
+    - [Larger context or process this fits into]
+    - [Pain point being solved]
 </background>
 
 <!--
@@ -122,15 +174,15 @@ The complete structure with inline documentation. Works for system prompts, agen
 <workflow>
     <!--
       OVERVIEW
-      Format: Numbered list of phases
+      Format: Numbered list of phases (order matters here)
 
       High-level outline of main phases or stages.
       Give the model a mental map of the process.
     -->
     <overview>
-    - Phase 1: [First major stage]
-    - Phase 2: [Second major stage]
-    - Phase 3: [Final stage / synthesis]
+        1. [First major stage]
+        2. [Second major stage]
+        3. [Final stage / synthesis]
     </overview>
 
     <!--
@@ -160,19 +212,19 @@ The complete structure with inline documentation. Works for system prompts, agen
     <steps>
         <step name="[action_verb]">
             <description>
-            - [What to do in this step]
-            - [How to do it - specific logic or transformation]
-            - [Why it matters for the overall goal]
+                - [What to do in this step]
+                - [How to do it - specific logic or transformation]
+                - [Why it matters for the overall goal]
             </description>
             <constraints>
-            - [Rules that apply ONLY to this step]
-            - [Limits or edge case handling]
+                - [Rules that apply ONLY to this step]
+                - [Limits or edge case handling]
             </constraints>
         </step>
 
         <step name="[next_action]">
             <description>
-            - [Processing logic for this step]
+                - [Processing logic for this step]
             </description>
             <!-- constraints optional if no step-specific rules -->
         </step>
@@ -186,9 +238,9 @@ The complete structure with inline documentation. Works for system prompts, agen
       Tone, style, formatting rules, things to avoid.
     -->
     <global_constraints>
-    - [Universal tone/style requirement]
-    - [What to always do]
-    - [What to never do]
+        - [Universal tone/style requirement]
+        - [What to always do]
+        - [What to never do]
     </global_constraints>
 
     <!--
@@ -199,9 +251,9 @@ The complete structure with inline documentation. Works for system prompts, agen
       Define fields, data types, and expected content.
     -->
     <output_format>
-    - [Section 1]: [description of content]
-    - [Section 2]: [description of content]
-    - [Section 3]: [description of content]
+        - [Section 1]: [description of content]
+        - [Section 2]: [description of content]
+        - [Section 3]: [description of content]
     </output_format>
 </workflow>
 
@@ -214,9 +266,9 @@ The complete structure with inline documentation. Works for system prompts, agen
   Reserve for truly critical rules—overuse dilutes impact.
 -->
 <important_rules>
-1. [Critical safety or quality constraint]
-2. [Non-negotiable behavior requirement]
-3. [Hard boundary or limitation]
+    1. [Critical safety or quality constraint]
+    2. [Non-negotiable behavior requirement]
+    3. [Hard boundary or limitation]
 </important_rules>
 ```
 

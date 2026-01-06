@@ -39,26 +39,26 @@ Steps are the **internal reasoning scaffold**. They guide how the model thinks t
 <steps>
     <step name="understand_input">
         <description>
-        Parse and validate the input. Identify key entities,
-        relationships, and any ambiguities to resolve.
+            - Parse and validate the input
+            - Identify key entities, relationships, and any ambiguities to resolve
         </description>
     </step>
 
     <step name="analyze">
         <description>
-        Apply domain expertise to evaluate the input.
-        Consider multiple perspectives before concluding.
+            - Apply domain expertise to evaluate the input
+            - Consider multiple perspectives before concluding
         </description>
         <constraints>
-        - Cite specific evidence from the input
-        - Flag low-confidence assessments
+            - Cite specific evidence from the input
+            - Flag low-confidence assessments
         </constraints>
     </step>
 
     <step name="synthesize">
         <description>
-        Combine analysis into final output.
-        Prioritize actionable insights.
+            - Combine analysis into final output
+            - Prioritize actionable insights
         </description>
     </step>
 </steps>
@@ -94,25 +94,28 @@ Each step has:
 **Description**: Include methodology, not just action
 ```xml
 <!-- Weak -->
-<description>Classify the sentiment</description>
+<description>
+    - Classify the sentiment
+</description>
 
 <!-- Strong -->
 <description>
-Classify sentiment as positive, negative, or neutral.
-Look for explicit emotional language first, then consider
-implicit sentiment through word choice and context.
-Weight recent statements more heavily than opening statements.
+    - Classify sentiment as positive, negative, or neutral
+    - Look for explicit emotional language first, then consider implicit sentiment through word choice and context
+    - Weight recent statements more heavily than opening statements
 </description>
 ```
 
 **Constraints**: Localize rules to specific steps
 ```xml
 <step name="cite_evidence">
-    <description>Support conclusions with specific quotes</description>
+    <description>
+        - Support conclusions with specific quotes
+    </description>
     <constraints>
-    - Minimum 2 quotes per major claim
-    - Include page/section references
-    - Do not paraphrase; use exact text
+        - Minimum 2 quotes per major claim
+        - Include page/section references
+        - Do not paraphrase; use exact text
     </constraints>
 </step>
 ```
@@ -143,17 +146,17 @@ Place constraints at the right scope:
     <steps>
         <step name="analyze">
             <constraints>
-            <!-- Rules for THIS step only -->
-            - Use only data from the provided context
+                <!-- Rules for THIS step only -->
+                - Use only data from the provided context
             </constraints>
         </step>
     </steps>
 
     <global_constraints>
-    <!-- Rules that apply EVERYWHERE -->
-    - Maintain professional tone
-    - Never include PII in output
-    - Response must be under 500 words
+        <!-- Rules that apply EVERYWHERE -->
+        - Maintain professional tone
+        - Never include PII in output
+        - Response must be under 500 words
     </global_constraints>
 </workflow>
 ```
@@ -170,26 +173,25 @@ Place constraints at the right scope:
 <steps>
     <step name="identify_signals">
         <description>
-        Scan input for classification signals: keywords,
-        phrases, structural patterns, and metadata.
+            - Scan input for classification signals: keywords, phrases, structural patterns, and metadata
         </description>
     </step>
 
     <step name="evaluate_categories">
         <description>
-        Map signals to possible categories. Weight signals
-        by reliability. Identify the strongest match.
+            - Map signals to possible categories
+            - Weight signals by reliability
+            - Identify the strongest match
         </description>
         <constraints>
-        - Require 3+ signals for high-confidence classification
-        - Flag ambiguous cases explicitly
+            - Require 3+ signals for high-confidence classification
+            - Flag ambiguous cases explicitly
         </constraints>
     </step>
 
     <step name="output_classification">
         <description>
-        Return category with confidence score and
-        supporting evidence.
+            - Return category with confidence score and supporting evidence
         </description>
     </step>
 </steps>
@@ -201,27 +203,27 @@ Place constraints at the right scope:
 <steps>
     <step name="parse_structure">
         <description>
-        Identify document structure: sections, tables,
-        lists, headers. Build mental map of content location.
+            - Identify document structure: sections, tables, lists, headers
+            - Build mental map of content location
         </description>
     </step>
 
     <step name="locate_fields">
         <description>
-        For each target field, identify location in document.
-        Handle variations in labeling and formatting.
+            - For each target field, identify location in document
+            - Handle variations in labeling and formatting
         </description>
     </step>
 
     <step name="extract_and_normalize">
         <description>
-        Extract values and normalize to target schema.
-        Apply type coercion and validation rules.
+            - Extract values and normalize to target schema
+            - Apply type coercion and validation rules
         </description>
         <constraints>
-        - Dates to ISO 8601 format
-        - Currency to decimal (no symbols)
-        - Missing fields as null (not empty string)
+            - Dates to ISO 8601 format
+            - Currency to decimal (no symbols)
+            - Missing fields as null (not empty string)
         </constraints>
     </step>
 </steps>
@@ -233,29 +235,29 @@ Place constraints at the right scope:
 <steps>
     <step name="understand_requirements">
         <description>
-        Parse the generation request. Identify: target format,
-        length constraints, tone, audience, key points to cover.
+            - Parse the generation request
+            - Identify: target format, length constraints, tone, audience, key points to cover
         </description>
     </step>
 
     <step name="plan_structure">
         <description>
-        Outline the response structure. Determine section
-        breakdown and information flow.
+            - Outline the response structure
+            - Determine section breakdown and information flow
         </description>
     </step>
 
     <step name="draft_content">
         <description>
-        Generate content following the plan. Maintain
-        consistent voice throughout.
+            - Generate content following the plan
+            - Maintain consistent voice throughout
         </description>
     </step>
 
     <step name="refine">
         <description>
-        Review for clarity, accuracy, and adherence to
-        constraints. Adjust as needed.
+            - Review for clarity, accuracy, and adherence to constraints
+            - Adjust as needed
         </description>
     </step>
 </steps>

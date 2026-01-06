@@ -142,17 +142,19 @@ From spec mode's workflow:
 
 ```xml
 <after_each_answer>
-    <critical>Each answer triggers an ATOMIC save cycle - NEVER batch updates</critical>
+    <critical>
+        - Each answer triggers an ATOMIC save cycle - NEVER batch updates
+    </critical>
 
     1. Acknowledge understanding (capture user's exact phrasing for nuance)
     2. Update spec.md IMMEDIATELY:
-       - Add/update relevant section
-       - Capture the WHY behind user's answer, not just the WHAT
+        - Add/update relevant section
+        - Capture the WHY behind user's answer, not just the WHAT
     3. Update state.json IMMEDIATELY:
-       - Sync open_questions (add new, remove answered)
-       - Update key_decisions with rationale if decisions emerged
-       - Update goals arrays if goals emerged
-       - Set updated_at timestamp
+        - Sync open_questions (add new, remove answered)
+        - Update key_decisions with rationale if decisions emerged
+        - Update goals arrays if goals emerged
+        - Set updated_at timestamp
     4. THEN ask next question OR summarize progress
 </after_each_answer>
 ```
@@ -188,34 +190,44 @@ Iterative loops follow a deterministic state machine:
 ```xml
 <stages>
     <stage name="INIT">
-        - Create session directory
-        - Initialize state.json with status: "draft"
-        - Create {artifact}.md from template
-        - Transition → Q
+        <actions>
+            - Create session directory
+            - Initialize state.json with status: "draft"
+            - Create {artifact}.md from template
+            - Transition → Q
+        </actions>
     </stage>
 
     <stage name="Q">
-        - Select highest-priority gap
-        - Emit exactly ONE focused question
-        - Explain WHY you're asking
-        - Await user reply
-        - Transition → UPDATE
+        <actions>
+            - Select highest-priority gap
+            - Emit exactly ONE focused question
+            - Explain WHY you're asking
+            - Await user reply
+            - Transition → UPDATE
+        </actions>
     </stage>
 
     <stage name="UPDATE">
-        <critical>Atomic update - both files, every time</critical>
-        - Parse user reply
-        - Update {artifact}.md with new content
-        - Update state.json (questions, decisions, goals)
-        - Set updated_at timestamp
-        - If done → FINALIZE, else → Q
+        <critical>
+            - Atomic update - both files, every time
+        </critical>
+        <actions>
+            - Parse user reply
+            - Update {artifact}.md with new content
+            - Update state.json (questions, decisions, goals)
+            - Set updated_at timestamp
+            - If done → FINALIZE, else → Q
+        </actions>
     </stage>
 
     <stage name="FINALIZE">
-        - Confirm with user
-        - Set status: "finalized"
-        - Add finalization header to artifact
-        - Report completion
+        <actions>
+            - Confirm with user
+            - Set status: "finalized"
+            - Add finalization header to artifact
+            - Report completion
+        </actions>
     </stage>
 </stages>
 ```
@@ -229,14 +241,18 @@ Iterative loops follow a deterministic state machine:
 Ask ONE focused question. Multiple questions diffuse attention and complicate state updates.
 
 ```xml
-<!-- Bad -->
-"What authentication method do you want? Also, what about token expiry?
-And should we support OAuth?"
+<!-- Bad: Multiple questions at once -->
+<question>
+    What authentication method do you want? Also, what about token expiry?
+    And should we support OAuth?
+</question>
 
-<!-- Good -->
-"What authentication method should we use—JWT tokens, session cookies,
-or something else? I'm asking because this affects our session management
-architecture."
+<!-- Good: ONE focused question with rationale -->
+<question>
+    What authentication method should we use—JWT tokens, session cookies,
+    or something else? I'm asking because this affects our session management
+    architecture.
+</question>
 ```
 
 ### Explain the Why
@@ -245,9 +261,10 @@ Each question includes rationale:
 
 ```xml
 <question_format>
-    [Question]
-
-    I'm asking because [why this matters / how it affects the design]
+    <template>
+        - [Question]
+        - I'm asking because [why this matters / how it affects the design]
+    </template>
 </question_format>
 ```
 
@@ -270,15 +287,23 @@ From spec mode's question categories:
 ```xml
 <termination_conditions>
     <condition name="Success">
-        All required sections complete + user confirms finalization
+        <criteria>
+            - All required sections complete
+            - User confirms finalization
+        </criteria>
     </condition>
 
     <condition name="Max Rounds">
-        Hit max_rounds limit (e.g., 15), report incomplete status
+        <criteria>
+            - Hit max_rounds limit (e.g., 15)
+            - Report incomplete status
+        </criteria>
     </condition>
 
     <condition name="User Exit">
-        User explicitly requests to end early
+        <criteria>
+            - User explicitly requests to end early
+        </criteria>
     </condition>
 </termination_conditions>
 ```

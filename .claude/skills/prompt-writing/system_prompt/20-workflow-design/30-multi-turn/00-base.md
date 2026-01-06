@@ -68,12 +68,10 @@ External state is what makes multi-turn special. The state file is the source of
 
 ```xml
 <critical>
-Update state after EACH action, not in batches.
-
-Anti-pattern: Do work → Do more work → Update state at end
-Correct: Do work → Update state → Do more work → Update state
-
-This ensures partial progress survives failures.
+    - Update state after EACH action, not in batches
+    - Anti-pattern: Do work → Do more work → Update state at end
+    - Correct: Do work → Update state → Do more work → Update state
+    - This ensures partial progress survives failures
 </critical>
 ```
 
@@ -125,22 +123,42 @@ Phases define external execution flow—each phase involves tool calls and state
 ```xml
 <workflow>
     <phase id="1" name="Initialize">
-        <action>Validate input</action>
-        <action>Create session directory</action>
-        <action>Write initial state file</action>
+        <action>
+            - Validate input
+        </action>
+        <action>
+            - Create session directory
+        </action>
+        <action>
+            - Write initial state file
+        </action>
     </phase>
 
     <phase id="2" name="Execute">
-        <critical>Update state after EACH action</critical>
-        <action>Perform operation</action>
-        <action>Update state with result</action>
-        <action>Repeat until complete</action>
+        <critical>
+            - Update state after EACH action
+        </critical>
+        <action>
+            - Perform operation
+        </action>
+        <action>
+            - Update state with result
+        </action>
+        <action>
+            - Repeat until complete
+        </action>
     </phase>
 
     <phase id="3" name="Finalize">
-        <action>Synthesize results</action>
-        <action>Write final output</action>
-        <action>Update status to "complete"</action>
+        <action>
+            - Synthesize results
+        </action>
+        <action>
+            - Write final output
+        </action>
+        <action>
+            - Update status to "complete"
+        </action>
     </phase>
 </workflow>
 ```
@@ -164,12 +182,12 @@ Multi-turn workflows write output to files, not response messages.
 ```xml
 <output_protocol>
     <critical>
-    You MUST:
-    1. Write results to: {session}/output.md
-    2. Update state after EACH item processed
-    3. Return ONLY: "Complete. Results at: {path}"
+        You MUST:
+        1. Write results to: {session}/output.md
+        2. Update state after EACH item processed
+        3. Return ONLY: "Complete. Results at: {path}"
 
-    Do NOT include full results in response message.
+        - Do NOT include full results in response message
     </critical>
 </output_protocol>
 ```
@@ -220,21 +238,27 @@ State files enable graceful failure handling:
 ```xml
 <error_handling>
     <scenario name="Agent Crashes">
-        - Read state.json to find last known position
-        - Resume from that point
-        - Partial results preserved in state
+        <recovery>
+            - Read state.json to find last known position
+            - Resume from that point
+            - Partial results preserved in state
+        </recovery>
     </scenario>
 
     <scenario name="Partial Completion">
-        - status field indicates incomplete
-        - Accumulated results still available
-        - Can continue or report partial findings
+        <recovery>
+            - status field indicates incomplete
+            - Accumulated results still available
+            - Can continue or report partial findings
+        </recovery>
     </scenario>
 
     <scenario name="Unrecoverable Error">
-        - Set status: "failed"
-        - Write error details to state
-        - Preserve partial work for debugging
+        <recovery>
+            - Set status: "failed"
+            - Write error details to state
+            - Preserve partial work for debugging
+        </recovery>
     </scenario>
 </error_handling>
 ```

@@ -48,19 +48,33 @@ Top-level execution units. Use for multi-turn workflows where each phase involve
 
 ```xml
 <phase id="1" name="Initialize">
-    <action>Validate input parameters</action>
-    <action>Create session directory</action>
-    <action>Write initial state file</action>
+    <action>
+        - Validate input parameters
+    </action>
+    <action>
+        - Create session directory
+    </action>
+    <action>
+        - Write initial state file
+    </action>
 </phase>
 
 <phase id="2" name="Execute">
-    <action>Process each item in queue</action>
-    <action>Update state after each completion</action>
+    <action>
+        - Process each item in queue
+    </action>
+    <action>
+        - Update state after each completion
+    </action>
 </phase>
 
 <phase id="3" name="Finalize">
-    <action>Synthesize results</action>
-    <action>Write final output</action>
+    <action>
+        - Synthesize results
+    </action>
+    <action>
+        - Write final output
+    </action>
 </phase>
 ```
 
@@ -76,19 +90,25 @@ Internal reasoning units. Use for single-completion workflows where the model pr
 ```xml
 <steps>
     <step id="1" name="parse_input">
-        <description>Extract key entities and relationships from the input</description>
+        <description>
+            - Extract key entities and relationships from the input
+        </description>
     </step>
 
     <step id="2" name="analyze">
-        <description>Apply domain rules to evaluate the extracted data</description>
+        <description>
+            - Apply domain rules to evaluate the extracted data
+        </description>
         <constraints>
-        - Only use explicitly stated facts
-        - Flag assumptions clearly
+            - Only use explicitly stated facts
+            - Flag assumptions clearly
         </constraints>
     </step>
 
     <step id="3" name="synthesize">
-        <description>Combine analysis into structured output</description>
+        <description>
+            - Combine analysis into structured output
+        </description>
     </step>
 </steps>
 ```
@@ -104,9 +124,15 @@ Discrete tasks within a phase. Each action is one thing to do.
 
 ```xml
 <phase id="2" name="Research">
-    <action>Search for relevant files using Glob</action>
-    <action>Read each file and extract key patterns</action>
-    <action>Update state with findings</action>
+    <action>
+        - Search for relevant files using Glob
+    </action>
+    <action>
+        - Read each file and extract key patterns
+    </action>
+    <action>
+        - Update state with findings
+    </action>
 </phase>
 ```
 
@@ -125,13 +151,13 @@ Signals the model to spend extra reasoning cycles on this unit. Use for complex 
 ```xml
 <step id="1" name="decompose_query">
     <ultrathink>
-    This is the most critical step. Spend significant effort here.
-    Break the query into orthogonal subqueries that cover all aspects.
-    Consider: scope, specificity, searchability, independence.
+        - This is the most critical step - spend significant effort here
+        - Break the query into orthogonal subqueries that cover all aspects
+        - Consider: scope, specificity, searchability, independence
     </ultrathink>
     <description>
-    Decompose the research request into 3-5 focused subqueries.
-    Each subquery should be independently investigable.
+        - Decompose the research request into 3-5 focused subqueries
+        - Each subquery should be independently investigable
     </description>
 </step>
 ```
@@ -139,11 +165,15 @@ Signals the model to spend extra reasoning cycles on this unit. Use for complex 
 ```xml
 <phase id="1" name="Understand Request">
     <ultrathink>
-    Parse the user's intent carefully. What do they ACTUALLY need?
-    Consider unstated assumptions and implicit requirements.
+        - Parse the user's intent carefully - what do they ACTUALLY need?
+        - Consider unstated assumptions and implicit requirements
     </ultrathink>
-    <action>Analyze the request for explicit and implicit requirements</action>
-    <action>Identify ambiguities that need clarification</action>
+    <action>
+        - Analyze the request for explicit and implicit requirements
+    </action>
+    <action>
+        - Identify ambiguities that need clarification
+    </action>
 </phase>
 ```
 
@@ -159,11 +189,19 @@ Signals that contained actions should execute concurrently, not sequentially.
 
 ```xml
 <phase id="2" name="Spawn Subagents">
-    <critical>Execute these in a SINGLE message with multiple tool calls</critical>
+    <critical>
+        - Execute these in a SINGLE message with multiple tool calls
+    </critical>
     <actions parallel="true">
-        <action>Spawn subagent for query 1</action>
-        <action>Spawn subagent for query 2</action>
-        <action>Spawn subagent for query 3</action>
+        <action>
+            - Spawn subagent for query 1
+        </action>
+        <action>
+            - Spawn subagent for query 2
+        </action>
+        <action>
+            - Spawn subagent for query 3
+        </action>
     </actions>
 </phase>
 ```
@@ -171,11 +209,19 @@ Signals that contained actions should execute concurrently, not sequentially.
 ```xml
 <phase id="3" name="Gather Context">
     <actions parallel="true">
-        <action>Read configuration file</action>
-        <action>Read environment variables</action>
-        <action>Fetch remote schema</action>
+        <action>
+            - Read configuration file
+        </action>
+        <action>
+            - Read environment variables
+        </action>
+        <action>
+            - Fetch remote schema
+        </action>
     </actions>
-    <action>Merge all context sources</action>  <!-- This runs after parallel actions -->
+    <action>
+        - Merge all context sources  <!-- This runs after parallel actions -->
+    </action>
 </phase>
 ```
 
@@ -191,15 +237,17 @@ Marks constraints that must not be violated. The model prioritizes these above o
 
 ```xml
 <critical>
-NEVER modify files outside the designated output directory.
+    - NEVER modify files outside the designated output directory
 </critical>
 
 <phase id="2" name="Execute">
     <critical>
-    Update state after EACH item processed.
-    Do NOT batch updates—enables resume on failure.
+        - Update state after EACH item processed
+        - Do NOT batch updates—enables resume on failure
     </critical>
-    <action>Process items from queue</action>
+    <action>
+        - Process items from queue
+    </action>
 </phase>
 ```
 
@@ -223,10 +271,12 @@ Rules that apply ONLY to one unit:
 
 ```xml
 <step name="extract_entities">
-    <description>Extract named entities from text</description>
+    <description>
+        - Extract named entities from text
+    </description>
     <constraints>
-    - Only extract entities mentioned explicitly
-    - Do not infer relationships not stated
+        - Only extract entities mentioned explicitly
+        - Do not infer relationships not stated
     </constraints>
 </step>
 ```
@@ -237,9 +287,9 @@ Rules that apply EVERYWHERE in the workflow:
 
 ```xml
 <global_constraints>
-- Maintain professional tone throughout
-- Never include PII in output
-- Stay within token budget
+    - Maintain professional tone throughout
+    - Never include PII in output
+    - Stay within token budget
 </global_constraints>
 ```
 
@@ -255,11 +305,11 @@ Defines the **structure** of the response:
 
 ```xml
 <output_format>
-{
-  "classification": "positive|negative|neutral",
-  "confidence": 0.0-1.0,
-  "evidence": ["quote1", "quote2"]
-}
+    {
+      "classification": "positive|negative|neutral",
+      "confidence": 0.0-1.0,
+      "evidence": ["quote1", "quote2"]
+    }
 </output_format>
 ```
 
@@ -270,12 +320,12 @@ Defines **where and how** to write output:
 ```xml
 <output_protocol>
     <critical>
-    Write findings to: {session}/findings.md
-    Update state after EACH file processed.
+        - Write findings to: {session}/findings.md
+        - Update state after EACH file processed
     </critical>
     <final_output>
-    Return ONLY: "Complete. Results at: {path}"
-    Do NOT include full results in response message.
+        - Return ONLY: "Complete. Results at: {path}"
+        - Do NOT include full results in response message
     </final_output>
 </output_protocol>
 ```
