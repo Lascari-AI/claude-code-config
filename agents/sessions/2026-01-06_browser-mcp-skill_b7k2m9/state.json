@@ -103,10 +103,10 @@
     "status": "in_progress",
     "checkpoints_total": 4,
     "checkpoints_detailed": 4,
-    "checkpoints_completed": [],
-    "current_checkpoint": 1,
-    "current_task_group": "1.4",
-    "current_task": "1.4.1",
-    "last_updated": "2026-01-07T00:14:00Z"
+    "checkpoints_completed": [1],
+    "current_checkpoint": 2,
+    "current_task_group": "2.3",
+    "current_task": "2.3.1",
+    "last_updated": "2026-01-07T00:30:00Z"
   }
 }
