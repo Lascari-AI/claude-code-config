@@ -1,0 +1,137 @@
+{
+  "session_id": "2026-01-12_agent-session-overhaul_k9m2x7",
+  "topic": "Agent Session Overhaul - Tying Everything Together",
+  "description": "Unify research, debug, docs into a single cohesive session flow with full traceability",
+  "granularity": "feature",
+  "created_at": "2026-01-12T00:00:00Z",
+  "updated_at": "2026-01-12T00:11:00Z",
+  "prior_session": null,
+  "parent_session": null,
+  "current_phase": "plan",
+  "phases": {
+    "spec": {
+      "status": "finalized",
+      "started_at": "2026-01-12T00:00:00Z",
+      "finalized_at": "2026-01-12T00:11:00Z"
+    },
+    "plan": {
+      "status": "finalized",
+      "started_at": "2026-01-14T00:00:00Z",
+      "finalized_at": "2026-01-14T00:35:00Z"
+    },
+    "build": {
+      "status": "not_started",
+      "started_at": null,
+      "completed_at": null,
+      "current_checkpoint": null
+    }
+  },
+  "goals": {
+    "high_level": [
+      "One session = complete development record with full traceability"
+    ],
+    "mid_level": [
+      "Integrate research agents into session flow (checkpoint-based, light vs full modes)",
+      "Two planning modes: quick plan (chores) vs full plan (features)",
+      "Build with checkpoint commits linked to checkpoints in state.json",
+      "Documentation agent integration (cleanup phase at end of session)",
+      "Debug as sub-phase of spec (ephemeral changes, understanding captured)"
+    ],
+    "detailed": [
+      "Research triggered by user or agent-with-confirmation (not automatic)",
+      "Light research: single agent for simple tasks",
+      "Full research: parallel agents for complex tasks",
+      "Use research agent system (not built-in explore) for observability",
+      "Research output stored in session/research/, back-linked to spec",
+      "Quick plan: auto-generate, ~1 checkpoint, chores/simple fixes, pairs with light research",
+      "Full plan: interactive, multi-checkpoint, complex features, pairs with full research",
+      "Consistent plan structure for ALL changes (traceability)",
+      "Escalation: if quick plan wrong during QA, refine in same session",
+      "Doc updates at END of session (after build + tests), not per-checkpoint",
+      "Doc agent uses docs-framework skill + changes + spec to determine what needs updating",
+      "Not every session needs doc updates - agent determines significance",
+      "Back-links: inline markdown (human-readable) + state.json manifest (machine-readable)",
+      "Commits tracked in state.json, linked to their checkpoint",
+      "Commit format: checkpoint-{N}: {description} + WHY body + Changes list",
+      "Debug changes are ephemeral (not committed), understanding goes to debug/ artifacts",
+      "Debug sub-phase: SPEC → DEBUG → SPEC (informed) → PLAN → BUILD",
+      "Session directory: context/ is flat, Python script for initialization",
+      "Research organized by session: research/{id}/ with state.json tracking phase, triggered_by, mode"
+    ]
+  },
+  "open_questions": [],
+  "key_decisions": [
+    {
+      "decision": "Research is checkpoint-based, not constant background",
+      "rationale": "Cost awareness, coherence (understanding must stay in sync), intentionality",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Research output stored within session directory",
+      "rationale": "All artifacts for a development task should be contained in one place",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Use research agent system over built-in explore tool",
+      "rationale": "Observability - research agent tracks everything (examined files, line ranges, learnings), providing traceability if agent fails or we need to understand what happened",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Two research modes: Light (single agent) vs Full (parallel agents)",
+      "rationale": "Light for chores/quick tasks, Full for complex features requiring multi-aspect investigation",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Quick plan and Full plan modes with consistent structure",
+      "rationale": "Every change gets a documented plan for traceability. Quick = auto-generate for chores, Full = interactive for features. Mode correlates with research mode.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Doc updates at END of session as cleanup phase",
+      "rationale": "Run after build + tests pass. Agent determines what needs updating using docs-framework skill knowledge. Not every session needs doc updates.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Design philosophy: Rely on model intelligence over prescriptive rules",
+      "rationale": "Skills provide knowledge; agents apply it intelligently. More maintainable than complex rule systems, leverages LLM strengths.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Dual back-link approach: inline markdown + state.json manifest",
+      "rationale": "Inline links for human navigation, state.json for machine-readable overview. Commits linked to checkpoints for complete traceability.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Checkpoint commit format: checkpoint-{N}: + WHY + Changes list",
+      "rationale": "Consistent format that captures the checkpoint number, reasoning, and specific changes. Follows git skill conventions.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Debug is sub-phase of spec with ephemeral changes",
+      "rationale": "Debug changes are for understanding only (not committed). Keeps plan/build clean and automatable. Debug is exploratory; plan/build is deliberate.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Session directory: context/ is flat, Python script for initialization",
+      "rationale": "Flat context/ is simpler (rarely used). Script saves tokens vs agent running mkdir commands.",
+      "date": "2026-01-12"
+    },
+    {
+      "decision": "Research organized by session with phase metadata",
+      "rationale": "Each research session is isolated in research/{id}/ with state.json tracking phase (spec/plan/debug), triggered_by, and mode. Enables tracing when/why each research happened.",
+      "date": "2026-01-12"
+    }
+  ],
+  "research_artifacts": [],
+  "doc_updates": [],
+  "plan_state": {
+    "status": "finalized",
+    "checkpoints_total": 6,
+    "checkpoints_detailed": 6,
+    "checkpoints_completed": [],
+    "current_checkpoint": null,
+    "current_task_group": null,
+    "current_task": null,
+    "last_updated": "2026-01-14T00:35:00Z"
+  }
+}

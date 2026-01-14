@@ -75,34 +75,30 @@ Spec mode is:
                 <action>Create new session</action>
                 <steps>
                     <step id="1">If $1 is empty, prompt user for topic</step>
-                    <step id="2">Generate session_id: {YYYY-MM-DD}_{topic-slug}_{6-char-random-id}</step>
-                    <step id="3">Create directory structure:
+                    <step id="2">Initialize session using Python script:
                         ```bash
-                        mkdir -p SESSIONS_DIR/{session_id}/research
-                        mkdir -p SESSIONS_DIR/{session_id}/context/diagrams
-                        mkdir -p SESSIONS_DIR/{session_id}/context/notes
+                        python .claude/skills/agent-session/scripts/init-session.py \
+                            --topic "{topic}" \
+                            [--description "{description}"]
                         ```
+                        Script auto-generates session_id from topic and creates:
+                        - Directory structure: research/, context/, debug/
+                        - Initialized state.json from template
+
+                        Returns JSON with session_id and session_path for subsequent steps.
                     </step>
-                    <step id="4">Initialize state.json with:
-                        - current_phase: "spec"
-                        - phases.spec.status: "draft"
-                        - phases.spec.started_at: now()
-                        - topic: $1 (or prompted value)
-                        - description: $2 (if provided)
-                        - prior_session: null (will be set if user provides one)
-                    </step>
-                    <step id="5">Prompt for prior spec references:
+                    <step id="3">Prompt for prior spec references:
                         - Use AskUserQuestion: "Are there prior specs to reference for context?"
                         - Options: "Yes - I have a prior session ID", "No - this is standalone"
                         - If yes, prompt for session ID input
                         - Update state.json prior_session field with provided ID
                     </step>
-                    <step id="6">If prior_session provided:
+                    <step id="4">If prior_session provided:
                         - Read SESSIONS_DIR/{prior_session}/spec.md
                         - Extract key context: goals, decisions, constraints
                         - Note relevant prior context for this spec
                     </step>
-                    <step id="7">Create initial spec.md from TEMPLATES_DIR/spec.md</step>
+                    <step id="5">Create initial spec.md from TEMPLATES_DIR/spec.md</step>
                 </steps>
             </branch>
         </phase>

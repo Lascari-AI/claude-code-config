@@ -31,7 +31,8 @@
 
   "goals": {
     "high_level": [],
-    "mid_level": []
+    "mid_level": [],
+    "low_level": []
   },
 
   "open_questions": [],
@@ -47,11 +48,19 @@
 
   "plan_state": {
     "status": "not_started",
-    "current_checkpoint": null,
-    "current_tranche": null,
-    "current_task": null,
+    "checkpoints_total": null,
+    "checkpoints_detailed": null,
     "checkpoints_completed": [],
+    "current_checkpoint": null,
+    "current_task_group": null,
+    "current_task": null,
     "last_updated": null,
     "summary": null
-  }
+  },
+
+  "commits": [],
+
+  "research_artifacts": [],
+
+  "doc_updates": []
 }

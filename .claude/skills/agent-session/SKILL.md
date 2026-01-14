@@ -146,13 +146,21 @@ Execute the plan checkpoint by checkpoint. Two modes available:
 
 ```
 agents/sessions/{session-id}/
-├── state.json       # Session state and progress
-├── spec.md          # WHAT: Goals, requirements, context
+├── state.json       # Session state, phase tracking, commits, artifacts
+├── spec.md          # WHAT: Goals, requirements, decisions
 ├── plan.json        # HOW: Checkpoints and tasks (source of truth)
-├── plan.md          # HOW: Human-readable (generated)
-├── research/        # Research artifacts
-└── context/         # Supporting materials
+├── plan.md          # HOW: Human-readable (auto-generated from plan.json)
+├── research/        # Research artifacts (organized by research session)
+│   └── {research-id}/
+│       ├── state.json   # Metadata: phase, triggered_by, mode
+│       ├── report.md    # Synthesized findings
+│       └── subagents/   # Raw subagent findings (if full research)
+├── context/         # Supporting materials (flat - diagrams, notes, etc.)
+└── debug/           # Debug session artifacts (if debugging occurred)
+    └── {issue}.md   # Debug findings, reproduction steps, root cause
 ```
+
+**Initialization**: Use `python .claude/skills/agent-session/scripts/init-session.py --topic "Topic"` to create session directories. The script auto-generates the session ID and initializes state.json from template.
 
 ## Session ID Format
 
