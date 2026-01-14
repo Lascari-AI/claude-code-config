@@ -25,14 +25,14 @@ An **Agent Session** is a workspace that tracks a complete development journey:
 ## Session Lifecycle
 
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│   SPEC   │────▶│   PLAN   │────▶│  BUILD   │────▶│ COMPLETE │
-│  (WHAT)  │     │  (HOW)   │     │  (DO)    │     │          │
-└────┬─────┘     └──────────┘     └──────────┘     └──────────┘
-     │
-     ▼ (optional)
-┌──────────┐
-│  DEBUG   │──── Ephemeral investigation
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│   SPEC   │────▶│   PLAN   │────▶│  BUILD   │────▶│   DOCS   │────▶│ COMPLETE │
+│  (WHAT)  │     │  (HOW)   │     │  (DO)    │     │ (UPDATE) │     │          │
+└────┬─────┘     └──────────┘     └──────────┘     └────┬─────┘     └──────────┘
+     │                                                  │
+     ▼ (optional)                                       └── Agent determines if
+┌──────────┐                                               docs need updating
+│  DEBUG   │──── Ephemeral investigation                   (not all sessions do)
 │(sub-phase)│    (findings → debug/ artifacts)
 └──────────┘
 ```
@@ -171,6 +171,33 @@ Execute the plan checkpoint by checkpoint. Two modes available:
 - **Autonomous** (`/session:build-background`) - Execute and report
 → **Read**: [build/OVERVIEW.md](build/OVERVIEW.md)
 
+### Docs Update Phase
+Update documentation at the end of a session after build + tests pass.
+
+**Key principles**:
+- Runs at END of session (after all checkpoints complete), NOT per-checkpoint
+- Agent determines what needs updating using docs-framework skill knowledge
+- **NOT every session needs doc updates** - agent determines significance
+- Rely on model intelligence, not prescriptive rules
+
+**What gets updated** (agent decides):
+- **L2/L3 (Codebase docs)** - For significant features, architectural changes
+- **L4 (File headers)** - For files with changed purpose
+- **L5 (Function docstrings)** - For new/changed functions with complex behavior
+
+**Change types that typically need docs**:
+- New features ✓
+- Behavioral changes ✓
+- Architectural refactors ✓
+
+**Change types that usually don't**:
+- Variable renames ✗
+- Simple bug fixes ✗
+- Dead code removal ✗
+- Chores/cleanup ✗
+
+**Outcome tracking**: Results recorded in `state.json.doc_updates` array (even if "no updates needed").
+
 ## Commands
 
 | Command | Description |
@@ -183,6 +210,7 @@ Execute the plan checkpoint by checkpoint. Two modes available:
 | `/session:plan [session-id] finalize` | Finalize the plan |
 | `/session:build [session-id]` | Interactive build - task-by-task with confirmation |
 | `/session:build-background [session-id]` | Autonomous build - execute checkpoint |
+| `/session:docs-update [session-id]` | Update documentation at end of session |
 
 ## Session Directory Structure
 
