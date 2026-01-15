@@ -1,4 +1,4 @@
-# Build Mode for Agent-Session
+# Build Mode for session
 
 > **Session**: `2025-12-28_build-mode_f8k2n5`
 > **Status**: ✅ Finalized
@@ -12,7 +12,7 @@
 
 ## Overview
 
-Defining how build mode should work in the agent-session skill. Build mode is the final phase of the spec → plan → build workflow, where we execute the planned checkpoints to transform the codebase from its current state to the desired state defined in the spec.
+Defining how build mode should work in the session skill. Build mode is the final phase of the spec → plan → build workflow, where we execute the planned checkpoints to transform the codebase from its current state to the desired state defined in the spec.
 
 The existing `build/OVERVIEW.md` provides a high-level outline, but we need to fully specify:
 - The interaction model (how autonomous vs. interactive)
@@ -111,16 +111,16 @@ Frontmatter:
 
 ### Existing Components
 
-The agent-session skill already has:
+The session skill already has:
 - **Spec phase**: Question-driven exploration to define WHAT to build
 - **Plan phase**: Checkpoint-based planning with IDK task definitions
 - **build/OVERVIEW.md**: High-level description of build execution
 
 ### Related Files
 
-- `.claude/skills/agent-session/SKILL.md` - Main skill documentation
-- `.claude/skills/agent-session/build/OVERVIEW.md` - Current build overview
-- `.claude/skills/agent-session/plan/OVERVIEW.md` - Plan phase reference
+- `.claude/skills/session/SKILL.md` - Main skill documentation
+- `.claude/skills/session/build/OVERVIEW.md` - Current build overview
+- `.claude/skills/session/plan/OVERVIEW.md` - Plan phase reference
 - `agents/sessions/{session-id}/plan.json` - Source of truth for build execution
 
 ## Key Decisions
@@ -215,4 +215,4 @@ flowchart TD
 
 - Initial implementation focuses on checkpoint-level execution
 - Tranche-level granularity can be added in future iteration
-- DevNotes system is new addition to agent-session skill
+- DevNotes system is new addition to session skill

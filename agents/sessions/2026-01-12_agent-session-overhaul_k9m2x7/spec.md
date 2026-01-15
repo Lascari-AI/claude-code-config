@@ -1,6 +1,6 @@
 # Agent Session Overhaul - Tying Everything Together
 
-> **Session**: `2026-01-12_agent-session-overhaul_k9m2x7`
+> **Session**: `2026-01-12_session-overhaul_k9m2x7`
 > **Status**: ✅ Finalized
 > **Created**: 2026-01-12
 > **Finalized**: 2026-01-12

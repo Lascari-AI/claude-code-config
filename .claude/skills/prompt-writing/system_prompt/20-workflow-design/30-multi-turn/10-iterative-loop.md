@@ -9,7 +9,7 @@ depends-on: [system_prompt/20-workflow-design/30-multi-turn/00-base.md]
 
 A multi-turn technique where the user provides input each cycle. The system runs autonomously between user inputs, updating state after each exchange.
 
-**Canonical implementation**: Spec mode (`/spec`) — see `.claude/commands/agent-session/spec.md`
+**Canonical implementation**: Spec mode (`/spec`) — see `.claude/commands/session/spec.md`
 
 ---
 
@@ -321,17 +321,17 @@ If terminated early, state and artifact preserve all progress:
 
 For implementing iterative loops, spec mode provides a reference implementation. These templates illustrate the pattern—your iterative loop may have different state fields and artifact structures based on your specific workflow.
 
-**Spec Mode Implementation**: `.claude/commands/agent-session/spec.md`
+**Spec Mode Implementation**: `.claude/commands/session/spec.md`
 - Complete workflow with all stages
 - Question categories
 - State schema
 - Atomic update pattern
 
-**Example State Template**: `.claude/skills/agent-session/spec/templates/state.json`
+**Example State Template**: `.claude/skills/session/spec/templates/state.json`
 - Session metadata, phase tracking, goals/decisions/questions
 - *Your workflow's state schema will differ based on what you're tracking*
 
-**Example Artifact Template**: `.claude/skills/agent-session/spec/templates/spec.md`
+**Example Artifact Template**: `.claude/skills/session/spec/templates/spec.md`
 - Document structure with section placeholders
 - *Your artifact structure depends on what you're building (spec, config, report, etc.)*
 

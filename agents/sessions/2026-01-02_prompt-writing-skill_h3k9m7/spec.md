@@ -331,7 +331,7 @@ These are the real examples the skill should reference/bundle:
 
 The user has developed a sophisticated, principled approach to prompt engineering through practice. This approach is currently encoded in:
 - Blog posts / reference documents (`6_single_task_prompt_structure.md`, `6.1_interviewer_prompt_structure.md`)
-- Existing skills (`docs-framework`, `agent-session`)
+- Existing skills (`docs-framework`, `session`)
 - Command definitions (XML-heavy workflow specifications)
 - Production code examples (`background-agent/`, `main-agent/`)
 

@@ -7,7 +7,7 @@
 
 ## Overview
 
-Update the agent-session workflow across all three phases (spec, plan, build) to support:
+Update the session workflow across all three phases (spec, plan, build) to support:
 1. **Structured prior spec referencing** in spec phase
 2. **Tiered progressive confirmation** in plan phase
 3. **Checkpoint-at-a-time execution with commit boundaries** in build phase
@@ -334,7 +334,7 @@ Restructure the plan hierarchy to be clearer, more intuitive, mapped to git work
 
 ```json
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
 
   "session_id": "{{SESSION_ID}}",
   "spec_reference": "./spec.md",
@@ -427,7 +427,7 @@ Restructure the plan hierarchy to be clearer, more intuitive, mapped to git work
 
 ```json
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
 
   "session_id": "2026-01-01_user-auth-feature_abc123",
   "spec_reference": "./spec.md",
@@ -691,8 +691,8 @@ The existing plan mode was implemented in session `2025-12-24_enhancing-plan-mod
 
 ### Related Files
 
-- `.claude/commands/agent-session/plan.md` - Plan mode command
-- `.claude/skills/agent-session/plan/OVERVIEW.md` - Plan phase documentation
+- `.claude/commands/session/plan.md` - Plan mode command
+- `.claude/skills/session/plan/OVERVIEW.md` - Plan phase documentation
 - `agents/sessions/*/plan.json` - Existing plan files
 
 ## Key Decisions

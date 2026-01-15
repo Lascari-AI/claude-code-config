@@ -1,5 +1,5 @@
 {
-  "$schema": "DevNotes schema for agent-session build phase",
+  "$schema": "DevNotes schema for session build phase",
   "$description": "Captures implementation learnings, deviations, discoveries, and decisions during build execution",
 
   "session_id": "{{SESSION_ID}}",

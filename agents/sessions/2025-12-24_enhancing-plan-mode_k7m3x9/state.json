@@ -1,7 +1,7 @@
 {
   "session_id": "2025-12-24_enhancing-plan-mode_k7m3x9",
   "topic": "Enhancing Plan Mode",
-  "description": "Improvements to the plan mode phase of the agent-session workflow",
+  "description": "Improvements to the plan mode phase of the session workflow",
   "granularity": "feature",
   "current_phase": "spec",
   "phases": {
@@ -84,7 +84,7 @@
     },
     {
       "decision": "IDKs organized in skill by category",
-      "rationale": "Restructure agent-session skill by phase (spec/plan/build); IDKs in plan/idk/ subdirectory, one file per category",
+      "rationale": "Restructure session skill by phase (spec/plan/build); IDKs in plan/idk/ subdirectory, one file per category",
       "date": "2025-12-24"
     },
     {

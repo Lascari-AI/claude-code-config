@@ -2,7 +2,7 @@
 
 This directory contains session workspaces for the spec/plan/build development cycle.
 
-> **Skill Reference**: See `.claude/skills/agent-session/` for templates and documentation.
+> **Skill Reference**: See `.claude/skills/session/` for templates and documentation.
 
 ## Overview
 
@@ -27,7 +27,7 @@ agents/sessions/
         └── notes/
 ```
 
-Templates are stored in the skill directory: `.claude/skills/agent-session/templates/`
+Templates are stored in the skill directory: `.claude/skills/session/templates/`
 
 ## Session Lifecycle
 

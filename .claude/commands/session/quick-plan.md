@@ -38,11 +38,11 @@ Auto-generate a simple plan (~1 checkpoint) for chores, quick fixes, and simple 
 
 ## Skill Reference
 
-Read the agent-session skill for templates and full documentation:
-- Skill: `.claude/skills/agent-session/SKILL.md`
-- Plan OVERVIEW: `.claude/skills/agent-session/plan/OVERVIEW.md`
-- Plan templates: `.claude/skills/agent-session/plan/templates/`
-- IDK vocabulary: `.claude/skills/agent-session/plan/idk/`
+Read the session skill for templates and full documentation:
+- Skill: `.claude/skills/session/SKILL.md`
+- Plan OVERVIEW: `.claude/skills/session/plan/OVERVIEW.md`
+- Plan templates: `.claude/skills/session/plan/templates/`
+- IDK vocabulary: `.claude/skills/session/plan/idk/`
 - Working directory: `agents/sessions/`
 
 ## Variables
@@ -50,7 +50,7 @@ Read the agent-session skill for templates and full documentation:
 ```
 $1 = session-id   (required)
 SESSIONS_DIR = agents/sessions
-SKILL_DIR = .claude/skills/agent-session
+SKILL_DIR = .claude/skills/session
 ```
 
 ## Instructions
@@ -468,7 +468,7 @@ For a spec with goal: "Fix typo in README and update copyright year"
 
 ```json
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
   "session_id": "2026-01-14_fix-readme-typo_a1b2c3",
   "spec_reference": "./spec.md",
   "created_at": "2026-01-14T10:00:00Z",

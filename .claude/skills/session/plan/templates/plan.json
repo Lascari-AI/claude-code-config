@@ -1,5 +1,5 @@
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
 
   "session_id": "{{SESSION_ID}}",
   "spec_reference": "./spec.md",

@@ -12,7 +12,7 @@ model: opus
 </purpose>
 
 <key_knowledge>
-    - Agent-session state management (state.json, plan.json, dev-notes.json)
+    - session state management (state.json, plan.json, dev-notes.json)
     - Build phase checkpoint/task structure and progress tracking
     - DevNotes schema and categories (deviation, discovery, decision, blocker, resolution)
     - Debugging methodology: reproduce → isolate → fix → verify

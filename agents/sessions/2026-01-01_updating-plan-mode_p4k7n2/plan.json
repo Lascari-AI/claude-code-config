@@ -1,5 +1,5 @@
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
 
   "session_id": "2026-01-01_updating-plan-mode_p4k7n2",
   "spec_reference": "./spec.md",
@@ -17,24 +17,24 @@
       "file_context": {
         "beginning": {
           "files": [
-            { "path": ".claude/skills/agent-session/plan/templates/plan.json", "status": "exists", "description": "Current template using 'tranches' and 'subtasks'" },
-            { "path": ".claude/skills/agent-session/plan/reference/models.py", "status": "exists", "description": "Pydantic models with Tranche and Subtask classes" }
+            { "path": ".claude/skills/session/plan/templates/plan.json", "status": "exists", "description": "Current template using 'tranches' and 'subtasks'" },
+            { "path": ".claude/skills/session/plan/reference/models.py", "status": "exists", "description": "Pydantic models with Tranche and Subtask classes" }
           ],
-          "tree": ".claude/skills/agent-session/plan/\n├── templates/\n│   └── plan.json\n└── reference/\n    └── models.py"
+          "tree": ".claude/skills/session/plan/\n├── templates/\n│   └── plan.json\n└── reference/\n    └── models.py"
         },
         "ending": {
           "files": [
-            { "path": ".claude/skills/agent-session/plan/templates/plan.json", "status": "modified", "description": "Template using 'task_groups' and 'actions'" },
-            { "path": ".claude/skills/agent-session/plan/reference/models.py", "status": "modified", "description": "Pydantic models with TaskGroup and Action classes" }
+            { "path": ".claude/skills/session/plan/templates/plan.json", "status": "modified", "description": "Template using 'task_groups' and 'actions'" },
+            { "path": ".claude/skills/session/plan/reference/models.py", "status": "modified", "description": "Pydantic models with TaskGroup and Action classes" }
           ],
-          "tree": ".claude/skills/agent-session/plan/\n├── templates/\n│   └── plan.json (updated)\n└── reference/\n    └── models.py (updated)"
+          "tree": ".claude/skills/session/plan/\n├── templates/\n│   └── plan.json (updated)\n└── reference/\n    └── models.py (updated)"
         }
       },
       "testing_strategy": {
         "approach": "Syntax validation and structure verification",
         "verification_steps": [
-          "python -c \"import json; json.load(open('.claude/skills/agent-session/plan/templates/plan.json'))\"",
-          "python -c \"import sys; sys.path.insert(0, '.claude/skills/agent-session/plan'); from reference.models import Plan, TaskGroup, Action\""
+          "python -c \"import json; json.load(open('.claude/skills/session/plan/templates/plan.json'))\"",
+          "python -c \"import sys; sys.path.insert(0, '.claude/skills/session/plan'); from reference.models import Plan, TaskGroup, Action\""
         ]
       },
       "task_groups": [
@@ -48,7 +48,7 @@
               "id": "1.1.1",
               "title": "Replace tranches with task_groups and update structure",
               "description": "Rename tranches array to task_groups, update field names, and restructure tasks to use actions array",
-              "file_path": ".claude/skills/agent-session/plan/templates/plan.json",
+              "file_path": ".claude/skills/session/plan/templates/plan.json",
               "status": "pending",
               "context": {
                 "read_before": [
@@ -58,13 +58,13 @@
               },
               "depends_on": [],
               "actions": [
-                { "id": "1.1.1.1", "command": "RENAME 'tranches' array to 'task_groups'", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" },
-                { "id": "1.1.1.2", "command": "ADD 'title' field to task_group (alongside 'objective')", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" },
-                { "id": "1.1.1.3", "command": "RENAME 'goal' field to 'objective' in task_group", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" },
-                { "id": "1.1.1.4", "command": "ADD 'status' field to task_group level", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" },
-                { "id": "1.1.1.5", "command": "REPLACE 'action' string field with 'actions' array of {id, command, file, status} objects", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" },
-                { "id": "1.1.1.6", "command": "REMOVE 'subtasks' array from task (replaced by actions)", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" },
-                { "id": "1.1.1.7", "command": "UPDATE $schema description to v2", "file": ".claude/skills/agent-session/plan/templates/plan.json", "status": "pending" }
+                { "id": "1.1.1.1", "command": "RENAME 'tranches' array to 'task_groups'", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" },
+                { "id": "1.1.1.2", "command": "ADD 'title' field to task_group (alongside 'objective')", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" },
+                { "id": "1.1.1.3", "command": "RENAME 'goal' field to 'objective' in task_group", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" },
+                { "id": "1.1.1.4", "command": "ADD 'status' field to task_group level", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" },
+                { "id": "1.1.1.5", "command": "REPLACE 'action' string field with 'actions' array of {id, command, file, status} objects", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" },
+                { "id": "1.1.1.6", "command": "REMOVE 'subtasks' array from task (replaced by actions)", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" },
+                { "id": "1.1.1.7", "command": "UPDATE $schema description to v2", "file": ".claude/skills/session/plan/templates/plan.json", "status": "pending" }
               ]
             }
           ]
@@ -79,84 +79,84 @@
               "id": "1.2.1",
               "title": "Rename Subtask to Action class",
               "description": "Rename Subtask class to Action, update docstring, rename action field to command, add file field",
-              "file_path": ".claude/skills/agent-session/plan/reference/models.py",
+              "file_path": ".claude/skills/session/plan/reference/models.py",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/plan/reference/models.py", "lines": "54-62", "purpose": "Understand current Subtask class structure" }
+                  { "file": ".claude/skills/session/plan/reference/models.py", "lines": "54-62", "purpose": "Understand current Subtask class structure" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "1.2.1.1", "command": "RENAME class Subtask to Action", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.1.2", "command": "UPDATE docstring to 'File-scoped atomic operation within a task'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.1.3", "command": "RENAME 'action' field to 'command' with description 'IDK-formatted command'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.1.4", "command": "ADD 'file' field with description 'Target file path'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.1.5", "command": "REMOVE 'title' and 'description' fields (actions are simpler)", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" }
+                { "id": "1.2.1.1", "command": "RENAME class Subtask to Action", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.1.2", "command": "UPDATE docstring to 'File-scoped atomic operation within a task'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.1.3", "command": "RENAME 'action' field to 'command' with description 'IDK-formatted command'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.1.4", "command": "ADD 'file' field with description 'Target file path'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.1.5", "command": "REMOVE 'title' and 'description' fields (actions are simpler)", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" }
               ]
             },
             {
               "id": "1.2.2",
               "title": "Rename Tranche to TaskGroup class",
               "description": "Rename Tranche class to TaskGroup, update docstring, rename goal to objective, add title and status fields",
-              "file_path": ".claude/skills/agent-session/plan/reference/models.py",
+              "file_path": ".claude/skills/session/plan/reference/models.py",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/plan/reference/models.py", "lines": "87-93", "purpose": "Understand current Tranche class structure" }
+                  { "file": ".claude/skills/session/plan/reference/models.py", "lines": "87-93", "purpose": "Understand current Tranche class structure" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "1.2.2.1", "command": "RENAME class Tranche to TaskGroup", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.2.2", "command": "UPDATE docstring to 'Objective-based grouping of tasks within a checkpoint'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.2.3", "command": "ADD 'title' field with description 'Short title for scanning'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.2.4", "command": "RENAME 'goal' field to 'objective'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.2.5", "command": "ADD 'status' field with TaskStatus type", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.2.6", "command": "UPDATE section comment from 'Tranche-Level' to 'TaskGroup-Level'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" }
+                { "id": "1.2.2.1", "command": "RENAME class Tranche to TaskGroup", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.2.2", "command": "UPDATE docstring to 'Objective-based grouping of tasks within a checkpoint'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.2.3", "command": "ADD 'title' field with description 'Short title for scanning'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.2.4", "command": "RENAME 'goal' field to 'objective'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.2.5", "command": "ADD 'status' field with TaskStatus type", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.2.6", "command": "UPDATE section comment from 'Tranche-Level' to 'TaskGroup-Level'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" }
               ]
             },
             {
               "id": "1.2.3",
               "title": "Update Task class structure",
               "description": "Replace action string with actions list, update subtasks reference to actions",
-              "file_path": ".claude/skills/agent-session/plan/reference/models.py",
+              "file_path": ".claude/skills/session/plan/reference/models.py",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/plan/reference/models.py", "lines": "64-79", "purpose": "Understand current Task class structure" }
+                  { "file": ".claude/skills/session/plan/reference/models.py", "lines": "64-79", "purpose": "Understand current Task class structure" }
                 ],
                 "related_files": []
               },
               "depends_on": ["1.2.1"],
               "actions": [
-                { "id": "1.2.3.1", "command": "UPDATE docstring to 'A unit of work within a task group'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.3.2", "command": "REMOVE 'action' single string field", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.3.3", "command": "RENAME 'subtasks' field to 'actions' with type list[Action]", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.3.4", "command": "UPDATE 'actions' field description to 'Atomic operations to perform'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" }
+                { "id": "1.2.3.1", "command": "UPDATE docstring to 'A unit of work within a task group'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.3.2", "command": "REMOVE 'action' single string field", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.3.3", "command": "RENAME 'subtasks' field to 'actions' with type list[Action]", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.3.4", "command": "UPDATE 'actions' field description to 'Atomic operations to perform'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" }
               ]
             },
             {
               "id": "1.2.4",
               "title": "Update Checkpoint and PlanState references",
               "description": "Update Checkpoint to use task_groups instead of tranches, update PlanState tracking fields",
-              "file_path": ".claude/skills/agent-session/plan/reference/models.py",
+              "file_path": ".claude/skills/session/plan/reference/models.py",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/plan/reference/models.py", "lines": "135-148", "purpose": "Understand Checkpoint class" },
-                  { "file": ".claude/skills/agent-session/plan/reference/models.py", "lines": "173-191", "purpose": "Understand PlanState class" }
+                  { "file": ".claude/skills/session/plan/reference/models.py", "lines": "135-148", "purpose": "Understand Checkpoint class" },
+                  { "file": ".claude/skills/session/plan/reference/models.py", "lines": "173-191", "purpose": "Understand PlanState class" }
                 ],
                 "related_files": []
               },
               "depends_on": ["1.2.2"],
               "actions": [
-                { "id": "1.2.4.1", "command": "UPDATE Checkpoint docstring to 'A sequential milestone containing task groups'", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.4.2", "command": "RENAME 'tranches' field to 'task_groups' with type list[TaskGroup]", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.4.3", "command": "RENAME 'current_tranche' to 'current_task_group' in PlanState", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" },
-                { "id": "1.2.4.4", "command": "UPDATE module docstring hierarchy: Plan → Checkpoint → TaskGroup → Task → Action", "file": ".claude/skills/agent-session/plan/reference/models.py", "status": "pending" }
+                { "id": "1.2.4.1", "command": "UPDATE Checkpoint docstring to 'A sequential milestone containing task groups'", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.4.2", "command": "RENAME 'tranches' field to 'task_groups' with type list[TaskGroup]", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.4.3", "command": "RENAME 'current_tranche' to 'current_task_group' in PlanState", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" },
+                { "id": "1.2.4.4", "command": "UPDATE module docstring hierarchy: Plan → Checkpoint → TaskGroup → Task → Action", "file": ".claude/skills/session/plan/reference/models.py", "status": "pending" }
               ]
             }
           ]
@@ -172,17 +172,17 @@
       "file_context": {
         "beginning": {
           "files": [
-            { "path": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "exists", "description": "Current documentation with Tranche terminology" },
-            { "path": ".claude/commands/agent-session/plan.md", "status": "exists", "description": "Current plan command with two-tier workflow" }
+            { "path": ".claude/skills/session/plan/OVERVIEW.md", "status": "exists", "description": "Current documentation with Tranche terminology" },
+            { "path": ".claude/commands/session/plan.md", "status": "exists", "description": "Current plan command with two-tier workflow" }
           ],
-          "tree": ".claude/\n├── skills/agent-session/plan/\n│   └── OVERVIEW.md\n└── commands/agent-session/\n    └── plan.md"
+          "tree": ".claude/\n├── skills/session/plan/\n│   └── OVERVIEW.md\n└── commands/session/\n    └── plan.md"
         },
         "ending": {
           "files": [
-            { "path": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "modified", "description": "Updated with Task Group/Action and tiered workflow" },
-            { "path": ".claude/commands/agent-session/plan.md", "status": "modified", "description": "Updated command with 4-tier progressive confirmation" }
+            { "path": ".claude/skills/session/plan/OVERVIEW.md", "status": "modified", "description": "Updated with Task Group/Action and tiered workflow" },
+            { "path": ".claude/commands/session/plan.md", "status": "modified", "description": "Updated command with 4-tier progressive confirmation" }
           ],
-          "tree": ".claude/\n├── skills/agent-session/plan/\n│   └── OVERVIEW.md (updated)\n└── commands/agent-session/\n    └── plan.md (updated)"
+          "tree": ".claude/\n├── skills/session/plan/\n│   └── OVERVIEW.md (updated)\n└── commands/session/\n    └── plan.md (updated)"
         }
       },
       "testing_strategy": {
@@ -203,7 +203,7 @@
               "id": "2.1.1",
               "title": "Update Key Concepts section",
               "description": "Rename Task Tranches to Task Groups, update descriptions and examples to use new structure",
-              "file_path": ".claude/skills/agent-session/plan/OVERVIEW.md",
+              "file_path": ".claude/skills/session/plan/OVERVIEW.md",
               "status": "pending",
               "context": {
                 "read_before": [
@@ -213,18 +213,18 @@
               },
               "depends_on": [],
               "actions": [
-                { "id": "2.1.1.1", "command": "RENAME 'Task Tranches' section header to 'Task Groups'", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" },
-                { "id": "2.1.1.2", "command": "UPDATE description from 'parallelizable groups' to 'objective-based grouping of tasks'", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" },
-                { "id": "2.1.1.3", "command": "UPDATE JSON example to use 'title', 'objective', 'status' fields", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" },
-                { "id": "2.1.1.4", "command": "ADD 'Actions' section explaining file-scoped atomic operations with example", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" },
-                { "id": "2.1.1.5", "command": "UPDATE Tasks section JSON example to show 'actions' array structure", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" }
+                { "id": "2.1.1.1", "command": "RENAME 'Task Tranches' section header to 'Task Groups'", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" },
+                { "id": "2.1.1.2", "command": "UPDATE description from 'parallelizable groups' to 'objective-based grouping of tasks'", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" },
+                { "id": "2.1.1.3", "command": "UPDATE JSON example to use 'title', 'objective', 'status' fields", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" },
+                { "id": "2.1.1.4", "command": "ADD 'Actions' section explaining file-scoped atomic operations with example", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" },
+                { "id": "2.1.1.5", "command": "UPDATE Tasks section JSON example to show 'actions' array structure", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" }
               ]
             },
             {
               "id": "2.1.2",
               "title": "Update Workflow section",
               "description": "Add tiered confirmation diagram and update workflow steps",
-              "file_path": ".claude/skills/agent-session/plan/OVERVIEW.md",
+              "file_path": ".claude/skills/session/plan/OVERVIEW.md",
               "status": "pending",
               "context": {
                 "read_before": [
@@ -234,9 +234,9 @@
               },
               "depends_on": ["2.1.1"],
               "actions": [
-                { "id": "2.1.2.1", "command": "UPDATE Workflow section with tiered confirmation: Checkpoints → Task Groups → Tasks → Actions", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" },
-                { "id": "2.1.2.2", "command": "ADD ASCII diagram showing 4-tier confirmation flow from spec", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" },
-                { "id": "2.1.2.3", "command": "ADD plan_state tracking notes for resumability", "file": ".claude/skills/agent-session/plan/OVERVIEW.md", "status": "pending" }
+                { "id": "2.1.2.1", "command": "UPDATE Workflow section with tiered confirmation: Checkpoints → Task Groups → Tasks → Actions", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" },
+                { "id": "2.1.2.2", "command": "ADD ASCII diagram showing 4-tier confirmation flow from spec", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" },
+                { "id": "2.1.2.3", "command": "ADD plan_state tracking notes for resumability", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending" }
               ]
             }
           ]
@@ -251,56 +251,56 @@
               "id": "2.2.1",
               "title": "Update terminology throughout command",
               "description": "Replace all tranche/subtask references with task_group/action",
-              "file_path": ".claude/commands/agent-session/plan.md",
+              "file_path": ".claude/commands/session/plan.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/plan.md", "purpose": "Understand current command structure" }
+                  { "file": ".claude/commands/session/plan.md", "purpose": "Understand current command structure" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "2.2.1.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/commands/agent-session/plan.md", "status": "pending" },
-                { "id": "2.2.1.2", "command": "RENAME all 'subtask' references to 'action'", "file": ".claude/commands/agent-session/plan.md", "status": "pending" }
+                { "id": "2.2.1.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/commands/session/plan.md", "status": "pending" },
+                { "id": "2.2.1.2", "command": "RENAME all 'subtask' references to 'action'", "file": ".claude/commands/session/plan.md", "status": "pending" }
               ]
             },
             {
               "id": "2.2.2",
               "title": "Implement tiered state detection",
               "description": "Update State Detection table with new tier-based states",
-              "file_path": ".claude/commands/agent-session/plan.md",
+              "file_path": ".claude/commands/session/plan.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/plan.md", "lines": "40-50", "purpose": "Understand current state detection table" }
+                  { "file": ".claude/commands/session/plan.md", "lines": "40-50", "purpose": "Understand current state detection table" }
                 ],
                 "related_files": []
               },
               "depends_on": ["2.2.1"],
               "actions": [
-                { "id": "2.2.2.1", "command": "UPDATE State Detection table with tier states: outline_pending, task_groups_pending, tasks_pending, actions_pending", "file": ".claude/commands/agent-session/plan.md", "status": "pending" },
-                { "id": "2.2.2.2", "command": "ADD state for 'detailing_checkpoint_N' to track per-checkpoint progress", "file": ".claude/commands/agent-session/plan.md", "status": "pending" }
+                { "id": "2.2.2.1", "command": "UPDATE State Detection table with tier states: outline_pending, task_groups_pending, tasks_pending, actions_pending", "file": ".claude/commands/session/plan.md", "status": "pending" },
+                { "id": "2.2.2.2", "command": "ADD state for 'detailing_checkpoint_N' to track per-checkpoint progress", "file": ".claude/commands/session/plan.md", "status": "pending" }
               ]
             },
             {
               "id": "2.2.3",
               "title": "Add tier-by-tier confirmation flow",
               "description": "Restructure Step 3 to handle tiered confirmation at each level",
-              "file_path": ".claude/commands/agent-session/plan.md",
+              "file_path": ".claude/commands/session/plan.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/plan.md", "lines": "88-128", "purpose": "Understand current Step 3 structure" }
+                  { "file": ".claude/commands/session/plan.md", "lines": "88-128", "purpose": "Understand current Step 3 structure" }
                 ],
                 "related_files": []
               },
               "depends_on": ["2.2.2"],
               "actions": [
-                { "id": "2.2.3.1", "command": "UPDATE Step 3 to be 'Detail Task Groups' with confirmation gate", "file": ".claude/commands/agent-session/plan.md", "status": "pending" },
-                { "id": "2.2.3.2", "command": "ADD Step 3b 'Detail Tasks within Task Group' with confirmation gate", "file": ".claude/commands/agent-session/plan.md", "status": "pending" },
-                { "id": "2.2.3.3", "command": "ADD Step 3c 'Detail Actions within Task' with confirmation gate", "file": ".claude/commands/agent-session/plan.md", "status": "pending" },
-                { "id": "2.2.3.4", "command": "ADD AskUserQuestion examples at each tier level", "file": ".claude/commands/agent-session/plan.md", "status": "pending" }
+                { "id": "2.2.3.1", "command": "UPDATE Step 3 to be 'Detail Task Groups' with confirmation gate", "file": ".claude/commands/session/plan.md", "status": "pending" },
+                { "id": "2.2.3.2", "command": "ADD Step 3b 'Detail Tasks within Task Group' with confirmation gate", "file": ".claude/commands/session/plan.md", "status": "pending" },
+                { "id": "2.2.3.3", "command": "ADD Step 3c 'Detail Actions within Task' with confirmation gate", "file": ".claude/commands/session/plan.md", "status": "pending" },
+                { "id": "2.2.3.4", "command": "ADD AskUserQuestion examples at each tier level", "file": ".claude/commands/session/plan.md", "status": "pending" }
               ]
             }
           ]
@@ -316,21 +316,21 @@
       "file_context": {
         "beginning": {
           "files": [
-            { "path": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "exists", "description": "Current script generating markdown with Tranche/Subtask terminology" }
+            { "path": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "exists", "description": "Current script generating markdown with Tranche/Subtask terminology" }
           ],
-          "tree": ".claude/skills/agent-session/plan/scripts/\n└── sync-plan-md.py"
+          "tree": ".claude/skills/session/plan/scripts/\n└── sync-plan-md.py"
         },
         "ending": {
           "files": [
-            { "path": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "modified", "description": "Updated script generating markdown with Task Group/Action terminology" }
+            { "path": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "modified", "description": "Updated script generating markdown with Task Group/Action terminology" }
           ],
-          "tree": ".claude/skills/agent-session/plan/scripts/\n└── sync-plan-md.py (updated)"
+          "tree": ".claude/skills/session/plan/scripts/\n└── sync-plan-md.py (updated)"
         }
       },
       "testing_strategy": {
         "approach": "JSON parsing and output verification",
         "verification_steps": [
-          "python -c \"import sys; sys.path.insert(0, '.claude/skills/agent-session/plan/scripts'); import importlib.util; spec = importlib.util.spec_from_file_location('sync', '.claude/skills/agent-session/plan/scripts/sync-plan-md.py'); m = importlib.util.module_from_spec(spec)\""
+          "python -c \"import sys; sys.path.insert(0, '.claude/skills/session/plan/scripts'); import importlib.util; spec = importlib.util.spec_from_file_location('sync', '.claude/skills/session/plan/scripts/sync-plan-md.py'); m = importlib.util.module_from_spec(spec)\""
         ]
       },
       "task_groups": [
@@ -344,42 +344,42 @@
               "id": "3.1.1",
               "title": "Update tranche iteration to task_groups",
               "description": "Rename all tranche references to task_group and update field access patterns",
-              "file_path": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py",
+              "file_path": ".claude/skills/session/plan/scripts/sync-plan-md.py",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "lines": "189-200", "purpose": "Understand current tranche iteration logic" }
+                  { "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "lines": "189-200", "purpose": "Understand current tranche iteration logic" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "3.1.1.1", "command": "UPDATE cp.get('tranches', []) to cp.get('task_groups', [])", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.1.2", "command": "RENAME 'tranches' variable to 'task_groups'", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.1.3", "command": "RENAME 'tranche' loop variable to 'task_group'", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.1.4", "command": "UPDATE section header from 'Tranche' to 'Task Group'", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.1.5", "command": "UPDATE tranche.get('goal') to task_group.get('objective')", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.1.6", "command": "ADD task_group.get('title') to display alongside objective", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" }
+                { "id": "3.1.1.1", "command": "UPDATE cp.get('tranches', []) to cp.get('task_groups', [])", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.1.2", "command": "RENAME 'tranches' variable to 'task_groups'", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.1.3", "command": "RENAME 'tranche' loop variable to 'task_group'", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.1.4", "command": "UPDATE section header from 'Tranche' to 'Task Group'", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.1.5", "command": "UPDATE tranche.get('goal') to task_group.get('objective')", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.1.6", "command": "ADD task_group.get('title') to display alongside objective", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" }
               ]
             },
             {
               "id": "3.1.2",
               "title": "Update task rendering for actions",
               "description": "Modify task rendering to show actions array instead of action string and subtasks",
-              "file_path": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py",
+              "file_path": ".claude/skills/session/plan/scripts/sync-plan-md.py",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "lines": "210-250", "purpose": "Understand current task and subtask rendering" }
+                  { "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "lines": "210-250", "purpose": "Understand current task and subtask rendering" }
                 ],
                 "related_files": []
               },
               "depends_on": ["3.1.1"],
               "actions": [
-                { "id": "3.1.2.1", "command": "UPDATE task.get('action') to task.get('actions', []) iteration", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.2.2", "command": "RENAME 'Subtasks' section header to 'Actions'", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.2.3", "command": "ADD action rendering loop showing: status emoji, id, command, file", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" },
-                { "id": "3.1.2.4", "command": "REMOVE subtasks rendering logic (replaced by actions)", "file": ".claude/skills/agent-session/plan/scripts/sync-plan-md.py", "status": "pending" }
+                { "id": "3.1.2.1", "command": "UPDATE task.get('action') to task.get('actions', []) iteration", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.2.2", "command": "RENAME 'Subtasks' section header to 'Actions'", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.2.3", "command": "ADD action rendering loop showing: status emoji, id, command, file", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" },
+                { "id": "3.1.2.4", "command": "REMOVE subtasks rendering logic (replaced by actions)", "file": ".claude/skills/session/plan/scripts/sync-plan-md.py", "status": "pending" }
               ]
             }
           ]
@@ -395,26 +395,26 @@
       "file_context": {
         "beginning": {
           "files": [
-            { "path": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "exists", "description": "Current build documentation with tranche terminology" },
-            { "path": ".claude/commands/agent-session/build.md", "status": "exists", "description": "Interactive build command" },
-            { "path": ".claude/commands/agent-session/build-background.md", "status": "exists", "description": "Autonomous build command with tranche references" }
+            { "path": ".claude/skills/session/build/OVERVIEW.md", "status": "exists", "description": "Current build documentation with tranche terminology" },
+            { "path": ".claude/commands/session/build.md", "status": "exists", "description": "Interactive build command" },
+            { "path": ".claude/commands/session/build-background.md", "status": "exists", "description": "Autonomous build command with tranche references" }
           ],
-          "tree": ".claude/\n├── skills/agent-session/build/\n│   └── OVERVIEW.md\n└── commands/agent-session/\n    ├── build.md\n    └── build-background.md"
+          "tree": ".claude/\n├── skills/session/build/\n│   └── OVERVIEW.md\n└── commands/session/\n    ├── build.md\n    └── build-background.md"
         },
         "ending": {
           "files": [
-            { "path": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "modified", "description": "Updated with task_group terminology and checkpoint=commit" },
-            { "path": ".claude/commands/agent-session/build.md", "status": "modified", "description": "Updated with task_group and git commit at checkpoint end" },
-            { "path": ".claude/commands/agent-session/build-background.md", "status": "modified", "description": "Updated with task_group and git commit at checkpoint end" }
+            { "path": ".claude/skills/session/build/OVERVIEW.md", "status": "modified", "description": "Updated with task_group terminology and checkpoint=commit" },
+            { "path": ".claude/commands/session/build.md", "status": "modified", "description": "Updated with task_group and git commit at checkpoint end" },
+            { "path": ".claude/commands/session/build-background.md", "status": "modified", "description": "Updated with task_group and git commit at checkpoint end" }
           ],
-          "tree": ".claude/\n├── skills/agent-session/build/\n│   └── OVERVIEW.md (updated)\n└── commands/agent-session/\n    ├── build.md (updated)\n    └── build-background.md (updated)"
+          "tree": ".claude/\n├── skills/session/build/\n│   └── OVERVIEW.md (updated)\n└── commands/session/\n    ├── build.md (updated)\n    └── build-background.md (updated)"
         }
       },
       "testing_strategy": {
         "approach": "Review documentation for consistency",
         "verification_steps": [
-          "grep -r 'tranche' .claude/skills/agent-session/build/ .claude/commands/agent-session/build*.md should return no matches",
-          "grep -r 'git commit' .claude/skills/agent-session/build/ .claude/commands/agent-session/build*.md should return matches"
+          "grep -r 'tranche' .claude/skills/session/build/ .claude/commands/session/build*.md should return no matches",
+          "grep -r 'git commit' .claude/skills/session/build/ .claude/commands/session/build*.md should return matches"
         ]
       },
       "task_groups": [
@@ -428,56 +428,56 @@
               "id": "4.1.1",
               "title": "Update build/OVERVIEW.md terminology",
               "description": "Replace tranche with task_group in build overview documentation",
-              "file_path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "file_path": ".claude/skills/session/build/OVERVIEW.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/build/OVERVIEW.md", "purpose": "Understand current structure" }
+                  { "file": ".claude/skills/session/build/OVERVIEW.md", "purpose": "Understand current structure" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "4.1.1.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "pending" },
-                { "id": "4.1.1.2", "command": "UPDATE JSON examples to use task_group structure", "file": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "pending" },
-                { "id": "4.1.1.3", "command": "UPDATE plan_state example to use 'current_task_group'", "file": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "pending" }
+                { "id": "4.1.1.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending" },
+                { "id": "4.1.1.2", "command": "UPDATE JSON examples to use task_group structure", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending" },
+                { "id": "4.1.1.3", "command": "UPDATE plan_state example to use 'current_task_group'", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending" }
               ]
             },
             {
               "id": "4.1.2",
               "title": "Update build.md command terminology",
               "description": "Replace tranche references in interactive build command",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/build.md", "purpose": "Understand current command structure" }
+                  { "file": ".claude/commands/session/build.md", "purpose": "Understand current command structure" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "4.1.2.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/commands/agent-session/build.md", "status": "pending" },
-                { "id": "4.1.2.2", "command": "UPDATE variable documentation for task_group", "file": ".claude/commands/agent-session/build.md", "status": "pending" }
+                { "id": "4.1.2.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/commands/session/build.md", "status": "pending" },
+                { "id": "4.1.2.2", "command": "UPDATE variable documentation for task_group", "file": ".claude/commands/session/build.md", "status": "pending" }
               ]
             },
             {
               "id": "4.1.3",
               "title": "Update build-background.md terminology",
               "description": "Replace tranche references in autonomous build command",
-              "file_path": ".claude/commands/agent-session/build-background.md",
+              "file_path": ".claude/commands/session/build-background.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/build-background.md", "purpose": "Understand current command structure" }
+                  { "file": ".claude/commands/session/build-background.md", "purpose": "Understand current command structure" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "4.1.3.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/commands/agent-session/build-background.md", "status": "pending" },
-                { "id": "4.1.3.2", "command": "UPDATE variable $3 description from 'tranche' to 'task_group'", "file": ".claude/commands/agent-session/build-background.md", "status": "pending" },
-                { "id": "4.1.3.3", "command": "UPDATE workflow phases to use task_group terminology", "file": ".claude/commands/agent-session/build-background.md", "status": "pending" }
+                { "id": "4.1.3.1", "command": "RENAME all 'tranche' references to 'task_group'", "file": ".claude/commands/session/build-background.md", "status": "pending" },
+                { "id": "4.1.3.2", "command": "UPDATE variable $3 description from 'tranche' to 'task_group'", "file": ".claude/commands/session/build-background.md", "status": "pending" },
+                { "id": "4.1.3.3", "command": "UPDATE workflow phases to use task_group terminology", "file": ".claude/commands/session/build-background.md", "status": "pending" }
               ]
             }
           ]
@@ -492,7 +492,7 @@
               "id": "4.2.1",
               "title": "Add commit step to build/OVERVIEW.md",
               "description": "Document git commit as part of checkpoint completion",
-              "file_path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "file_path": ".claude/skills/session/build/OVERVIEW.md",
               "status": "pending",
               "context": {
                 "read_before": [
@@ -502,47 +502,47 @@
               },
               "depends_on": ["4.1.1"],
               "actions": [
-                { "id": "4.2.1.1", "command": "ADD 'Git Commit' step after verification in Workflow section", "file": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "pending" },
-                { "id": "4.2.1.2", "command": "ADD commit message format: 'checkpoint-N: description'", "file": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "pending" },
-                { "id": "4.2.1.3", "command": "UPDATE checkpoint completion to include git add + commit steps", "file": ".claude/skills/agent-session/build/OVERVIEW.md", "status": "pending" }
+                { "id": "4.2.1.1", "command": "ADD 'Git Commit' step after verification in Workflow section", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending" },
+                { "id": "4.2.1.2", "command": "ADD commit message format: 'checkpoint-N: description'", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending" },
+                { "id": "4.2.1.3", "command": "UPDATE checkpoint completion to include git add + commit steps", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending" }
               ]
             },
             {
               "id": "4.2.2",
               "title": "Add commit step to build.md",
               "description": "Add git commit step to interactive build command",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/build.md", "lines": "100-130", "purpose": "Understand checkpoint completion flow" }
+                  { "file": ".claude/commands/session/build.md", "lines": "100-130", "purpose": "Understand checkpoint completion flow" }
                 ],
                 "related_files": []
               },
               "depends_on": ["4.1.2"],
               "actions": [
-                { "id": "4.2.2.1", "command": "ADD Step 4b 'Create Git Commit' after verification step", "file": ".claude/commands/agent-session/build.md", "status": "pending" },
-                { "id": "4.2.2.2", "command": "ADD git add and commit commands with checkpoint message", "file": ".claude/commands/agent-session/build.md", "status": "pending" },
-                { "id": "4.2.2.3", "command": "UPDATE completion output to show commit hash", "file": ".claude/commands/agent-session/build.md", "status": "pending" }
+                { "id": "4.2.2.1", "command": "ADD Step 4b 'Create Git Commit' after verification step", "file": ".claude/commands/session/build.md", "status": "pending" },
+                { "id": "4.2.2.2", "command": "ADD git add and commit commands with checkpoint message", "file": ".claude/commands/session/build.md", "status": "pending" },
+                { "id": "4.2.2.3", "command": "UPDATE completion output to show commit hash", "file": ".claude/commands/session/build.md", "status": "pending" }
               ]
             },
             {
               "id": "4.2.3",
               "title": "Add commit step to build-background.md",
               "description": "Add git commit step to autonomous build command",
-              "file_path": ".claude/commands/agent-session/build-background.md",
+              "file_path": ".claude/commands/session/build-background.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/build-background.md", "lines": "130-180", "purpose": "Understand checkpoint completion flow" }
+                  { "file": ".claude/commands/session/build-background.md", "lines": "130-180", "purpose": "Understand checkpoint completion flow" }
                 ],
                 "related_files": []
               },
               "depends_on": ["4.1.3"],
               "actions": [
-                { "id": "4.2.3.1", "command": "ADD commit phase to workflow after verification (phase 5b)", "file": ".claude/commands/agent-session/build-background.md", "status": "pending" },
-                { "id": "4.2.3.2", "command": "UPDATE checkpoint_complete scenario to show commit hash", "file": ".claude/commands/agent-session/build-background.md", "status": "pending" },
-                { "id": "4.2.3.3", "command": "ADD git commit to execution flow with checkpoint message format", "file": ".claude/commands/agent-session/build-background.md", "status": "pending" }
+                { "id": "4.2.3.1", "command": "ADD commit phase to workflow after verification (phase 5b)", "file": ".claude/commands/session/build-background.md", "status": "pending" },
+                { "id": "4.2.3.2", "command": "UPDATE checkpoint_complete scenario to show commit hash", "file": ".claude/commands/session/build-background.md", "status": "pending" },
+                { "id": "4.2.3.3", "command": "ADD git commit to execution flow with checkpoint message format", "file": ".claude/commands/session/build-background.md", "status": "pending" }
               ]
             }
           ]
@@ -558,24 +558,24 @@
       "file_context": {
         "beginning": {
           "files": [
-            { "path": ".claude/commands/agent-session/spec.md", "status": "exists", "description": "Current spec command without prior spec prompting" },
-            { "path": ".claude/skills/agent-session/spec/OVERVIEW.md", "status": "exists", "description": "Current spec phase documentation" }
+            { "path": ".claude/commands/session/spec.md", "status": "exists", "description": "Current spec command without prior spec prompting" },
+            { "path": ".claude/skills/session/spec/OVERVIEW.md", "status": "exists", "description": "Current spec phase documentation" }
           ],
-          "tree": ".claude/\n├── commands/agent-session/\n│   └── spec.md\n└── skills/agent-session/spec/\n    └── OVERVIEW.md"
+          "tree": ".claude/\n├── commands/session/\n│   └── spec.md\n└── skills/session/spec/\n    └── OVERVIEW.md"
         },
         "ending": {
           "files": [
-            { "path": ".claude/commands/agent-session/spec.md", "status": "modified", "description": "Updated with prior spec referencing workflow" },
-            { "path": ".claude/skills/agent-session/spec/OVERVIEW.md", "status": "modified", "description": "Updated with prior spec documentation" }
+            { "path": ".claude/commands/session/spec.md", "status": "modified", "description": "Updated with prior spec referencing workflow" },
+            { "path": ".claude/skills/session/spec/OVERVIEW.md", "status": "modified", "description": "Updated with prior spec documentation" }
           ],
-          "tree": ".claude/\n├── commands/agent-session/\n│   └── spec.md (updated)\n└── skills/agent-session/spec/\n    └── OVERVIEW.md (updated)"
+          "tree": ".claude/\n├── commands/session/\n│   └── spec.md (updated)\n└── skills/session/spec/\n    └── OVERVIEW.md (updated)"
         }
       },
       "testing_strategy": {
         "approach": "Documentation review",
         "verification_steps": [
-          "grep 'prior' .claude/commands/agent-session/spec.md should return matches",
-          "grep 'prior_session' .claude/skills/agent-session/spec/OVERVIEW.md should return matches"
+          "grep 'prior' .claude/commands/session/spec.md should return matches",
+          "grep 'prior_session' .claude/skills/session/spec/OVERVIEW.md should return matches"
         ]
       },
       "task_groups": [
@@ -589,40 +589,40 @@
               "id": "5.1.1",
               "title": "Update spec.md command workflow",
               "description": "Add prior spec prompting and storage to the spec command workflow",
-              "file_path": ".claude/commands/agent-session/spec.md",
+              "file_path": ".claude/commands/session/spec.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/commands/agent-session/spec.md", "lines": "60-100", "purpose": "Understand current phase 2 workflow" },
+                  { "file": ".claude/commands/session/spec.md", "lines": "60-100", "purpose": "Understand current phase 2 workflow" },
                   { "file": "agents/sessions/2026-01-01_updating-plan-mode_p4k7n2/spec.md", "lines": "159-186", "purpose": "Reference spec phase diagram from spec" }
                 ],
                 "related_files": []
               },
               "depends_on": [],
               "actions": [
-                { "id": "5.1.1.1", "command": "ADD step in phase 2_resolve_session: 'Prompt: Are there prior specs to reference?'", "file": ".claude/commands/agent-session/spec.md", "status": "pending" },
-                { "id": "5.1.1.2", "command": "ADD AskUserQuestion for prior spec selection with session ID input", "file": ".claude/commands/agent-session/spec.md", "status": "pending" },
-                { "id": "5.1.1.3", "command": "ADD prior_session field to state.json initialization in step 4", "file": ".claude/commands/agent-session/spec.md", "status": "pending" },
-                { "id": "5.1.1.4", "command": "ADD step to read prior spec.md for context if prior_session provided", "file": ".claude/commands/agent-session/spec.md", "status": "pending" }
+                { "id": "5.1.1.1", "command": "ADD step in phase 2_resolve_session: 'Prompt: Are there prior specs to reference?'", "file": ".claude/commands/session/spec.md", "status": "pending" },
+                { "id": "5.1.1.2", "command": "ADD AskUserQuestion for prior spec selection with session ID input", "file": ".claude/commands/session/spec.md", "status": "pending" },
+                { "id": "5.1.1.3", "command": "ADD prior_session field to state.json initialization in step 4", "file": ".claude/commands/session/spec.md", "status": "pending" },
+                { "id": "5.1.1.4", "command": "ADD step to read prior spec.md for context if prior_session provided", "file": ".claude/commands/session/spec.md", "status": "pending" }
               ]
             },
             {
               "id": "5.1.2",
               "title": "Update spec/OVERVIEW.md documentation",
               "description": "Document the prior spec referencing feature in the overview",
-              "file_path": ".claude/skills/agent-session/spec/OVERVIEW.md",
+              "file_path": ".claude/skills/session/spec/OVERVIEW.md",
               "status": "pending",
               "context": {
                 "read_before": [
-                  { "file": ".claude/skills/agent-session/spec/OVERVIEW.md", "purpose": "Understand current structure" }
+                  { "file": ".claude/skills/session/spec/OVERVIEW.md", "purpose": "Understand current structure" }
                 ],
                 "related_files": []
               },
               "depends_on": ["5.1.1"],
               "actions": [
-                { "id": "5.1.2.1", "command": "ADD 'Prior Specs' section after Prerequisites explaining the referencing feature", "file": ".claude/skills/agent-session/spec/OVERVIEW.md", "status": "pending" },
-                { "id": "5.1.2.2", "command": "UPDATE Workflow diagram to include prior spec step after session creation", "file": ".claude/skills/agent-session/spec/OVERVIEW.md", "status": "pending" },
-                { "id": "5.1.2.3", "command": "ADD example of prior_session field in state.json to Outputs section", "file": ".claude/skills/agent-session/spec/OVERVIEW.md", "status": "pending" }
+                { "id": "5.1.2.1", "command": "ADD 'Prior Specs' section after Prerequisites explaining the referencing feature", "file": ".claude/skills/session/spec/OVERVIEW.md", "status": "pending" },
+                { "id": "5.1.2.2", "command": "UPDATE Workflow diagram to include prior spec step after session creation", "file": ".claude/skills/session/spec/OVERVIEW.md", "status": "pending" },
+                { "id": "5.1.2.3", "command": "ADD example of prior_session field in state.json to Outputs section", "file": ".claude/skills/session/spec/OVERVIEW.md", "status": "pending" }
               ]
             }
           ]

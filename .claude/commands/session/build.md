@@ -107,7 +107,7 @@ After all tasks:
 
 #### 4a. Create Git Commit (checkpoint = commit boundary)
 
-Create a commit using the **Checkpoint Commits** format from the [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-agent-sessions):
+Create a commit using the **Checkpoint Commits** format from the [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-sessions):
 
 ```bash
 git add <changed-files>

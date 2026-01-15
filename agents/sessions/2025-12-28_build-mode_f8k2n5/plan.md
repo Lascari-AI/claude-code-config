@@ -1,4 +1,4 @@
-# Implementation Plan: Build Mode for Agent-Session
+# Implementation Plan: Build Mode for session
 
 > **Session**: `2025-12-28_build-mode_f8k2n5`
 > **Status**: ✅ Finalized
@@ -13,7 +13,7 @@
 
 ## Summary
 
-Implementing build mode - the third and final phase of the agent-session skill's spec → plan → build workflow. Build mode executes finalized plans checkpoint by checkpoint, spawning dedicated agents per checkpoint with clean context, tracking progress for resume capability, and capturing implementation learnings in DevNotes.
+Implementing build mode - the third and final phase of the session skill's spec → plan → build workflow. Build mode executes finalized plans checkpoint by checkpoint, spawning dedicated agents per checkpoint with clean context, tracking progress for resume capability, and capturing implementation learnings in DevNotes.
 
 ## Spec Reference
 
@@ -50,11 +50,11 @@ Implementing build mode - the third and final phase of the agent-session skill's
 **Directory Structure**:
 ```
 .claude/
-├── commands/agent-session/
+├── commands/session/
 │   ├── spec.md    ✓ exists
 │   ├── plan.md    ✓ exists
 │   └── build.md   ← NEW
-└── skills/agent-session/
+└── skills/session/
     ├── SKILL.md
     ├── spec/
     ├── plan/
@@ -67,14 +67,14 @@ Implementing build mode - the third and final phase of the agent-session skill's
 ### Files to Create
 | File | Purpose |
 |------|---------|
-| `.claude/commands/agent-session/build.md` | Build mode command with workflows |
-| `.claude/skills/agent-session/build/templates/dev-notes.json` | DevNotes template |
+| `.claude/commands/session/build.md` | Build mode command with workflows |
+| `.claude/skills/session/build/templates/dev-notes.json` | DevNotes template |
 
 ### Files to Modify
 | File | Purpose | Changes |
 |------|---------|---------|
-| `.claude/skills/agent-session/build/OVERVIEW.md` | Build phase docs | Add DevNotes, update command syntax |
-| `.claude/skills/agent-session/SKILL.md` | Main skill docs | Minor updates if needed |
+| `.claude/skills/session/build/OVERVIEW.md` | Build phase docs | Add DevNotes, update command syntax |
+| `.claude/skills/session/SKILL.md` | Main skill docs | Minor updates if needed |
 
 ### Integration Points
 - Reads `plan.json` for checkpoint/tranche/task structure
@@ -137,7 +137,7 @@ flowchart TD
 **Goal**: Establish the build command with full workflow definition
 
 **Files**:
-- CREATE: `.claude/commands/agent-session/build.md`
+- CREATE: `.claude/commands/session/build.md`
 
 **Tranches**:
 
@@ -181,7 +181,7 @@ flowchart TD
 **Goal**: Establish the dev-notes.json structure
 
 **Files**:
-- CREATE: `.claude/skills/agent-session/build/templates/dev-notes.json`
+- CREATE: `.claude/skills/session/build/templates/dev-notes.json`
 
 **Tranches**:
 
@@ -200,7 +200,7 @@ flowchart TD
 **Goal**: Align documentation with spec decisions
 
 **Files**:
-- MODIFY: `.claude/skills/agent-session/build/OVERVIEW.md`
+- MODIFY: `.claude/skills/session/build/OVERVIEW.md`
 
 **Tranches**:
 

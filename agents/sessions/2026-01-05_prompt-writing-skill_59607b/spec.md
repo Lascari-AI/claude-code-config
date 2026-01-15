@@ -215,7 +215,7 @@ Spawn subagents with own state:
 - [ ] `30-multi-turn/10-iterative-loop.md` documents user-in-the-loop technique
 - [ ] `30-multi-turn/20-parallel-agents.md` documents subagent spawning technique
 - [ ] Examples from `.claude/agents/research/` inform the parallel-agents technique
-- [ ] Examples from `.claude/skills/agent-session/` inform the iterative-loop technique
+- [ ] Examples from `.claude/skills/session/` inform the iterative-loop technique
 
 ---
 
@@ -230,7 +230,7 @@ Spawn subagents with own state:
 Multi-turn examples studied:
 - `.claude/agents/research/report-writer.md` - Report synthesis with state
 - `.claude/agents/research/research-subagent.md` - Incremental research with state updates
-- `.claude/skills/agent-session/` - Session management with phases
+- `.claude/skills/session/` - Session management with phases
 
 ---
 

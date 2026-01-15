@@ -1,5 +1,5 @@
 {
-  "$schema": "Session state schema for agent-session skill",
+  "$schema": "Session state schema for session skill",
 
   "session_id": "{{SESSION_ID}}",
   "created_at": "{{CREATED_AT}}",

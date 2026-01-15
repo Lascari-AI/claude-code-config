@@ -215,7 +215,7 @@ User provides input each cycle. System asks → user answers → state updates �
 - Each exchange triggers atomic update to both files
 
 → See: [Iterative Loop](10-iterative-loop.md)
-→ Real implementation: `.claude/commands/agent-session/spec.md`
+→ Real implementation: `.claude/commands/session/spec.md`
 
 ### Parallel Agents
 

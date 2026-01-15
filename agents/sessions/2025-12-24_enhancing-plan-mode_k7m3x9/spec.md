@@ -1,4 +1,4 @@
-# Enhancing Agent-Session Plan Phase
+# Enhancing session Plan Phase
 
 > **Session**: `2025-12-24_enhancing-plan-mode_k7m3x9`
 > **Status**: ✅ Finalized
@@ -7,9 +7,9 @@
 
 ## Overview
 
-Adapt the existing external 4-phase planning system into the **agent-session workflow's plan phase** (not Claude Code's native plan mode). The goal is to bring the structured, checkpoint-based planning approach with IDK (Information-Dense Keywords) task definitions directly into the `/session:plan` command, leveraging finalized specs and prior research as inputs.
+Adapt the existing external 4-phase planning system into the **session workflow's plan phase** (not Claude Code's native plan mode). The goal is to bring the structured, checkpoint-based planning approach with IDK (Information-Dense Keywords) task definitions directly into the `/session:plan` command, leveraging finalized specs and prior research as inputs.
 
-**Important distinction**: This is about the agent-session skill's plan phase (`/session:plan`), which is a custom workflow in this repository - NOT Claude Code's built-in `EnterPlanMode` feature.
+**Important distinction**: This is about the session skill's plan phase (`/session:plan`), which is a custom workflow in this repository - NOT Claude Code's built-in `EnterPlanMode` feature.
 
 ## Mental Model
 
@@ -52,7 +52,7 @@ This framing clarifies:
 
 ## Problem Statement
 
-The current agent-session plan phase is relatively basic - it produces a plan.md with implementation steps, but lacks:
+The current session plan phase is relatively basic - it produces a plan.md with implementation steps, but lacks:
 - The structured decomposition into sequential checkpoints
 - Task tranches for parallelizable work
 - IDK-based precise task definitions
@@ -71,7 +71,7 @@ The external system works but requires:
 
 ### High-Level Goals
 
-Bring the full power of structured, checkpoint-based planning with IDK task definitions into the agent-session plan phase, with an **iterative, user-confirmed workflow** that allows for course correction at each stage.
+Bring the full power of structured, checkpoint-based planning with IDK task definitions into the session plan phase, with an **iterative, user-confirmed workflow** that allows for course correction at each stage.
 
 ### Mid-Level Goals
 
@@ -214,7 +214,7 @@ Checkpoint (sequential milestone)
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Adapt existing system vs. build from scratch | Preserve proven patterns while achieving native integration | 2025-12-24 |
-| Agent-session plan phase, not native plan mode | Keep systems separate; agent-session is our custom workflow | 2025-12-24 |
+| session plan phase, not native plan mode | Keep systems separate; session is our custom workflow | 2025-12-24 |
 | Iterative, phase-by-phase workflow | Generate outline first, confirm, then detail each checkpoint one at a time with user review between each | 2025-12-24 |
 | Build phase includes checkpoint verification | After each checkpoint execution, verify state and allow task adjustment if unexpected issues arise | 2025-12-24 |
 | State-aware single command | `/session:plan [id]` detects current state and guides conversationally - fluid, no explicit subcommands | 2025-12-24 |
@@ -226,7 +226,7 @@ Checkpoint (sequential milestone)
 | Tasks have short titles | One-sentence max summary for quick scanning | 2025-12-24 |
 | Task status in plan.json | Keep status directly in plan file (may move to state.json later) | 2025-12-24 |
 | Testing strategy per checkpoint | Each checkpoint includes how to verify it works | 2025-12-24 |
-| IDKs organized in skill by category | Restructure agent-session skill by phase (spec/plan/build); IDKs in plan subdirectory, one file per category (CRUD, Actions, etc.) | 2025-12-24 |
+| IDKs organized in skill by category | Restructure session skill by phase (spec/plan/build); IDKs in plan subdirectory, one file per category (CRUD, Actions, etc.) | 2025-12-24 |
 | IDKs are agent-internal | Users don't see raw IDK vocabulary; they see rendered plan. Agent progressively learns IDKs from skill files | 2025-12-24 |
 | Full structure, flexible interaction | All tasks need full plan structure, but simple tasks can skip iterative confirmation - agent can generate full plan in one pass | 2025-12-24 |
 | Plan state in state.json | Add plan_state section with current checkpoint, progress overview so agent doesn't need to re-read full plan on resume | 2025-12-24 |
@@ -311,8 +311,8 @@ BUILD PHASE:
 6. **Hierarchical task IDs** - `checkpoint.tranche.task` format (e.g., 1.1.1)
 
 ### Adaptation Considerations
-- The external system uses Gemini; agent-session uses Claude
-- External system uses XML extensively; using JSON in agent-session
+- The external system uses Gemini; session uses Claude
+- External system uses XML extensively; using JSON in session
 - Notebooks → integrated into `/session:plan` command
 - Separate prompts → integrated into plan phase workflow
 - The input is now the finalized spec + research from spec phase
@@ -331,10 +331,10 @@ agents/sessions/{session-id}/
 
 ### Skill Structure (Progressive Disclosure Architecture)
 
-The agent-session skill uses **progressive disclosure** - SKILL.md routes to phase-specific OVERVIEWs, which link to detailed resources.
+The session skill uses **progressive disclosure** - SKILL.md routes to phase-specific OVERVIEWs, which link to detailed resources.
 
 ```
-.claude/skills/agent-session/
+.claude/skills/session/
 ├── SKILL.md                        # Purpose + Overview + Routes to phase OVERVIEWs
 │
 ├── spec/
@@ -385,7 +385,7 @@ User invokes: /session:plan my-session
 
 ```markdown
 ---
-name: agent-session
+name: session
 description: Manage development sessions with spec/plan/build workflow
 ---
 
@@ -398,7 +398,7 @@ Each phase has dedicated instructions in its OVERVIEW.md file.
 ## Variables
 
 SESSIONS_DIR: agents/sessions
-SKILL_DIR: .claude/skills/agent-session
+SKILL_DIR: .claude/skills/session
 
 ## Session Lifecycle
 

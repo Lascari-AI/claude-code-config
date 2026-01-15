@@ -1,23 +1,23 @@
 ---
-description: Gain a full understanding of the agent-session system for spec/plan/build workflow
+description: Gain a full understanding of the session system for spec/plan/build workflow
 ---
 
-# Prime Agent Session
+# Prime Session
 
-Read all agent-session files to understand the spec/plan/build workflow system.
+Read all session files to understand the spec/plan/build workflow system.
 
 ## Read
 
-.claude/skills/agent-session/SKILL.md
-.claude/commands/agent-session/spec.md
-.claude/commands/agent-session/plan.md
-.claude/skills/agent-session/templates/state.json
-.claude/skills/agent-session/templates/spec.md
-.claude/skills/agent-session/templates/plan.md
+.claude/skills/session/SKILL.md
+.claude/commands/session/spec.md
+.claude/commands/session/plan.md
+.claude/skills/session/spec/templates/state.json
+.claude/skills/session/spec/templates/spec.md
+.claude/skills/session/plan/templates/plan.md
 
 ## Report
 
-Summarize your understanding of the agent-session system including:
+Summarize your understanding of the session system including:
 
 1. **Purpose**: The spec → plan → build workflow philosophy
 2. **Spec Mode**: How requirements are gathered through question-driven exploration

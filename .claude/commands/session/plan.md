@@ -25,7 +25,7 @@ This is the interactive planning mode with tier-by-tier user confirmation. For s
 $1 = session-id   (required)
 $2 = action       (optional: "continue" or "finalize")
 SESSIONS_DIR = agents/sessions
-SKILL_DIR = .claude/skills/agent-session
+SKILL_DIR = .claude/skills/session
 ```
 
 ## Required Reading

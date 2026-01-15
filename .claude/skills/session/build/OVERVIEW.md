@@ -142,7 +142,7 @@ After all tasks complete:
 
 ### Git Commit (Checkpoint = Commit Boundary)
 
-After verification passes (or override), create a commit using the **Checkpoint Commits** format from the [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-agent-sessions).
+After verification passes (or override), create a commit using the **Checkpoint Commits** format from the [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-sessions).
 
 The git skill defines:
 - Subject format: `checkpoint-N: <brief description>`

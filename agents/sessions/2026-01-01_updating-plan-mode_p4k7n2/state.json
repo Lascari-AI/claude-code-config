@@ -1,7 +1,7 @@
 {
   "session_id": "2026-01-01_updating-plan-mode_p4k7n2",
   "topic": "Updating Plan Mode",
-  "description": "Updates and improvements to the agent-session plan phase",
+  "description": "Updates and improvements to the session plan phase",
   "granularity": "feature",
   "prior_session": "2025-12-24_enhancing-plan-mode_k7m3x9",
   "created_at": "2026-01-01T00:00:00Z",

@@ -1,5 +1,5 @@
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning",
+  "$schema": "Plan schema for session checkpoint-based planning",
 
   "session_id": "2025-12-28_build-mode_f8k2n5",
   "spec_reference": "./spec.md",
@@ -19,32 +19,32 @@
         "beginning": {
           "files": [
             {
-              "path": ".claude/commands/agent-session/spec.md",
+              "path": ".claude/commands/session/spec.md",
               "status": "exists",
               "description": "Reference pattern for command structure"
             },
             {
-              "path": ".claude/commands/agent-session/plan.md",
+              "path": ".claude/commands/session/plan.md",
               "status": "exists",
               "description": "Reference pattern for command structure"
             },
             {
-              "path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "path": ".claude/skills/session/build/OVERVIEW.md",
               "status": "exists",
               "description": "Existing build phase documentation"
             }
           ],
-          "tree": ".claude/commands/agent-session/\n├── spec.md\n└── plan.md"
+          "tree": ".claude/commands/session/\n├── spec.md\n└── plan.md"
         },
         "ending": {
           "files": [
             {
-              "path": ".claude/commands/agent-session/build.md",
+              "path": ".claude/commands/session/build.md",
               "status": "new",
               "description": "Build mode command with workflows"
             }
           ],
-          "tree": ".claude/commands/agent-session/\n├── spec.md\n├── plan.md\n└── build.md"
+          "tree": ".claude/commands/session/\n├── spec.md\n├── plan.md\n└── build.md"
         }
       },
 
@@ -65,13 +65,13 @@
             {
               "id": "1.1.1",
               "title": "Create build.md with frontmatter",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Create the build command file with proper frontmatter matching spec.md and plan.md patterns",
-              "action": "CREATE .claude/commands/agent-session/build.md:\n    ADD frontmatter with description, argument-hint, allowed-tools, model\n    ADD skill reference section\n    ADD variables section with $1, $2, $3 definitions",
+              "action": "CREATE .claude/commands/session/build.md:\n    ADD frontmatter with description, argument-hint, allowed-tools, model\n    ADD skill reference section\n    ADD variables section with $1, $2, $3 definitions",
               "context": {
                 "read_before": [
                   {
-                    "file": ".claude/commands/agent-session/spec.md",
+                    "file": ".claude/commands/session/spec.md",
                     "lines": "1-30",
                     "purpose": "Reference pattern for frontmatter and variables"
                   },
@@ -82,7 +82,7 @@
                   }
                 ],
                 "related_files": [
-                  ".claude/commands/agent-session/plan.md"
+                  ".claude/commands/session/plan.md"
                 ]
               },
               "depends_on": [],
@@ -98,13 +98,13 @@
             {
               "id": "1.2.1",
               "title": "Add input parsing phase",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add workflow phase for parsing $1, $2, $3 arguments",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD workflow phase for parsing session-id, checkpoint, tranche args\n    ADD validation logic for each argument",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD workflow phase for parsing session-id, checkpoint, tranche args\n    ADD validation logic for each argument",
               "context": {
                 "read_before": [
                   {
-                    "file": ".claude/commands/agent-session/spec.md",
+                    "file": ".claude/commands/session/spec.md",
                     "lines": "47-96",
                     "purpose": "Reference workflow phase structure"
                   }
@@ -118,9 +118,9 @@
             {
               "id": "1.2.2",
               "title": "Add session loading phase",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add workflow phase for loading session and validating plan is finalized",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD phase for loading state.json\n    ADD validation that plan is finalized\n    ADD loading plan.json",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD phase for loading state.json\n    ADD validation that plan is finalized\n    ADD loading plan.json",
               "context": {
                 "read_before": [],
                 "related_files": []
@@ -132,9 +132,9 @@
             {
               "id": "1.2.3",
               "title": "Add target determination phase",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add workflow phase for determining what checkpoint/tranche to execute",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD logic for auto-discovery from plan_state\n    ADD logic for explicit checkpoint targeting\n    ADD logic for explicit tranche targeting",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD logic for auto-discovery from plan_state\n    ADD logic for explicit checkpoint targeting\n    ADD logic for explicit tranche targeting",
               "context": {
                 "read_before": [],
                 "related_files": []
@@ -146,9 +146,9 @@
             {
               "id": "1.2.4",
               "title": "Add checkpoint agent spawning phase",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add workflow phase for spawning checkpoint agent via Task tool",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD phase for constructing checkpoint agent prompt\n    ADD Task tool invocation pattern\n    ADD context assembly (checkpoint data, spec goals, prior DevNotes)",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD phase for constructing checkpoint agent prompt\n    ADD Task tool invocation pattern\n    ADD context assembly (checkpoint data, spec goals, prior DevNotes)",
               "context": {
                 "read_before": [],
                 "related_files": []
@@ -160,9 +160,9 @@
             {
               "id": "1.2.5",
               "title": "Add results handling phase",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add workflow phase for handling checkpoint completion and verification",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD phase for receiving agent results\n    ADD verification step execution\n    ADD override mechanism for failed verification\n    ADD state update logic",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD phase for receiving agent results\n    ADD verification step execution\n    ADD override mechanism for failed verification\n    ADD state update logic",
               "context": {
                 "read_before": [],
                 "related_files": []
@@ -180,9 +180,9 @@
             {
               "id": "1.3.1",
               "title": "Create checkpoint agent prompt template",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Define what context and instructions the checkpoint agent receives",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD checkpoint_agent_prompt template section\n    INCLUDE checkpoint goal and tasks\n    INCLUDE relevant spec goals\n    INCLUDE prior DevNotes summary\n    INCLUDE expected outputs format",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD checkpoint_agent_prompt template section\n    INCLUDE checkpoint goal and tasks\n    INCLUDE relevant spec goals\n    INCLUDE prior DevNotes summary\n    INCLUDE expected outputs format",
               "context": {
                 "read_before": [
                   {
@@ -206,13 +206,13 @@
             {
               "id": "1.4.1",
               "title": "Add user output scenarios",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add output templates for different scenarios",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD output for build started\n    ADD output for checkpoint complete\n    ADD output for error/pause\n    ADD output for build complete",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD output for build started\n    ADD output for checkpoint complete\n    ADD output for error/pause\n    ADD output for build complete",
               "context": {
                 "read_before": [
                   {
-                    "file": ".claude/commands/agent-session/spec.md",
+                    "file": ".claude/commands/session/spec.md",
                     "lines": "203-254",
                     "purpose": "Reference pattern for user output scenarios"
                   }
@@ -232,13 +232,13 @@
             {
               "id": "1.5.1",
               "title": "Add validation and error handling",
-              "file_path": ".claude/commands/agent-session/build.md",
+              "file_path": ".claude/commands/session/build.md",
               "description": "Add validation rules and error handling scenarios",
-              "action": "UPDATE .claude/commands/agent-session/build.md:\n    ADD validation section (session exists, plan finalized, valid target)\n    ADD error_handling section with scenarios",
+              "action": "UPDATE .claude/commands/session/build.md:\n    ADD validation section (session exists, plan finalized, valid target)\n    ADD error_handling section with scenarios",
               "context": {
                 "read_before": [
                   {
-                    "file": ".claude/commands/agent-session/spec.md",
+                    "file": ".claude/commands/session/spec.md",
                     "lines": "256-269",
                     "purpose": "Reference pattern for error handling"
                   }
@@ -264,22 +264,22 @@
         "beginning": {
           "files": [
             {
-              "path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "path": ".claude/skills/session/build/OVERVIEW.md",
               "status": "exists",
               "description": "Build phase documentation"
             }
           ],
-          "tree": ".claude/skills/agent-session/build/\n└── OVERVIEW.md"
+          "tree": ".claude/skills/session/build/\n└── OVERVIEW.md"
         },
         "ending": {
           "files": [
             {
-              "path": ".claude/skills/agent-session/build/templates/dev-notes.json",
+              "path": ".claude/skills/session/build/templates/dev-notes.json",
               "status": "new",
               "description": "DevNotes template"
             }
           ],
-          "tree": ".claude/skills/agent-session/build/\n├── OVERVIEW.md\n└── templates/\n    └── dev-notes.json"
+          "tree": ".claude/skills/session/build/\n├── OVERVIEW.md\n└── templates/\n    └── dev-notes.json"
         }
       },
 
@@ -300,9 +300,9 @@
             {
               "id": "2.1.1",
               "title": "Create dev-notes.json template",
-              "file_path": ".claude/skills/agent-session/build/templates/dev-notes.json",
+              "file_path": ".claude/skills/session/build/templates/dev-notes.json",
               "description": "Create the DevNotes template with proper structure",
-              "action": "CREATE .claude/skills/agent-session/build/templates/dev-notes.json:\n    ADD schema reference\n    ADD notes array with example entries\n    INCLUDE fields: id, timestamp, scope, category, content",
+              "action": "CREATE .claude/skills/session/build/templates/dev-notes.json:\n    ADD schema reference\n    ADD notes array with example entries\n    INCLUDE fields: id, timestamp, scope, category, content",
               "context": {
                 "read_before": [
                   {
@@ -332,22 +332,22 @@
         "beginning": {
           "files": [
             {
-              "path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "path": ".claude/skills/session/build/OVERVIEW.md",
               "status": "exists",
               "description": "Current build phase documentation"
             }
           ],
-          "tree": ".claude/skills/agent-session/build/\n└── OVERVIEW.md"
+          "tree": ".claude/skills/session/build/\n└── OVERVIEW.md"
         },
         "ending": {
           "files": [
             {
-              "path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "path": ".claude/skills/session/build/OVERVIEW.md",
               "status": "modified",
               "description": "Updated build phase documentation"
             }
           ],
-          "tree": ".claude/skills/agent-session/build/\n└── OVERVIEW.md"
+          "tree": ".claude/skills/session/build/\n└── OVERVIEW.md"
         }
       },
 
@@ -368,13 +368,13 @@
             {
               "id": "3.1.1",
               "title": "Add DevNotes section",
-              "file_path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "file_path": ".claude/skills/session/build/OVERVIEW.md",
               "description": "Document DevNotes purpose, structure, and usage",
-              "action": "UPDATE .claude/skills/agent-session/build/OVERVIEW.md:\n    ADD DevNotes section after State Tracking\n    INCLUDE purpose and structure\n    INCLUDE category explanations\n    INCLUDE example",
+              "action": "UPDATE .claude/skills/session/build/OVERVIEW.md:\n    ADD DevNotes section after State Tracking\n    INCLUDE purpose and structure\n    INCLUDE category explanations\n    INCLUDE example",
               "context": {
                 "read_before": [
                   {
-                    "file": ".claude/skills/agent-session/build/OVERVIEW.md",
+                    "file": ".claude/skills/session/build/OVERVIEW.md",
                     "lines": "all",
                     "purpose": "Current documentation structure"
                   }
@@ -394,9 +394,9 @@
             {
               "id": "3.2.1",
               "title": "Update command syntax",
-              "file_path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "file_path": ".claude/skills/session/build/OVERVIEW.md",
               "description": "Update command section to match spec syntax",
-              "action": "UPDATE .claude/skills/agent-session/build/OVERVIEW.md:\n    REPLACE Commands section with positional args format\n    ADD examples for checkpoint and tranche targeting",
+              "action": "UPDATE .claude/skills/session/build/OVERVIEW.md:\n    REPLACE Commands section with positional args format\n    ADD examples for checkpoint and tranche targeting",
               "context": {
                 "read_before": [],
                 "related_files": []
@@ -414,9 +414,9 @@
             {
               "id": "3.3.1",
               "title": "Update workflow with agent spawning",
-              "file_path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "file_path": ".claude/skills/session/build/OVERVIEW.md",
               "description": "Update workflow to show checkpoint agent pattern",
-              "action": "UPDATE .claude/skills/agent-session/build/OVERVIEW.md:\n    UPDATE Workflow section to include agent spawning\n    ADD verification with override flow\n    ADD partial completion description",
+              "action": "UPDATE .claude/skills/session/build/OVERVIEW.md:\n    UPDATE Workflow section to include agent spawning\n    ADD verification with override flow\n    ADD partial completion description",
               "context": {
                 "read_before": [],
                 "related_files": []

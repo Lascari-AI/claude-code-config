@@ -21,14 +21,14 @@
 
 | State | File | Status | Description |
 |-------|------|--------|-------------|
-| Before | `.claude/skills/agent-session/plan/templates/plan.json` | 📄 exists | Current template using 'tranches' and 'subtasks' |
-| Before | `.claude/skills/agent-session/plan/reference/models.py` | 📄 exists | Pydantic models with Tranche and Subtask classes |
-| After | `.claude/skills/agent-session/plan/templates/plan.json` | 📝 modified | Template using 'task_groups' and 'actions' |
-| After | `.claude/skills/agent-session/plan/reference/models.py` | 📝 modified | Pydantic models with TaskGroup and Action classes |
+| Before | `.claude/skills/session/plan/templates/plan.json` | 📄 exists | Current template using 'tranches' and 'subtasks' |
+| Before | `.claude/skills/session/plan/reference/models.py` | 📄 exists | Pydantic models with Tranche and Subtask classes |
+| After | `.claude/skills/session/plan/templates/plan.json` | 📝 modified | Template using 'task_groups' and 'actions' |
+| After | `.claude/skills/session/plan/reference/models.py` | 📝 modified | Pydantic models with TaskGroup and Action classes |
 
 **Projected Structure**:
 ```
-.claude/skills/agent-session/plan/
+.claude/skills/session/plan/
 ├── templates/
 │   └── plan.json (updated)
 └── reference/
@@ -40,8 +40,8 @@
 **Approach**: Syntax validation and structure verification
 
 **Verification Steps**:
-- [ ] `python -c "import json; json.load(open('.claude/skills/agent-session/plan/templates/plan.json'))"`
-- [ ] `python -c "import sys; sys.path.insert(0, '.claude/skills/agent-session/plan'); from reference.models import Plan, TaskGroup, Action"`
+- [ ] `python -c "import json; json.load(open('.claude/skills/session/plan/templates/plan.json'))"`
+- [ ] `python -c "import sys; sys.path.insert(0, '.claude/skills/session/plan'); from reference.models import Plan, TaskGroup, Action"`
 
 ---
 
@@ -55,17 +55,17 @@
 
 | State | File | Status | Description |
 |-------|------|--------|-------------|
-| Before | `.claude/skills/agent-session/plan/OVERVIEW.md` | 📄 exists | Current documentation with Tranche terminology |
-| Before | `.claude/commands/agent-session/plan.md` | 📄 exists | Current plan command with two-tier workflow |
-| After | `.claude/skills/agent-session/plan/OVERVIEW.md` | 📝 modified | Updated with Task Group/Action and tiered workflow |
-| After | `.claude/commands/agent-session/plan.md` | 📝 modified | Updated command with 4-tier progressive confirmation |
+| Before | `.claude/skills/session/plan/OVERVIEW.md` | 📄 exists | Current documentation with Tranche terminology |
+| Before | `.claude/commands/session/plan.md` | 📄 exists | Current plan command with two-tier workflow |
+| After | `.claude/skills/session/plan/OVERVIEW.md` | 📝 modified | Updated with Task Group/Action and tiered workflow |
+| After | `.claude/commands/session/plan.md` | 📝 modified | Updated command with 4-tier progressive confirmation |
 
 **Projected Structure**:
 ```
 .claude/
-├── skills/agent-session/plan/
+├── skills/session/plan/
 │   └── OVERVIEW.md (updated)
-└── commands/agent-session/
+└── commands/session/
     └── plan.md (updated)
 ```
 
@@ -89,12 +89,12 @@
 
 | State | File | Status | Description |
 |-------|------|--------|-------------|
-| Before | `.claude/skills/agent-session/plan/scripts/sync-plan-md.py` | 📄 exists | Current script generating markdown with Tranche/Subtask terminology |
-| After | `.claude/skills/agent-session/plan/scripts/sync-plan-md.py` | 📝 modified | Updated script generating markdown with Task Group/Action terminology |
+| Before | `.claude/skills/session/plan/scripts/sync-plan-md.py` | 📄 exists | Current script generating markdown with Tranche/Subtask terminology |
+| After | `.claude/skills/session/plan/scripts/sync-plan-md.py` | 📝 modified | Updated script generating markdown with Task Group/Action terminology |
 
 **Projected Structure**:
 ```
-.claude/skills/agent-session/plan/scripts/
+.claude/skills/session/plan/scripts/
 └── sync-plan-md.py (updated)
 ```
 
@@ -103,7 +103,7 @@
 **Approach**: JSON parsing and output verification
 
 **Verification Steps**:
-- [ ] `python -c "import sys; sys.path.insert(0, '.claude/skills/agent-session/plan/scripts'); import importlib.util; spec = importlib.util.spec_from_file_location('sync', '.claude/skills/agent-session/plan/scripts/sync-plan-md.py'); m = importlib.util.module_from_spec(spec)"`
+- [ ] `python -c "import sys; sys.path.insert(0, '.claude/skills/session/plan/scripts'); import importlib.util; spec = importlib.util.spec_from_file_location('sync', '.claude/skills/session/plan/scripts/sync-plan-md.py'); m = importlib.util.module_from_spec(spec)"`
 
 ---
 
@@ -117,19 +117,19 @@
 
 | State | File | Status | Description |
 |-------|------|--------|-------------|
-| Before | `.claude/skills/agent-session/build/OVERVIEW.md` | 📄 exists | Current build documentation with tranche terminology |
-| Before | `.claude/commands/agent-session/build.md` | 📄 exists | Interactive build command |
-| Before | `.claude/commands/agent-session/build-background.md` | 📄 exists | Autonomous build command with tranche references |
-| After | `.claude/skills/agent-session/build/OVERVIEW.md` | 📝 modified | Updated with task_group terminology and checkpoint=commit |
-| After | `.claude/commands/agent-session/build.md` | 📝 modified | Updated with task_group and git commit at checkpoint end |
-| After | `.claude/commands/agent-session/build-background.md` | 📝 modified | Updated with task_group and git commit at checkpoint end |
+| Before | `.claude/skills/session/build/OVERVIEW.md` | 📄 exists | Current build documentation with tranche terminology |
+| Before | `.claude/commands/session/build.md` | 📄 exists | Interactive build command |
+| Before | `.claude/commands/session/build-background.md` | 📄 exists | Autonomous build command with tranche references |
+| After | `.claude/skills/session/build/OVERVIEW.md` | 📝 modified | Updated with task_group terminology and checkpoint=commit |
+| After | `.claude/commands/session/build.md` | 📝 modified | Updated with task_group and git commit at checkpoint end |
+| After | `.claude/commands/session/build-background.md` | 📝 modified | Updated with task_group and git commit at checkpoint end |
 
 **Projected Structure**:
 ```
 .claude/
-├── skills/agent-session/build/
+├── skills/session/build/
 │   └── OVERVIEW.md (updated)
-└── commands/agent-session/
+└── commands/session/
     ├── build.md (updated)
     └── build-background.md (updated)
 ```
@@ -139,8 +139,8 @@
 **Approach**: Review documentation for consistency
 
 **Verification Steps**:
-- [ ] `grep -r 'tranche' .claude/skills/agent-session/build/ .claude/commands/agent-session/build*.md should return no matches`
-- [ ] `grep -r 'git commit' .claude/skills/agent-session/build/ .claude/commands/agent-session/build*.md should return matches`
+- [ ] `grep -r 'tranche' .claude/skills/session/build/ .claude/commands/session/build*.md should return no matches`
+- [ ] `grep -r 'git commit' .claude/skills/session/build/ .claude/commands/session/build*.md should return matches`
 
 ---
 
@@ -152,17 +152,17 @@
 
 | State | File | Status | Description |
 |-------|------|--------|-------------|
-| Before | `.claude/commands/agent-session/spec.md` | 📄 exists | Current spec command without prior spec prompting |
-| Before | `.claude/skills/agent-session/spec/OVERVIEW.md` | 📄 exists | Current spec phase documentation |
-| After | `.claude/commands/agent-session/spec.md` | 📝 modified | Updated with prior spec referencing workflow |
-| After | `.claude/skills/agent-session/spec/OVERVIEW.md` | 📝 modified | Updated with prior spec documentation |
+| Before | `.claude/commands/session/spec.md` | 📄 exists | Current spec command without prior spec prompting |
+| Before | `.claude/skills/session/spec/OVERVIEW.md` | 📄 exists | Current spec phase documentation |
+| After | `.claude/commands/session/spec.md` | 📝 modified | Updated with prior spec referencing workflow |
+| After | `.claude/skills/session/spec/OVERVIEW.md` | 📝 modified | Updated with prior spec documentation |
 
 **Projected Structure**:
 ```
 .claude/
-├── commands/agent-session/
+├── commands/session/
 │   └── spec.md (updated)
-└── skills/agent-session/spec/
+└── skills/session/spec/
     └── OVERVIEW.md (updated)
 ```
 
@@ -171,8 +171,8 @@
 **Approach**: Documentation review
 
 **Verification Steps**:
-- [ ] `grep 'prior' .claude/commands/agent-session/spec.md should return matches`
-- [ ] `grep 'prior_session' .claude/skills/agent-session/spec/OVERVIEW.md should return matches`
+- [ ] `grep 'prior' .claude/commands/session/spec.md should return matches`
+- [ ] `grep 'prior_session' .claude/skills/session/spec/OVERVIEW.md should return matches`
 
 ---
 

@@ -11,9 +11,9 @@ Enter spec mode to define WHAT you want to build before planning HOW to build it
 
 ## Skill Reference
 
-Read the agent-session skill for templates and full documentation:
-- Skill: `.claude/skills/agent-session/SKILL.md`
-- Templates: `.claude/skills/agent-session/templates/`
+Read the session skill for templates and full documentation:
+- Skill: `.claude/skills/session/SKILL.md`
+- Templates: `.claude/skills/session/templates/`
 - Working directory: `agents/sessions/`
 
 ## Variables
@@ -22,7 +22,7 @@ Read the agent-session skill for templates and full documentation:
 $1 = Primary argument (session-id, topic, or "finalize")
 $2 = Optional additional context or description
 SESSIONS_DIR = agents/sessions
-TEMPLATES_DIR = .claude/skills/agent-session/templates
+TEMPLATES_DIR = .claude/skills/session/templates
 ```
 
 ## Instructions
@@ -77,7 +77,7 @@ Spec mode is:
                     <step id="1">If $1 is empty, prompt user for topic</step>
                     <step id="2">Initialize session using Python script:
                         ```bash
-                        python .claude/skills/agent-session/scripts/init-session.py \
+                        python .claude/skills/session/scripts/init-session.py \
                             --topic "{topic}" \
                             [--description "{description}"]
                         ```

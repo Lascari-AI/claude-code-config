@@ -1,5 +1,5 @@
 ---
-name: agent-session
+name: session
 description: Manage development sessions with spec/plan/build workflow. Use when starting new features, defining requirements, planning implementations, or tracking development cycles. Provides structured session management with state tracking.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 ---
@@ -234,7 +234,7 @@ agents/sessions/{session-id}/
     └── {issue}.md   # Debug findings, reproduction steps, root cause
 ```
 
-**Initialization**: Use `python .claude/skills/agent-session/scripts/init-session.py --topic "Topic"` to create session directories. The script auto-generates the session ID and initializes state.json from template.
+**Initialization**: Use `python .claude/skills/session/scripts/init-session.py --topic "Topic"` to create session directories. The script auto-generates the session ID and initializes state.json from template.
 
 ## Session ID Format
 

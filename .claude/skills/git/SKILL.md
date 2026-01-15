@@ -36,7 +36,7 @@ Examples:
 
 ## Checkpoint Commits (Agent Sessions)
 
-For agent-session checkpoints, use this format instead of conventional type prefix:
+For session checkpoints, use this format instead of conventional type prefix:
 
 ```
 checkpoint-N: concise description

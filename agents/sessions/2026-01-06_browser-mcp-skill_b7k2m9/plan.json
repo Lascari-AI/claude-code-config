@@ -1,5 +1,5 @@
 {
-  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
 
   "session_id": "2026-01-06_browser-mcp-skill_b7k2m9",
   "spec_reference": "./spec.md",

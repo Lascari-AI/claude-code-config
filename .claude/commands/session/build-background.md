@@ -11,9 +11,9 @@ Execute a checkpoint autonomously without per-task confirmation. Executes all ta
 
 ## Skill Reference
 
-Read the agent-session skill for templates and full documentation:
-- Skill: `.claude/skills/agent-session/SKILL.md`
-- Build docs: `.claude/skills/agent-session/build/OVERVIEW.md`
+Read the session skill for templates and full documentation:
+- Skill: `.claude/skills/session/SKILL.md`
+- Build docs: `.claude/skills/session/build/OVERVIEW.md`
 - Working directory: `agents/sessions/`
 
 ## Variables
@@ -151,7 +151,7 @@ Build mode:
             <description>Create git commit (checkpoint = commit boundary)</description>
             <steps>
                 <step id="1">Stage changed files: git add &lt;changed-files&gt;</step>
-                <step id="2">Create commit using **Checkpoint Commits** format from [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-agent-sessions)</step>
+                <step id="2">Create commit using **Checkpoint Commits** format from [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-sessions)</step>
                 <step id="3">Capture commit hash for reporting</step>
             </steps>
             <note>Each checkpoint produces exactly one commit. See git skill for format details.</note>
