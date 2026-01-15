@@ -106,9 +106,12 @@ Repeat from 3a for the next task.
 After all tasks:
 
 #### 4a. Create Git Commit (checkpoint = commit boundary)
+
+Create a commit using the **Checkpoint Commits** format from the [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-agent-sessions):
+
 ```bash
 git add <changed-files>
-git commit -m "checkpoint-N: <checkpoint-title>"
+# Use checkpoint commit format from git skill
 ```
 
 Show commit hash to user.
@@ -117,6 +120,7 @@ Show commit hash to user.
 Update state.json:
 - Add checkpoint to `plan_state.checkpoints_completed`
 - Set `plan_state.current_checkpoint` to next (or null if done)
+- Append to `commits` array: `{checkpoint_id, sha, message, created_at}`
 
 #### 4c. Report Completion
 ```

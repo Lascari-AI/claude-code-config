@@ -1,0 +1,1067 @@
+{
+  "$schema": "Plan schema for agent-session checkpoint-based planning (v2)",
+
+  "session_id": "2026-01-12_agent-session-overhaul_k9m2x7",
+  "spec_reference": "./spec.md",
+  "created_at": "2026-01-14T00:00:00Z",
+  "updated_at": "2026-01-14T00:00:00Z",
+  "status": "complete",
+
+  "checkpoints": [
+    {
+      "id": 1,
+      "title": "Session Directory Structure & Initialization Script",
+      "goal": "Establish the foundation: update session directory structure and create Python initialization script. This creates the container that all subsequent features will use.",
+      "prerequisites": [],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "1.1",
+          "title": "Update Session Directory Templates",
+          "objective": "Update state.json template to include new fields for commits, research_artifacts, doc_updates, and enhanced plan_state tracking. Simplify context/ to flat structure.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.1.1",
+              "title": "Update state.json template with commits tracking",
+              "file_path": ".claude/skills/agent-session/spec/templates/state.json",
+              "description": "Add commits array to state.json template. Each commit entry should link to a checkpoint ID. This enables traceability from commits back to the plan.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/spec/templates/state.json",
+                    "lines": "all",
+                    "purpose": "Understand current state.json structure"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "119-142",
+                    "purpose": "See commit format specification: checkpoint-{N}: + WHY + Changes"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.1.1.1",
+                  "command": "ADD VAR commits = [] with schema: [{checkpoint_id, sha, message, created_at}]",
+                  "file": ".claude/skills/agent-session/spec/templates/state.json",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.2",
+              "title": "Enhance plan_state tracking in state.json template",
+              "file_path": ".claude/skills/agent-session/spec/templates/state.json",
+              "description": "Update plan_state object to include checkpoints_total, checkpoints_detailed, and checkpoints_completed fields for better progress tracking during plan and build phases.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/spec/templates/state.json",
+                    "lines": "48-57",
+                    "purpose": "See current plan_state structure"
+                  },
+                  {
+                    "file": ".claude/skills/agent-session/plan/OVERVIEW.md",
+                    "lines": "63-75",
+                    "purpose": "See plan_state tracking requirements"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {
+                  "id": "1.1.2.1",
+                  "command": "UPDATE VAR plan_state: ADD checkpoints_total, checkpoints_detailed, current_task_group fields",
+                  "file": ".claude/skills/agent-session/spec/templates/state.json",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.3",
+              "title": "Add detailed goals array to state.json template",
+              "file_path": ".claude/skills/agent-session/spec/templates/state.json",
+              "description": "Add detailed goals array to goals object to match the three-tier goal structure (high_level, mid_level, detailed) defined in the spec.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/spec/templates/state.json",
+                    "lines": "32-36",
+                    "purpose": "See current goals structure (only high_level, mid_level)"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/state.json",
+                    "lines": "29-61",
+                    "purpose": "Example of three-tier goals in existing session"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.1.3.1",
+                  "command": "ADD VAR detailed = [] to goals object",
+                  "file": ".claude/skills/agent-session/spec/templates/state.json",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "Create Python Initialization Script",
+          "objective": "Create a Python script that generates the session directory structure. Agent runs the script instead of manually creating directories. Saves tokens and ensures consistent structure.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.2.1",
+              "title": "Create session initialization Python script",
+              "file_path": ".claude/skills/agent-session/scripts/init-session.py",
+              "description": "Create a Python script that initializes a new session directory structure. Takes session_id, topic, and optional description as arguments. Creates directories (research/, context/, debug/) and initializes state.json from template. Output minimal confirmation message for agent consumption.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/spec/templates/state.json",
+                    "lines": "all",
+                    "purpose": "Template for state.json to be populated by the script"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "227-256",
+                    "purpose": "See session directory structure specification"
+                  },
+                  {
+                    "file": ".claude/commands/agent-session/spec.md",
+                    "lines": "79-106",
+                    "purpose": "Current directory creation steps to be replaced"
+                  }
+                ],
+                "related_files": [
+                  ".claude/skills/agent-session/plan/scripts/sync-plan-md.py"
+                ]
+              },
+              "depends_on": ["1.1.1", "1.1.2", "1.1.3"],
+              "actions": [
+                {
+                  "id": "1.2.1.1",
+                  "command": "CREATE FILE .claude/skills/agent-session/scripts/init-session.py",
+                  "file": ".claude/skills/agent-session/scripts/init-session.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.2",
+                  "command": "CREATE FUNCTION main() with argparse: session_id (required), topic (required), description (optional)",
+                  "file": ".claude/skills/agent-session/scripts/init-session.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.3",
+                  "command": "CREATE FUNCTION create_directories(session_path): research/, context/, debug/",
+                  "file": ".claude/skills/agent-session/scripts/init-session.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.4",
+                  "command": "CREATE FUNCTION init_state_json(session_path, session_id, topic, description): read template, populate, write",
+                  "file": ".claude/skills/agent-session/scripts/init-session.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.3",
+          "title": "Update Spec Command for Script Usage",
+          "objective": "Modify the spec command to use the Python init script instead of mkdir commands. Update directory creation steps in the workflow.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.3.1",
+              "title": "Update spec command to call Python init script",
+              "file_path": ".claude/commands/agent-session/spec.md",
+              "description": "Replace mkdir commands in the spec command workflow with a call to the Python init script. Update phase 2_resolve_session steps to run 'python .claude/skills/agent-session/scripts/init-session.py' with appropriate arguments. Remove individual mkdir steps.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/spec.md",
+                    "lines": "64-106",
+                    "purpose": "See current directory creation workflow in phase 2_resolve_session"
+                  },
+                  {
+                    "file": ".claude/skills/agent-session/scripts/init-session.py",
+                    "lines": "all",
+                    "purpose": "Understand script interface (created in task 1.2.1)"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.2.1"],
+              "actions": [
+                {
+                  "id": "1.3.1.1",
+                  "command": "REPLACE mkdir commands in step id=3 with: python .claude/skills/agent-session/scripts/init-session.py {session_id} {topic} {description}",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.2",
+                  "command": "UPDATE step id=4: REMOVE Initialize state.json (now handled by script)",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.3",
+                  "command": "UPDATE step id=7: REMOVE Create initial spec.md reference (script creates it)",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.3.2",
+              "title": "Update SKILL.md with new directory structure",
+              "file_path": ".claude/skills/agent-session/SKILL.md",
+              "description": "Update the Session Directory Structure section in SKILL.md to reflect the simplified structure: flat context/ (no subdirectories), debug/ added, and note about using Python init script.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/SKILL.md",
+                    "lines": "147-155",
+                    "purpose": "See current directory structure documentation"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "227-256",
+                    "purpose": "See new directory structure specification"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.3.2.1",
+                  "command": "UPDATE directory structure: ADD debug/ directory",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.2.2",
+                  "command": "UPDATE directory structure: REPLACE context/ subdirectories with flat context/",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Research Integration - Store Research Within Sessions",
+      "goal": "Modify research system to output within session directories (research/{id}/) with phase metadata tracking. Update research commands to accept session context.",
+      "prerequisites": [1],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "2.1",
+          "title": "Add Session-Aware Research Command",
+          "objective": "Create a new research command variant that accepts an agent session ID and outputs research artifacts within that session's research/ directory. Includes phase metadata (spec/plan/debug) and triggered_by tracking.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.1.1",
+              "title": "Create session-research command",
+              "file_path": ".claude/commands/agent-session/research.md",
+              "description": "Create a new research command under agent-session namespace. Accepts --session={session-id} --phase={spec|plan|debug} --triggered-by={reason}. Outputs to agents/sessions/{session-id}/research/{research-id}/ instead of research_sessions/. Mirrors existing research.md structure but with session awareness.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/development/research.md",
+                    "lines": "all",
+                    "purpose": "Understand existing research orchestrator structure to mirror"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "233-256",
+                    "purpose": "See research directory structure and state.json schema"
+                  }
+                ],
+                "related_files": [
+                  ".claude/agents/research/research-subagent.md",
+                  ".claude/agents/research/report-writer.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.1.1.1",
+                  "command": "CREATE FILE .claude/commands/agent-session/research.md",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.2",
+                  "command": "MIRROR development/research.md structure with session-aware variables",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.3",
+                  "command": "ADD argument parsing: --session (required), --phase (required), --triggered-by (required)",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.4",
+                  "command": "UPDATE directory_structure to use agents/sessions/{session-id}/research/{research-id}/",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.5",
+                  "command": "UPDATE session_state_schema to include phase, triggered_by, mode fields",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Implement Light Research Mode",
+          "objective": "Add a --mode=light option that uses a single research agent instead of parallel subagents. Simpler output structure for chores/quick tasks. Still stores within session.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.2.1",
+              "title": "Add light mode to session-research command",
+              "file_path": ".claude/commands/agent-session/research.md",
+              "description": "Add --mode={light|full} argument. Light mode spawns a single research agent that investigates directly without subagent decomposition. Output structure is simpler: just state.json and report.md (no subagents/ directory). Default to light mode if not specified.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/research.md",
+                    "lines": "all",
+                    "purpose": "Understand current session-research structure (created in 2.1.1)"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "73-78",
+                    "purpose": "See light vs full research mode requirements"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {
+                  "id": "2.2.1.1",
+                  "command": "ADD argument: --mode={light|full} DEFAULT light",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.1.2",
+                  "command": "ADD conditional workflow: if mode=light, spawn single agent; if mode=full, spawn parallel subagents",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.1.3",
+                  "command": "UPDATE directory_structure for light mode: no subagents/ directory",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Update Research Subagent for Session Context",
+          "objective": "Modify research-subagent.md to accept session path as parameter and output to session/research/{id}/subagents/. Add phase metadata to subagent output.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.3.1",
+              "title": "Update research-subagent for session context",
+              "file_path": ".claude/agents/research/research-subagent.md",
+              "description": "Modify research-subagent.md to accept a session_path parameter that can be either research_sessions/{id}/ (legacy) or agents/sessions/{session-id}/research/{research-id}/. Update state file output path accordingly. This allows the same subagent to work with both the old research command and new session-aware command.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/agents/research/research-subagent.md",
+                    "lines": "all",
+                    "purpose": "Understand current subagent structure and state file format"
+                  }
+                ],
+                "related_files": [
+                  ".claude/agents/research/report-writer.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.3.1.1",
+                  "command": "UPDATE input_format: session_path is now the full path (not just research_sessions/)",
+                  "file": ".claude/agents/research/research-subagent.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.1.2",
+                  "command": "UPDATE output_protocol: use session_path for state file location",
+                  "file": ".claude/agents/research/research-subagent.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.4",
+          "title": "Track Research Artifacts in Session State",
+          "objective": "Update session state.json with research_artifacts array after research completes. Add back-links to spec.md referencing research reports.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.4.1",
+              "title": "Update research_artifacts in session state after research",
+              "file_path": ".claude/commands/agent-session/research.md",
+              "description": "After research completes, update the parent session's state.json to add the research artifact to research_artifacts array. Include path to report.md and research session metadata.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/research.md",
+                    "lines": "all",
+                    "purpose": "Understand session-research command (created in 2.1.1)"
+                  },
+                  {
+                    "file": ".claude/skills/agent-session/spec/templates/state.json",
+                    "lines": "all",
+                    "purpose": "See research_artifacts field in state.json template"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {
+                  "id": "2.4.1.1",
+                  "command": "ADD phase to update session state.json after research completes",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.4.1.2",
+                  "command": "ADD action: append {research_id, report_path, phase, triggered_by} to research_artifacts array",
+                  "file": ".claude/commands/agent-session/research.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Planning Modes - Quick and Full Plans",
+      "goal": "Implement two planning modes (quick: auto-generate ~1 checkpoint, full: interactive multi-checkpoint) with consistent plan structure. Add mode selection and escalation.",
+      "prerequisites": [1],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "3.1",
+          "title": "Add Quick Plan Mode Command",
+          "objective": "Create a quick plan command that auto-generates a simple ~1 checkpoint plan without interactive tiered confirmation. User QAs the result; can escalate if needed.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.1.1",
+              "title": "Create quick-plan command",
+              "file_path": ".claude/commands/agent-session/quick-plan.md",
+              "description": "Create a new plan command variant for chores/simple fixes. Auto-generates plan with ~1 checkpoint based on spec. Skips tiered confirmation. Outputs same plan.json structure for consistency. User QAs and can refine if plan is wrong.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/plan.md",
+                    "lines": "all",
+                    "purpose": "Understand existing full plan command structure"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "82-94",
+                    "purpose": "See quick plan mode requirements"
+                  }
+                ],
+                "related_files": [
+                  ".claude/skills/agent-session/plan/OVERVIEW.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.1.1.1",
+                  "command": "CREATE FILE .claude/commands/agent-session/quick-plan.md",
+                  "file": ".claude/commands/agent-session/quick-plan.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.2",
+                  "command": "ADD workflow: read spec, auto-generate single checkpoint, write plan.json",
+                  "file": ".claude/commands/agent-session/quick-plan.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.3",
+                  "command": "ADD QA step: present plan to user for review with option to refine",
+                  "file": ".claude/commands/agent-session/quick-plan.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Update Plan Command as Full Mode",
+          "objective": "Rename/clarify existing plan command as 'full plan' mode. Ensure it's the default for complex features. Add mode detection hints.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.2.1",
+              "title": "Clarify plan command as full mode",
+              "file_path": ".claude/commands/agent-session/plan.md",
+              "description": "Update existing plan command to clarify it's the 'full' interactive mode. Add guidance on when to use full vs quick plan. Add option to suggest quick plan if task seems simple.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/plan.md",
+                    "lines": "all",
+                    "purpose": "Current plan command structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.2.1.1",
+                  "command": "UPDATE description to clarify this is 'full' interactive planning mode",
+                  "file": ".claude/commands/agent-session/plan.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.1.2",
+                  "command": "ADD guidance section: when to use full vs quick plan",
+                  "file": ".claude/commands/agent-session/plan.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Add Escalation Flow",
+          "objective": "Enable escalating from quick plan to full plan if the auto-generated plan is wrong during QA. Same session, refine the plan interactively.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.3.1",
+              "title": "Add escalation from quick to full plan",
+              "file_path": ".claude/commands/agent-session/quick-plan.md",
+              "description": "Add escalation option in quick-plan QA step. If user says plan needs more work, transition to full plan mode for interactive refinement. Keep same session, don't create new plan.json.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/quick-plan.md",
+                    "lines": "all",
+                    "purpose": "Quick plan command (created in 3.1.1)"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.1.1"],
+              "actions": [
+                {
+                  "id": "3.3.1.1",
+                  "command": "ADD AskUserQuestion in QA step: options include 'Escalate to full plan'",
+                  "file": ".claude/commands/agent-session/quick-plan.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.1.2",
+                  "command": "ADD escalation handler: if escalate, invoke plan.md logic for interactive refinement",
+                  "file": ".claude/commands/agent-session/quick-plan.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "Update SKILL.md with Planning Modes",
+          "objective": "Document both planning modes in SKILL.md. Explain when to use each, correlation with research modes.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.4.1",
+              "title": "Document planning modes in SKILL.md",
+              "file_path": ".claude/skills/agent-session/SKILL.md",
+              "description": "Add section explaining quick vs full planning modes. Include guidance on mode selection, correlation with research modes (light research → quick plan, full research → full plan), and escalation flow.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/SKILL.md",
+                    "lines": "117-131",
+                    "purpose": "Current Phases section to update"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.4.1.1",
+                  "command": "UPDATE Plan Phase section: add quick vs full mode explanation",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.4.1.2",
+                  "command": "ADD Commands table entry for /session:quick-plan",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Build Phase - Checkpoint Commits with Traceability",
+      "goal": "Update build phase to create checkpoint commits in specified format, track commits in state.json linked to checkpoints, and update commit message templates.",
+      "prerequisites": [1, 3],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "4.1",
+          "title": "Update Build Command for Checkpoint Commits",
+          "objective": "Modify build commands to create git commits in the specified format after each checkpoint completes. Format: checkpoint-{N}: {description} + WHY body + Changes list.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.1.1",
+              "title": "Add checkpoint commit creation to build command",
+              "file_path": ".claude/commands/agent-session/build.md",
+              "description": "Update build command to create a git commit after each checkpoint completes verification. Use format: checkpoint-{N}: {brief description} with body containing WHY explanation and Changes bullet list. Follow git skill conventions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/build.md",
+                    "lines": "all",
+                    "purpose": "Current build command structure"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "119-147",
+                    "purpose": "See checkpoint commit format specification"
+                  },
+                  {
+                    "file": ".claude/skills/agent-session/build/OVERVIEW.md",
+                    "lines": "115-128",
+                    "purpose": "Current git commit section in build OVERVIEW"
+                  }
+                ],
+                "related_files": [
+                  ".claude/skills/git/SKILL.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.1.1.1",
+                  "command": "UPDATE git commit section: use HEREDOC format with checkpoint-{N}: subject",
+                  "file": ".claude/commands/agent-session/build.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.1.1.2",
+                  "command": "ADD commit body format: WHY explanation + Changes bullet list",
+                  "file": ".claude/commands/agent-session/build.md",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.1.2",
+              "title": "Update build-background command for checkpoint commits",
+              "file_path": ".claude/commands/agent-session/build-background.md",
+              "description": "Same commit format updates for the autonomous build command.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/build-background.md",
+                    "lines": "all",
+                    "purpose": "Current build-background command structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1"],
+              "actions": [
+                {
+                  "id": "4.1.2.1",
+                  "command": "MIRROR commit format from build.md",
+                  "file": ".claude/commands/agent-session/build-background.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Track Commits in Session State",
+          "objective": "After each checkpoint commit, update state.json commits array with commit metadata linked to checkpoint ID.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.2.1",
+              "title": "Add commit tracking to build commands",
+              "file_path": ".claude/commands/agent-session/build.md",
+              "description": "After creating git commit, update session state.json commits array. Each entry includes: checkpoint_id, sha (from git log), message, created_at. This enables traceability from commits back to checkpoints.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/spec/templates/state.json",
+                    "lines": "all",
+                    "purpose": "See commits array structure (added in task 1.1.1)"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1"],
+              "actions": [
+                {
+                  "id": "4.2.1.1",
+                  "command": "ADD step after git commit: get SHA with git log -1 --format='%H'",
+                  "file": ".claude/commands/agent-session/build.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.2.1.2",
+                  "command": "ADD step: update state.json commits array with {checkpoint_id, sha, message, created_at}",
+                  "file": ".claude/commands/agent-session/build.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Update Build OVERVIEW Documentation",
+          "objective": "Update build/OVERVIEW.md to reflect new commit format and tracking requirements.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.3.1",
+              "title": "Update build OVERVIEW with commit format",
+              "file_path": ".claude/skills/agent-session/build/OVERVIEW.md",
+              "description": "Update the Git Commit section with the new commit format (checkpoint-{N}: + WHY + Changes). Add section on commit tracking in state.json.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/build/OVERVIEW.md",
+                    "lines": "115-128",
+                    "purpose": "Current git commit documentation"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.3.1.1",
+                  "command": "UPDATE Git Commit section with new format: checkpoint-{N}: + WHY body + Changes",
+                  "file": ".claude/skills/agent-session/build/OVERVIEW.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.1.2",
+                  "command": "ADD section: Commit Tracking in state.json",
+                  "file": ".claude/skills/agent-session/build/OVERVIEW.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Debug Integration as Spec Sub-Phase",
+      "goal": "Integrate debug as a sub-phase within spec. Debug changes are ephemeral (not committed), understanding captured in debug/ artifacts. Add debug flow to spec phase.",
+      "prerequisites": [1],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "5.1",
+          "title": "Add Debug Sub-Phase to Spec Command",
+          "objective": "Modify spec command to support entering debug sub-phase. Debug is for understanding (ephemeral changes), findings go to debug/ artifacts.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.1.1",
+              "title": "Add debug sub-phase workflow to spec command",
+              "file_path": ".claude/commands/agent-session/spec.md",
+              "description": "Add a debug sub-phase that can be entered during spec. Flow: SPEC → DEBUG → SPEC (informed). Debug phase allows ephemeral code changes (for understanding), captures findings in debug/{issue}.md. Changes are NOT committed. After debug, return to spec with new understanding.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/commands/agent-session/spec.md",
+                    "lines": "all",
+                    "purpose": "Current spec command structure"
+                  },
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "48-68",
+                    "purpose": "Debug integration requirements and flow diagram"
+                  }
+                ],
+                "related_files": [
+                  ".claude/commands/development/debug.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.1.1.1",
+                  "command": "ADD phase: debug_sub_phase between question_driven_exploration and finalize",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.1.2",
+                  "command": "ADD trigger: when user wants to investigate a bug during spec",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.1.3",
+                  "command": "ADD debug artifact creation: debug/{issue}.md with findings",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.1.4",
+                  "command": "ADD principle: debug changes are ephemeral, not committed",
+                  "file": ".claude/commands/agent-session/spec.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Update SKILL.md with Debug Integration",
+          "objective": "Document the debug sub-phase in SKILL.md and spec/OVERVIEW.md.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.2.1",
+              "title": "Document debug sub-phase in skill docs",
+              "file_path": ".claude/skills/agent-session/SKILL.md",
+              "description": "Add section explaining debug as sub-phase of spec. Include flow diagram, explain ephemeral changes concept, and how debug findings inform the spec.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/SKILL.md",
+                    "lines": "117-131",
+                    "purpose": "Current Phases section"
+                  }
+                ],
+                "related_files": [
+                  ".claude/skills/agent-session/spec/OVERVIEW.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.2.1.1",
+                  "command": "UPDATE Spec Phase section: add debug sub-phase explanation",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.1.2",
+                  "command": "ADD flow diagram: SPEC → DEBUG → SPEC (informed) → PLAN → BUILD",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Documentation Cleanup Phase",
+      "goal": "Add doc cleanup phase at end of session. Agent determines what needs updating using docs-framework skill. Updates happen after build + tests pass, not per-checkpoint.",
+      "prerequisites": [1, 4],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "6.1",
+          "title": "Create Doc Cleanup Command",
+          "objective": "Create a new command for the documentation cleanup phase. Agent reviews changes + spec, determines what docs need updating using docs-framework skill knowledge.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "6.1.1",
+              "title": "Create doc-cleanup command",
+              "file_path": ".claude/commands/agent-session/doc-cleanup.md",
+              "description": "Create a new command for documentation cleanup phase at end of session. Agent: 1) Reviews commits made during build, 2) Reads spec for context, 3) Uses docs-framework skill to determine what needs updating, 4) Updates relevant docs (L2/L3 codebase docs, L4 headers, L5 docstrings as needed), 5) Updates state.json doc_updates array.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "agents/sessions/2026-01-12_agent-session-overhaul_k9m2x7/spec.md",
+                    "lines": "97-108",
+                    "purpose": "Doc integration requirements"
+                  },
+                  {
+                    "file": ".claude/skills/docs-framework/SKILL.md",
+                    "lines": "all",
+                    "purpose": "Understand docs-framework skill for intelligent doc decisions"
+                  }
+                ],
+                "related_files": [
+                  ".claude/commands/docs/write.md",
+                  ".claude/commands/docs/annotate.md"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "6.1.1.1",
+                  "command": "CREATE FILE .claude/commands/agent-session/doc-cleanup.md",
+                  "file": ".claude/commands/agent-session/doc-cleanup.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "6.1.1.2",
+                  "command": "ADD workflow: read commits, read spec, analyze changes significance",
+                  "file": ".claude/commands/agent-session/doc-cleanup.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "6.1.1.3",
+                  "command": "ADD decision logic: USE docs-framework skill to determine what needs updating",
+                  "file": ".claude/commands/agent-session/doc-cleanup.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "6.1.1.4",
+                  "command": "ADD action: update relevant docs using docs/write and docs/annotate patterns",
+                  "file": ".claude/commands/agent-session/doc-cleanup.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "6.1.1.5",
+                  "command": "ADD state update: append to doc_updates array in state.json",
+                  "file": ".claude/commands/agent-session/doc-cleanup.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "6.2",
+          "title": "Update Session Lifecycle Documentation",
+          "objective": "Update SKILL.md to include the doc cleanup phase in the session lifecycle. Add command to commands table.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "6.2.1",
+              "title": "Update SKILL.md with doc cleanup phase",
+              "file_path": ".claude/skills/agent-session/SKILL.md",
+              "description": "Add doc cleanup as final phase before session completion. Update lifecycle diagram. Explain that not every session needs doc updates - agent determines significance.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/agent-session/SKILL.md",
+                    "lines": "27-32",
+                    "purpose": "Current session lifecycle diagram"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "6.2.1.1",
+                  "command": "UPDATE Session Lifecycle diagram: add DOC CLEANUP between BUILD and COMPLETE",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "6.2.1.2",
+                  "command": "ADD Commands table entry for /session:doc-cleanup",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                },
+                {
+                  "id": "6.2.1.3",
+                  "command": "ADD note: not every session needs doc updates - agent determines",
+                  "file": ".claude/skills/agent-session/SKILL.md",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

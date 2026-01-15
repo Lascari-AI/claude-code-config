@@ -1,124 +1,67 @@
 # Running Scripts
 
-A Python script is a file intended for standalone execution, e.g., with `python <script>.py`. Using uv manages script dependencies automatically without manual environment management.
+## Overview
 
-## Running Scripts Without Dependencies
+UV enables execution of Python scripts with automatic dependency management. Scripts run in on-demand environments rather than requiring manual virtual environment setup.
 
-For scripts with no external requirements, execute with `uv run`:
+## Key Concepts
 
-```python
-print("Hello world")
-```
+### Basic Script Execution
 
-```bash
-$ uv run example.py
-Hello world
-```
-
-Standard library modules work similarly:
-
-```python
-import os
-print(os.path.expanduser("~"))
-```
+Scripts without dependencies execute simply:
 
 ```bash
-$ uv run example.py
-/Users/astral
+uv run example.py
 ```
 
-### Passing Arguments
+The tool automatically manages virtual environments for you.
 
-Scripts accept command-line arguments:
+### Dependency Management
 
-```python
-import sys
-print(" ".join(sys.argv[1:]))
-```
+Two primary approaches exist:
+
+1. **Command-line declaration**: `uv run --with rich example.py`
+2. **Inline metadata** in script files using PEP 723 format
+
+## Core Features
+
+### Simple Scripts
+
+Scripts using only standard library modules require no additional setup. Arguments pass directly:
 
 ```bash
-$ uv run example.py test
-test
-
-$ uv run example.py hello world!
-hello world!
+uv run example.py test
 ```
 
-### Reading from stdin
+### Scripts with Dependencies
 
-Scripts can read directly from stdin:
+Use the `--with` flag for single dependencies or repeat it for multiple packages. Version constraints work:
 
 ```bash
-$ echo 'print("hello world!")' | uv run -
-
-uv run - <<EOF
-print("hello world!")
-EOF
+uv run --with 'rich>12,<13' example.py
 ```
 
-### Project Context
+### Inline Script Metadata
 
-If you use `uv run` in a _project_, i.e., a directory with a `pyproject.toml`, it will install the current project before running the script. Use `--no-project` to skip this behavior:
+Initialize with:
 
 ```bash
-$ uv run --no-project example.py
+uv init --script example.py --python 3.12
 ```
 
-## Running Scripts With Dependencies
-
-When scripts require external packages, declare them explicitly. This supports on-demand environment creation rather than long-lived virtual environments.
-
-### Using the --with Flag
-
-For a script requiring the `rich` package:
-
-```python
-import time
-from rich.progress import track
-
-for i in track(range(20), description="For example:"):
-    time.sleep(0.05)
-```
-
-Execute with dependencies:
+Add dependencies using:
 
 ```bash
-$ uv run --with rich example.py
-For example: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:01
+uv add --script example.py 'requests<3' 'rich'
 ```
 
-Add version constraints:
+This creates a `# /// script` section declaring requirements directly in the file.
 
-```bash
-$ uv run --with 'rich>12,<13' example.py
-```
-
-Multiple dependencies can be requested by repeating `--with`:
-
-```bash
-$ uv run --with 'dependency1' --with 'dependency2' example.py
-```
-
-## Creating Python Scripts
-
-Initialize scripts with inline metadata using `uv init --script`:
-
-```bash
-$ uv init --script example.py --python 3.12
-```
-
-## Declaring Script Dependencies
-
-Python supports inline script metadata via PEP 723. Use `uv add --script` to declare dependencies:
-
-```bash
-$ uv add --script example.py 'requests<3' 'rich'
-```
-
-This adds a `script` section at the file's top:
+Example script with inline metadata:
 
 ```python
 # /// script
+# requires-python = ">=3.12"
 # dependencies = [
 #   "requests<3",
 #   "rich",
@@ -133,175 +76,121 @@ data = resp.json()
 pprint([(k, v["title"]) for k, v in data.items()][:10])
 ```
 
-Run the script:
+### Shebang Execution
 
-```bash
-$ uv run example.py
-[
-│   ('1', 'PEP Purpose and Guidelines'),
-│   ('2', 'Procedure for Adding New Modules'),
-│   ...
-]
+Scripts can become executable with:
+
+```python
+#!/usr/bin/env -S uv run --script
 ```
 
-### Python Version Requirements
+Make executable and run directly without the `uv run` prefix:
 
-uv also respects Python version requirements:
+```bash
+chmod +x example.py
+./example.py
+```
+
+### Python Version Management
+
+Request specific versions:
+
+```bash
+uv run --python 3.10 example.py
+```
+
+Specify in metadata:
 
 ```python
 # /// script
 # requires-python = ">=3.12"
-# dependencies = []
 # ///
-
-# Use some syntax added in Python 3.12
-type Point = tuple[float, float]
-print(Point)
 ```
 
-The `dependencies` field must be provided even if empty. uv automatically finds and downloads required Python versions.
+### Locking & Reproducibility
 
-## Using Shebangs for Executable Files
+- Lock dependencies: `uv lock --script example.py`
+- Creates adjacent `.lock` files
+- Add `exclude-newer` timestamps in metadata for reproducible future runs
 
-Make scripts executable by adding a shebang:
+Example with locked dependencies:
 
 ```bash
-#!/usr/bin/env -S uv run --script
-
-print("Hello, world!")
+uv lock --script example.py
+# Creates example.py.lock
 ```
 
-Make executable and run:
+For reproducible builds, add to metadata:
 
-```bash
-$ chmod +x greet
-$ ./greet
-Hello, world!
-```
-
-With dependencies and version requirements:
-
-```bash
-#!/usr/bin/env -S uv run --script
+```python
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["httpx"]
+# dependencies = ["rich"]
+# exclude-newer = "2024-03-25T00:00:00Z"
 # ///
-
-import httpx
-
-print(httpx.get("https://example.com"))
 ```
 
-## Using Alternative Package Indexes
+### GUI Scripts
 
-Specify alternative indexes when adding dependencies:
+Windows `.pyw` files automatically use `pythonw`. Works with GUI libraries like PyQt5 and tkinter.
+
+### Alternative Package Indexes
+
+Use custom package indexes:
 
 ```bash
-$ uv add --index "https://example.com/simple" --script example.py 'requests<3' 'rich'
+uv add --index "https://example.com/simple" --script example.py
 ```
 
-This includes index data in inline metadata:
+## Important Notes
 
-```python
-# [[tool.uv.index]]
-# url = "https://example.com/simple"
-```
+- When using inline script metadata, project dependencies are automatically ignored—the `--no-project` flag becomes unnecessary
+- Use `--no-project` when *not* using inline metadata to skip project installation
+- UV automatically manages virtual environments in the background
+- Scripts with inline metadata are self-contained and portable
 
-Refer to package index documentation for authentication requirements.
+## Common Patterns
 
-## Locking Dependencies
-
-Scripts can be locked using the `uv.lock` file format:
+### Quick Script with External Dependency
 
 ```bash
-$ uv lock --script example.py
+uv run --with rich script.py
 ```
 
-This creates an adjacent `.lock` file (e.g., `example.py.lock`). Subsequent operations like `uv run --script`, `uv add --script`, `uv export --script`, and `uv tree --script` reuse locked dependencies.
+### Production Script with Locked Dependencies
 
-## Improving Reproducibility
+```bash
+# Initialize script
+uv init --script script.py --python 3.12
 
-Add an `exclude-newer` field to limit distributions to those released before a specific date:
+# Add dependencies
+uv add --script script.py requests rich
+
+# Lock dependencies
+uv lock --script script.py
+
+# Run locked script
+uv run script.py
+```
+
+### Executable Script
 
 ```python
+#!/usr/bin/env -S uv run --script
 # /// script
-# dependencies = [
-#   "requests",
-# ]
-# [tool.uv]
-# exclude-newer = "2023-10-16T00:00:00Z"
+# requires-python = ">=3.11"
+# dependencies = ["requests"]
 # ///
 
 import requests
 
-print(requests.__version__)
+def main():
+    print("Hello from UV!")
+
+if __name__ == "__main__":
+    main()
 ```
 
-Dates use RFC 3339 format (e.g., `2006-12-02T02:07:43Z`).
+---
 
-## Using Different Python Versions
-
-Request specific Python versions per invocation:
-
-```python
-import sys
-
-print(".".join(map(str, sys.version_info[:3])))
-```
-
-```bash
-$ uv run example.py
-3.12.6
-
-$ uv run --python 3.10 example.py
-3.10.15
-```
-
-## Using GUI Scripts
-
-On Windows, `.pyw` files execute with `pythonw`:
-
-```python
-from tkinter import Tk, ttk
-
-root = Tk()
-root.title("uv")
-frm = ttk.Frame(root, padding=10)
-frm.grid()
-ttk.Label(frm, text="Hello World").grid(column=0, row=0)
-root.mainloop()
-```
-
-```bash
-PS> uv run example.pyw
-```
-
-With dependencies:
-
-```python
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout
-
-app = QApplication(sys.argv)
-widget = QWidget()
-grid = QGridLayout()
-
-text_label = QLabel()
-text_label.setText("Hello World!")
-grid.addWidget(text_label)
-
-widget.setLayout(grid)
-widget.setGeometry(100, 100, 200, 50)
-widget.setWindowTitle("uv")
-widget.show()
-sys.exit(app.exec_())
-```
-
-```bash
-PS> uv run --with PyQt5 example_pyqt.pyw
-```
-
-## Next Steps
-
-Consult the command reference for `uv run` details, or learn about running and installing tools with uv.
+**Source**: https://docs.astral.sh/uv/guides/scripts/

@@ -75,34 +75,30 @@ Spec mode is:
                 <action>Create new session</action>
                 <steps>
                     <step id="1">If $1 is empty, prompt user for topic</step>
-                    <step id="2">Generate session_id: {YYYY-MM-DD}_{topic-slug}_{6-char-random-id}</step>
-                    <step id="3">Create directory structure:
+                    <step id="2">Initialize session using Python script:
                         ```bash
-                        mkdir -p SESSIONS_DIR/{session_id}/research
-                        mkdir -p SESSIONS_DIR/{session_id}/context/diagrams
-                        mkdir -p SESSIONS_DIR/{session_id}/context/notes
+                        python .claude/skills/agent-session/scripts/init-session.py \
+                            --topic "{topic}" \
+                            [--description "{description}"]
                         ```
+                        Script auto-generates session_id from topic and creates:
+                        - Directory structure: research/, context/, debug/
+                        - Initialized state.json from template
+
+                        Returns JSON with session_id and session_path for subsequent steps.
                     </step>
-                    <step id="4">Initialize state.json with:
-                        - current_phase: "spec"
-                        - phases.spec.status: "draft"
-                        - phases.spec.started_at: now()
-                        - topic: $1 (or prompted value)
-                        - description: $2 (if provided)
-                        - prior_session: null (will be set if user provides one)
-                    </step>
-                    <step id="5">Prompt for prior spec references:
+                    <step id="3">Prompt for prior spec references:
                         - Use AskUserQuestion: "Are there prior specs to reference for context?"
                         - Options: "Yes - I have a prior session ID", "No - this is standalone"
                         - If yes, prompt for session ID input
                         - Update state.json prior_session field with provided ID
                     </step>
-                    <step id="6">If prior_session provided:
+                    <step id="4">If prior_session provided:
                         - Read SESSIONS_DIR/{prior_session}/spec.md
                         - Extract key context: goals, decisions, constraints
                         - Note relevant prior context for this spec
                     </step>
-                    <step id="7">Create initial spec.md from TEMPLATES_DIR/spec.md</step>
+                    <step id="5">Create initial spec.md from TEMPLATES_DIR/spec.md</step>
                 </steps>
             </branch>
         </phase>
@@ -197,6 +193,84 @@ Spec mode is:
             </after_each_answer>
             <exit_condition>User signals readiness to finalize OR all key questions answered</exit_condition>
         </phase>
+        <phase name="4b_debug_sub_phase">
+            <description>Optional sub-phase for investigating bugs during spec. Debug changes are ephemeral (not committed). Understanding captured in debug/ artifacts.</description>
+            <trigger>User signals need to investigate/understand a bug (e.g., "I need to debug this", "Let's investigate", "Can we look into why this happens?")</trigger>
+            <flow_diagram>
+                SPEC → (need to understand bug) → DEBUG SUB-PHASE → SPEC (now informed) → PLAN → BUILD
+                                                        │
+                                                        ├── Make ephemeral changes (logs, repro)
+                                                        ├── Investigate and understand
+                                                        ├── Capture findings in debug/ artifacts
+                                                        └── Changes are NOT committed (revert or discard)
+            </flow_diagram>
+            <principles>
+                - Debug changes are **ephemeral** - for understanding only, NOT committed
+                - Understanding goes into `debug/{issue-slug}.md` artifacts
+                - After debug completes, return to spec phase with new understanding
+                - Plan phase implements the proper fix based on debug findings
+                - Keeps plan/build clean and automatable - debug is exploratory, plan/build is deliberate
+            </principles>
+            <steps>
+                <step id="1">Acknowledge entering debug sub-phase
+                    - Confirm with user what issue we're investigating
+                    - Create issue slug from description (e.g., "random-logout" from "users getting logged out randomly")
+                </step>
+                <step id="2">Investigate using debug techniques
+                    - Read relevant code files
+                    - Add logging/print statements (ephemeral - will be reverted)
+                    - Run tests or repro steps
+                    - Trace data flow and identify root cause
+                    - Use Bash for git operations, test runs, etc.
+                </step>
+                <step id="3">Document findings in debug artifact
+                    - Create `debug/{issue-slug}.md` with:
+                        - Problem description
+                        - Investigation steps taken
+                        - Root cause identified
+                        - Evidence (code snippets, logs)
+                        - Proposed fix direction (for plan phase)
+                </step>
+                <step id="4">Clean up ephemeral changes
+                    - Revert any debug-specific code changes (logs, print statements)
+                    - Use `git checkout -- {files}` or manual revert
+                    - Confirm working directory is clean
+                </step>
+                <step id="5">Return to spec with findings
+                    - Summarize what was learned
+                    - Update spec.md with relevant understanding
+                    - Continue question-driven exploration (phase 4) or proceed to finalize (phase 5)
+                </step>
+            </steps>
+            <debug_artifact_template>
+```markdown
+# Debug: {Issue Description}
+
+**Session**: {session_id}
+**Date**: {date}
+**Status**: Investigated
+
+## Problem
+{What the bug/issue is}
+
+## Investigation Steps
+1. {What was examined}
+2. {What was tried}
+3. ...
+
+## Root Cause
+{The underlying issue identified}
+
+## Evidence
+- `file.ts:123` - {what this showed}
+- {log output or behavior observed}
+
+## Fix Direction
+{High-level approach for the proper fix - to be implemented in plan/build phases}
+```
+            </debug_artifact_template>
+            <exit_condition>User confirms debug investigation is complete OR root cause identified</exit_condition>
+        </phase>
         <phase name="5_finalize">
             <description>Complete and lock the spec for planning phase</description>
             <trigger>User approval (explicit request or confirmation prompt)</trigger>
@@ -243,6 +317,8 @@ DURING SPEC MODE:
 - DO capture the user's reasoning and mental model, not just their answers
 - DO use the user's own phrasing when it conveys important nuance or "taste"
 - DO document WHY decisions were made, not just WHAT was decided
+- DO create debug artifacts in debug/ when entering debug sub-phase
+- DO revert ephemeral debug changes before returning to spec
 
 ALLOWED WRITES:
 - agents/sessions/{session_id}/**  (all session files)
@@ -313,6 +389,42 @@ The spec is now ready for the planning phase. Use `/plan` to begin
 implementation planning, which will use this spec as its foundation.
 
 **Spec Location**: `agents/sessions/{session_id}/spec.md`
+```
+    </scenario>
+
+    <scenario name="enter_debug" trigger="User signals need to debug/investigate">
+```markdown
+## Entering Debug Sub-Phase
+
+**Issue**: {issue description}
+**Artifact**: `debug/{issue-slug}.md`
+
+I'll investigate this issue. Debug changes (logging, test runs) are **ephemeral** -
+they won't be committed. Findings will be captured in the debug artifact.
+
+{Begin investigation}
+```
+    </scenario>
+
+    <scenario name="exit_debug" trigger="Debug investigation complete">
+```markdown
+## Debug Complete
+
+**Issue**: {issue description}
+**Root Cause**: {brief summary}
+**Artifact**: `debug/{issue-slug}.md`
+
+### What We Learned
+{Summary of key findings}
+
+### Fix Direction
+{How this will be addressed in plan/build phases}
+
+---
+
+Returning to spec mode. Any ephemeral changes have been reverted.
+
+{Continue with next question or finalization}
 ```
     </scenario>
 </user_output>

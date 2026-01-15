@@ -108,6 +108,15 @@
     ],
     "SessionStart": [
       {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/env/setup-env.sh\""
+          }
+        ]
+      },
+      {
         "matcher": "*",
         "hooks": [
           {

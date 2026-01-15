@@ -114,18 +114,33 @@ After all tasks complete:
 
 ### Git Commit (Checkpoint = Commit Boundary)
 
-After verification passes (or override), create a commit:
+After verification passes (or override), create a commit using the **Checkpoint Commits** format from the [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-agent-sessions).
 
-```bash
-git add <changed-files>
-git commit -m "checkpoint-N: <checkpoint-title>"
-```
-
-**Commit Message Format**: `checkpoint-N: <short description>`
-- Example: `checkpoint-1: Update plan templates and data models`
-- Example: `checkpoint-2: Add tiered confirmation workflow`
+The git skill defines:
+- Subject format: `checkpoint-N: <brief description>`
+- Body: WHY explanation (reasoning behind changes)
+- Changes section: Bullet list of modifications
 
 This creates a clear commit history aligned with the plan structure.
+
+### Commit Tracking
+
+After each checkpoint commit, update state.json `commits` array:
+
+```json
+{
+  "commits": [
+    {
+      "checkpoint_id": 1,
+      "sha": "abc123def...",
+      "message": "checkpoint-1: Session directory structure",
+      "created_at": "2026-01-14T01:00:00Z"
+    }
+  ]
+}
+```
+
+This enables traceability from commits back to plan checkpoints.
 
 ## State Tracking
 

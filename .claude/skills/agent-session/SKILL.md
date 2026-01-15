@@ -25,10 +25,16 @@ An **Agent Session** is a workspace that tracks a complete development journey:
 ## Session Lifecycle
 
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│   SPEC   │────▶│   PLAN   │────▶│  BUILD   │────▶│ COMPLETE │
-│  (WHAT)  │     │  (HOW)   │     │  (DO)    │     │          │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│   SPEC   │────▶│   PLAN   │────▶│  BUILD   │────▶│   DOCS   │────▶│ COMPLETE │
+│  (WHAT)  │     │  (HOW)   │     │  (DO)    │     │ (UPDATE) │     │          │
+└────┬─────┘     └──────────┘     └──────────┘     └────┬─────┘     └──────────┘
+     │                                                  │
+     ▼ (optional)                                       └── Agent determines if
+┌──────────┐                                               docs need updating
+│  DEBUG   │──── Ephemeral investigation                   (not all sessions do)
+│(sub-phase)│    (findings → debug/ artifacts)
+└──────────┘
 ```
 
 ## Mental Model: The Bridge
@@ -120,15 +126,77 @@ CURRENT STATE                              DESIRED STATE
 Define WHAT to build and WHY.
 → **Read**: [spec/OVERVIEW.md](spec/OVERVIEW.md)
 
+**Debug Sub-Phase** (optional): When investigating a bug during spec, enter the debug sub-phase:
+
+```
+SPEC ──▶ (need to understand bug) ──▶ DEBUG SUB-PHASE ──▶ SPEC (informed) ──▶ PLAN ──▶ BUILD
+                                            │
+                                            ├── Make ephemeral changes (logs, repro)
+                                            ├── Investigate and understand
+                                            ├── Capture findings in debug/ artifacts
+                                            └── Changes are NOT committed (revert or discard)
+```
+
+Key principles:
+- Debug changes are **ephemeral** - for understanding only, NOT committed
+- Understanding goes into `debug/{issue-slug}.md` artifacts
+- After debug completes, return to spec with new understanding
+- Plan phase implements the proper fix based on debug findings
+- Keeps plan/build clean and automatable - debug is exploratory, plan/build is deliberate
+
 ### Plan Phase
 Design HOW to implement with checkpoints and IDK tasks.
 → **Read**: [plan/OVERVIEW.md](plan/OVERVIEW.md)
+
+**Two Planning Modes**:
+
+| Mode | Command | Use When |
+|------|---------|----------|
+| **Quick Plan** | `/session:quick-plan` | Chores, bug fixes, small changes (1-3 files) |
+| **Full Plan** | `/session:plan` | Features, refactoring, complex work (multiple checkpoints) |
+
+**Quick Plan**: Auto-generates complete plan (~1 checkpoint), user QAs result. Faster, less overhead.
+
+**Full Plan**: Interactive tier-by-tier planning with user confirmation at each stage. More control, thorough.
+
+**Mode Correlation**:
+- Light research → Quick plan → Fast build
+- Full research → Full plan → Careful build
+
+**Escalation**: If quick plan generates something too complex, user can escalate to full plan for interactive refinement within the same session.
 
 ### Build Phase
 Execute the plan checkpoint by checkpoint. Two modes available:
 - **Interactive** (`/session:build`) - Task-by-task with confirmation (default)
 - **Autonomous** (`/session:build-background`) - Execute and report
 → **Read**: [build/OVERVIEW.md](build/OVERVIEW.md)
+
+### Docs Update Phase
+Update documentation at the end of a session after build + tests pass.
+
+**Key principles**:
+- Runs at END of session (after all checkpoints complete), NOT per-checkpoint
+- Agent determines what needs updating using docs-framework skill knowledge
+- **NOT every session needs doc updates** - agent determines significance
+- Rely on model intelligence, not prescriptive rules
+
+**What gets updated** (agent decides):
+- **L2/L3 (Codebase docs)** - For significant features, architectural changes
+- **L4 (File headers)** - For files with changed purpose
+- **L5 (Function docstrings)** - For new/changed functions with complex behavior
+
+**Change types that typically need docs**:
+- New features ✓
+- Behavioral changes ✓
+- Architectural refactors ✓
+
+**Change types that usually don't**:
+- Variable renames ✗
+- Simple bug fixes ✗
+- Dead code removal ✗
+- Chores/cleanup ✗
+
+**Outcome tracking**: Results recorded in `state.json.doc_updates` array (even if "no updates needed").
 
 ## Commands
 
@@ -137,22 +205,32 @@ Execute the plan checkpoint by checkpoint. Two modes available:
 | `/session:spec [topic]` | Start new spec session |
 | `/session:spec [session-id]` | Resume existing session |
 | `/session:spec [session-id] finalize` | Finalize session spec |
-| `/session:plan [session-id]` | Start/resume planning |
+| `/session:quick-plan [session-id]` | Auto-generate plan for simple tasks (QA at end) |
+| `/session:plan [session-id]` | Interactive tier-by-tier planning |
 | `/session:plan [session-id] finalize` | Finalize the plan |
 | `/session:build [session-id]` | Interactive build - task-by-task with confirmation |
 | `/session:build-background [session-id]` | Autonomous build - execute checkpoint |
+| `/session:docs-update [session-id]` | Update documentation at end of session |
 
 ## Session Directory Structure
 
 ```
 agents/sessions/{session-id}/
-├── state.json       # Session state and progress
-├── spec.md          # WHAT: Goals, requirements, context
+├── state.json       # Session state, phase tracking, commits, artifacts
+├── spec.md          # WHAT: Goals, requirements, decisions
 ├── plan.json        # HOW: Checkpoints and tasks (source of truth)
-├── plan.md          # HOW: Human-readable (generated)
-├── research/        # Research artifacts
-└── context/         # Supporting materials
+├── plan.md          # HOW: Human-readable (auto-generated from plan.json)
+├── research/        # Research artifacts (organized by research session)
+│   └── {research-id}/
+│       ├── state.json   # Metadata: phase, triggered_by, mode
+│       ├── report.md    # Synthesized findings
+│       └── subagents/   # Raw subagent findings (if full research)
+├── context/         # Supporting materials (flat - diagrams, notes, etc.)
+└── debug/           # Debug session artifacts (if debugging occurred)
+    └── {issue}.md   # Debug findings, reproduction steps, root cause
 ```
+
+**Initialization**: Use `python .claude/skills/agent-session/scripts/init-session.py --topic "Topic"` to create session directories. The script auto-generates the session ID and initializes state.json from template.
 
 ## Session ID Format
 

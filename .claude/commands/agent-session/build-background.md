@@ -151,10 +151,10 @@ Build mode:
             <description>Create git commit (checkpoint = commit boundary)</description>
             <steps>
                 <step id="1">Stage changed files: git add &lt;changed-files&gt;</step>
-                <step id="2">Create commit: git commit -m "checkpoint-N: &lt;checkpoint-title&gt;"</step>
+                <step id="2">Create commit using **Checkpoint Commits** format from [git skill](/.claude/skills/git/SKILL.md#checkpoint-commits-agent-sessions)</step>
                 <step id="3">Capture commit hash for reporting</step>
             </steps>
-            <note>Each checkpoint produces exactly one commit with format: checkpoint-N: description</note>
+            <note>Each checkpoint produces exactly one commit. See git skill for format details.</note>
         </phase>
 
         <phase name="6_update_state">
@@ -172,6 +172,12 @@ Build mode:
                     - checkpoints[id].status: "completed"
                 </step>
                 <step id="3">Append new DevNotes to dev-notes.json</step>
+                <step id="4">Append commit to state.json commits array:
+                    - checkpoint_id: completed checkpoint ID
+                    - sha: commit hash from step 5b
+                    - message: first line of commit message
+                    - created_at: now()
+                </step>
             </steps>
         </phase>
 

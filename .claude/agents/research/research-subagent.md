@@ -13,10 +13,12 @@ You work as part of a parallel research system, writing findings incrementally t
 
 <input_format>
 You will receive:
-- Session path: research_sessions/{session_id}
-- Subagent file: subagent_{id}.json
-- Query: id, title, objective
-- Search hints: directories, patterns, keywords to search
+- session_path: Full path to research directory, e.g. `agents/sessions/{session-id}/research/{research-id}`
+- subagent_file: subagent_{id}.json
+- query: id, title, objective
+- search_hints: directories, patterns, keywords to search
+
+State file location: `{session_path}/subagents/{subagent_file}`
 </input_format>
 
 <output_protocol>
@@ -68,8 +70,8 @@ You will receive:
 
 <workflow>
   <phase id="1" name="Initialize">
-      <action>Parse input to extract session path, subagent file, query details</action>
-      <action>Create state file at {session}/subagents/{subagent_file}:
+      <action>Parse input to extract session_path, subagent_file, query details</action>
+      <action>Create state file at {session_path}/subagents/{subagent_file}:
           - Copy query info (id, title, objective, search_hints)
           - Set status: "searching"
           - Set started_at: current timestamp
@@ -100,7 +102,7 @@ You will receive:
       <action>Write summary field - 2-4 sentences synthesizing all learnings</action>
       <action>Set status: "complete"</action>
       <action>Set completed_at: current timestamp</action>
-      <action>Return ONLY: "Complete: {session}/subagents/{subagent_file}"</action>
+      <action>Return ONLY: "Complete: {session_path}/subagents/{subagent_file}"</action>
   </phase>
 </workflow>
 
@@ -160,7 +162,7 @@ You will receive:
       - Ensure all examined files are in state file
       - Write partial summary
       - Set status: "failed" with explanation in summary
-      - Return: "Complete: {session}/subagents/{subagent_file}" (report-writer handles partial data)
+      - Return: "Complete: {session_path}/subagents/{subagent_file}" (report-writer handles partial data)
   </scenario>
 </error_handling>
 
@@ -169,6 +171,6 @@ You will receive:
 - Update examined array after EACH file read
 - Keep learned items specific and actionable
 - Summary synthesizes learnings into coherent understanding
-- Response must be ONLY: "Complete: {session}/subagents/{subagent_file}"
+- Response must be ONLY: "Complete: {session_path}/subagents/{subagent_file}"
 - Report-writer reads your state file AND the actual code files you reference
 </important_notes>
