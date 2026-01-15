@@ -30,18 +30,24 @@ Control Claude's behavior during an interactive session with slash commands.
 | `/model` | Select or change the AI model |
 | `/output-style [style]` | Set the output style directly or from a selection menu |
 | `/permissions` | View or update [permissions](https://code.claude.com/docs/en/iam#configuring-permissions) |
+| `/plan` | Enter plan mode directly from the prompt |
 | `/plugin` | Manage Claude Code plugins |
 | `/pr-comments` | View pull request comments |
 | `/privacy-settings` | View and update your privacy settings |
 | `/release-notes` | View release notes |
-| `/resume` | Resume a conversation |
+| `/rename <name>` | Rename the current session for easier identification |
+| `/remote-env` | Configure remote session environment (claude.ai subscribers) |
+| `/resume [session]` | Resume a conversation by ID or name, or open the session picker |
 | `/review` | Request code review |
 | `/rewind` | Rewind the conversation and/or code |
 | `/sandbox` | Enable sandboxed bash tool with filesystem and network isolation for safer, more autonomous execution |
 | `/security-review` | Complete a security review of pending changes on the current branch |
+| `/stats` | Visualize daily usage, session history, streaks, and model preferences |
 | `/status` | Open the Settings interface (Status tab) showing version, model, account, and connectivity |
 | `/statusline` | Set up Claude Code's status line UI |
-| `/terminal-setup` | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only) |
+| `/teleport` | Resume a remote session from claude.ai by session ID, or open a picker (claude.ai subscribers) |
+| `/terminal-setup` | Install Shift+Enter key binding for newlines (VS Code, Alacritty, Zed, Warp) |
+| `/theme` | Change the color theme |
 | `/todos` | List current TODO items |
 | `/usage` | For subscription plans only: show plan usage limits and rate limit status |
 | `/vim` | Enter vim mode for alternating insert and command modes |
@@ -49,6 +55,8 @@ Control Claude's behavior during an interactive session with slash commands.
 ## Custom slash commands
 
 Custom slash commands allow you to define frequently used prompts as Markdown files that Claude Code can execute. Commands are organized by scope (project-specific or personal) and support namespacing through directory structures.
+
+Slash command autocomplete works anywhere in your input, not just at the beginning. Type `/` at any position to see available commands.
 
 ### Syntax
 
@@ -174,7 +182,7 @@ Include file contents in commands using the `@` prefix to [reference files](http
 
 For example:
 
-```markdown
+```
 # Reference a specific file
 
 Review the implementation in @src/utils/helpers.js
@@ -198,7 +206,8 @@ Command files support frontmatter, useful for specifying metadata about the comm
 | `argument-hint` | The arguments expected for the slash command. Example: `argument-hint: add [tagId] | remove [tagId] | list`. This hint is shown to the user when auto-completing the slash command. | None |
 | `description` | Brief description of the command | Uses the first line from the prompt |
 | `model` | Specific model string (see [Models overview](https://docs.claude.com/en/docs/about-claude/models/overview)) | Inherits from the conversation |
-| `disable-model-invocation` | Whether to prevent `SlashCommand` tool from calling this command | false |
+| `disable-model-invocation` | Whether to prevent the `Skill` tool from calling this command | false |
+| `hooks` | Define hooks scoped to this command's execution. See [Define hooks for commands](#define-hooks-for-commands). | None |
 
 For example:
 
@@ -225,6 +234,31 @@ Review PR #$1 with priority $2 and assign to $3.
 Focus on security, performance, and code style.
 ```
 
+#### Define hooks for commands
+
+Slash commands can define hooks that run during the command's execution. Use the `hooks` field to specify `PreToolUse`, `PostToolUse`, or `Stop` handlers:
+
+```markdown
+---
+description: Deploy to staging with validation
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate-deploy.sh"
+          once: true
+---
+
+Deploy the current branch to staging environment.
+```
+
+The `once: true` option runs the hook only once per session. After the first successful execution, the hook is removed.
+
+Hooks defined in a command are scoped to that command's execution and are automatically cleaned up when the command finishes.
+
+See [Hooks](https://code.claude.com/docs/en/hooks) for the complete hook configuration format.
+
 ## Plugin commands
 
 [Plugins](https://code.claude.com/docs/en/plugins) can provide custom slash commands that integrate seamlessly with Claude Code. Plugin commands work exactly like user-defined commands but are distributed through [plugin marketplaces](https://code.claude.com/docs/en/plugin-marketplaces).
@@ -240,6 +274,7 @@ Plugin commands are:
 ### Plugin command structure
 
 **Location**: `commands/` directory in plugin root
+
 **File format**: Markdown files with frontmatter
 
 **Basic command structure**:
@@ -264,19 +299,19 @@ Include specific guidance on parameters, expected outcomes, and any special cons
 
 ### Invocation patterns
 
-Direct command (when no conflicts)
+Direct command (when no conflicts):
 
 ```
 /command-name
 ```
 
-Plugin-prefixed (when needed for disambiguation)
+Plugin-prefixed (when needed for disambiguation):
 
 ```
 /plugin-name:command-name
 ```
 
-With arguments (if command supports them)
+With arguments (if command supports them):
 
 ```
 /command-name arg1 arg2
@@ -308,7 +343,7 @@ MCP commands are automatically available when:
 
 MCP prompts can accept arguments defined by the server:
 
-```bash
+```
 # Without arguments
 > /mcp__github__list_prs
 
@@ -336,72 +371,81 @@ Use the `/mcp` command to:
 
 ### MCP permissions and wildcards
 
-Wildcards aren't supported in [permissions for MCP tools](https://code.claude.com/docs/en/iam#tool-specific-permission-rules).
-
-To approve all tools from an MCP server, use the server name alone, without wildcards:
+To approve all tools from an MCP server, use either the server name alone or wildcard syntax:
 
 - `mcp__github` (approves all GitHub tools)
+- `mcp__github__*` (wildcard syntax, also approves all GitHub tools)
 
 To approve specific tools, list each one explicitly:
 
 - `mcp__github__get_issue`
 - `mcp__github__list_issues`
 
-## `SlashCommand` tool
+See [MCP permission rules](https://code.claude.com/docs/en/iam#tool-specific-permission-rules) for more details.
 
-The `SlashCommand` tool allows Claude to execute [custom slash commands](https://code.claude.com/docs/en/slash-commands#custom-slash-commands) programmatically during a conversation. This gives Claude the ability to invoke custom commands on your behalf when appropriate.
+## `Skill` tool
 
-To encourage Claude to use the `SlashCommand` tool, reference the command by name, including the slash, in your prompts or `CLAUDE.md` file. For example:
+In earlier versions of Claude Code, slash command invocation was provided by a separate `SlashCommand` tool. This has been merged into the `Skill` tool. If you have existing permission rules using `SlashCommand`, update them to use `Skill`.
+
+The `Skill` tool allows Claude to programmatically invoke both [custom slash commands](#custom-slash-commands) and [Agent Skills](https://code.claude.com/docs/en/skills) during a conversation. This gives Claude the ability to use these capabilities on your behalf when appropriate.
+
+### What the `Skill` tool can invoke
+
+The `Skill` tool provides access to:
+
+| Type | Location | Requirements |
+| --- | --- | --- |
+| Custom slash commands | `.claude/commands/` or `~/.claude/commands/` | Must have `description` frontmatter |
+| Agent Skills | `.claude/skills/` or `~/.claude/skills/` | Must not have `disable-model-invocation: true` |
+
+Built-in commands like `/compact` and `/init` are _not_ available through this tool.
+
+### Encourage Claude to use specific commands
+
+To encourage Claude to use the `Skill` tool, reference the command by name, including the slash, in your prompts or `CLAUDE.md` file:
 
 ```
 > Run /write-unit-test when you are about to start writing tests.
 ```
 
-This tool puts each available custom slash command's metadata into context up to the character budget limit. You can use `/context` to monitor token usage and follow the operations below to manage context.
+This tool puts each available command's metadata into context up to the character budget limit. Use `/context` to monitor token usage.
 
-### `SlashCommand` tool supported commands
+To see which commands and Skills are available to the `Skill` tool, run `claude --debug` and trigger a query.
 
-`SlashCommand` tool only supports custom slash commands that:
+### Disable the `Skill` tool
 
-- Are user-defined. Built-in commands like `/compact` and `/init` are _not_ supported.
-- Have the `description` frontmatter field populated. The description is used in the context.
-
-For Claude Code versions >= 1.0.124, you can see which custom slash commands `SlashCommand` tool can invoke by running `claude --debug` and triggering a query.
-
-### Disable `SlashCommand` tool
-
-To prevent Claude from executing any slash commands via the tool:
+To prevent Claude from programmatically invoking any commands or Skills:
 
 ```
 /permissions
-# Add to deny rules: SlashCommand
+# Add to deny rules: Skill
 ```
 
-This also removes the SlashCommand tool and command descriptions from context.
+This removes the `Skill` tool and all command/Skill descriptions from context.
 
-### Disable specific commands only
+### Disable specific commands or Skills
 
-To prevent a specific slash command from becoming available, add `disable-model-invocation: true` to the slash command's frontmatter.
+To prevent a specific command or Skill from being invoked programmatically via the `Skill` tool, add `disable-model-invocation: true` to its frontmatter. This also removes the item's metadata from context.
 
-This also removes the command's metadata from context.
+The `user-invocable` field in Skills only controls menu visibility, not `Skill` tool access. Use `disable-model-invocation: true` to block programmatic invocation. See [Control Skill visibility](https://code.claude.com/docs/en/skills#control-skill-visibility) for details.
 
-### `SlashCommand` permission rules
+### `Skill` permission rules
 
 The permission rules support:
 
-- **Exact match**: `SlashCommand:/commit` (allows only `/commit` with no arguments)
-- **Prefix match**: `SlashCommand:/review-pr:*` (allows `/review-pr` with any arguments)
+- **Exact match**: `Skill(/commit)` (allows only `/commit` with no arguments)
+- **Prefix match**: `Skill(/review-pr:*)` (allows `/review-pr` with any arguments)
 
 ### Character budget limit
 
-The `SlashCommand` tool includes a character budget to limit the size of command descriptions shown to Claude. This prevents token overflow when many commands are available.
+The `Skill` tool includes a character budget to limit context usage. This prevents token overflow when many commands and Skills are available.
 
-The budget includes each custom slash command's name, arguments, and description.
+The budget includes each item's name, arguments, and description.
 
 - **Default limit**: 15,000 characters
-- **Custom limit**: Set via `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable
+- **Custom limit**: Set via `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable. The name is retained for backwards compatibility.
 
-When the character budget is exceeded, Claude sees only a subset of the available commands. In `/context`, a warning shows "M of N commands".
+When the budget is exceeded, Claude sees only a subset of available items. In `/context`, a warning shows how many are included.
 
 ## Skills vs slash commands
 

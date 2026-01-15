@@ -1,4 +1,4 @@
-# Hooks Reference
+# Hooks reference
 
 For a quickstart guide with examples, see [Get started with Claude Code hooks](https://code.claude.com/docs/en/hooks-guide).
 
@@ -9,7 +9,9 @@ Claude Code hooks are configured in your [settings files](https://code.claude.co
 - `~/.claude/settings.json` - User settings
 - `.claude/settings.json` - Project settings
 - `.claude/settings.local.json` - Local project settings (not committed)
-- Enterprise managed policy settings
+- Managed policy settings
+
+Enterprise administrators can use `allowManagedHooksOnly` to block user, project, and plugin hooks. See [Hook configuration](https://code.claude.com/docs/en/settings#hook-configuration).
 
 ### Structure
 
@@ -128,6 +130,48 @@ Plugin hooks run alongside your custom hooks. If multiple hooks match an event, 
 - All standard environment variables are available
 
 See the [plugin components reference](https://code.claude.com/docs/en/plugins-reference#hooks) for details on creating plugin hooks.
+
+### Hooks in Skills, Agents, and Slash Commands
+
+In addition to settings files and plugins, hooks can be defined directly in [Skills](https://code.claude.com/docs/en/skills), [subagents](https://code.claude.com/docs/en/sub-agents), and [slash commands](https://code.claude.com/docs/en/slash-commands) using frontmatter. These hooks are scoped to the component's lifecycle and only run when that component is active.
+
+**Supported events**: `PreToolUse`, `PostToolUse`, and `Stop`
+
+**Example in a Skill**:
+
+```yaml
+---
+name: secure-operations
+description: Perform operations with security checks
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/security-check.sh"
+---
+```
+
+**Example in an agent**:
+
+```yaml
+---
+name: code-reviewer
+description: Review code changes
+hooks:
+  PostToolUse:
+    - matcher: "Edit|Write"
+      hooks:
+        - type: command
+          command: "./scripts/run-linter.sh"
+---
+```
+
+Component-scoped hooks follow the same configuration format as settings-based hooks but are automatically cleaned up when the component finishes executing.
+
+**Additional option for skills and slash commands:**
+
+- `once`: Set to `true` to run the hook only once per session. After the first successful execution, the hook is removed. Note: This option is currently only supported for skills and slash commands, not for agents.
 
 ## Prompt-Based Hooks
 
@@ -427,7 +471,7 @@ Hooks receive JSON data via stdin containing session information and event-speci
   session_id: string
   transcript_path: string  // Path to conversation JSON
   cwd: string              // The current working directory when the hook is invoked
-  permission_mode: string  // Current permission mode: "default", "plan", "acceptEdits", or "bypassPermissions"
+  permission_mode: string  // Current permission mode: "default", "plan", "acceptEdits", "dontAsk", or "bypassPermissions"
 
   // Event-specific fields
   hook_event_name: string
@@ -629,14 +673,15 @@ If `continue` is false, Claude stops processing after the hooks run.
 
 Additionally, hooks can modify tool inputs before execution using `updatedInput`:
 
-- `updatedInput` allows you to modify the tool's input parameters before the tool executes.
-- This is most useful with `"permissionDecision": "allow"` to modify and approve tool calls.
+- `updatedInput` modifies the tool's input parameters before the tool executes
+- Combine with `"permissionDecision": "allow"` to modify the input and auto-approve the tool call
+- Combine with `"permissionDecision": "ask"` to modify the input and show it to the user for confirmation
 
 ```json
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
-    "permissionDecision": "allow"
+    "permissionDecision": "allow",
     "permissionDecisionReason": "My reason here",
     "updatedInput": {
       "field_to_modify": "new value"
@@ -751,7 +796,7 @@ The JSON format isn't required for simple use cases. To add context, you can pri
 
 `SessionEnd` hooks run when a session ends. They cannot block session termination but can perform cleanup tasks.
 
-### Exit Code Example: Bash Command Validation
+#### Exit Code Example: Bash Command Validation
 
 ```python
 #!/usr/bin/env python3
@@ -801,7 +846,7 @@ if issues:
     sys.exit(2)
 ```
 
-### JSON Output Example: UserPromptSubmit to Add Context and Validation
+#### JSON Output Example: UserPromptSubmit to Add Context and Validation
 
 For `UserPromptSubmit` hooks, you can inject context using either method:
 
@@ -859,7 +904,7 @@ print(json.dumps({
 sys.exit(0)
 ```
 
-### JSON Output Example: PreToolUse with Approval
+#### JSON Output Example: PreToolUse with Approval
 
 ```python
 #!/usr/bin/env python3
@@ -935,10 +980,6 @@ You can target specific MCP tools or entire MCP servers:
   }
 }
 ```
-
-## Examples
-
-For practical examples including code formatting, notifications, and file protection, see [More Examples](https://code.claude.com/docs/en/hooks-guide#more-examples) in the get started guide.
 
 ## Security Considerations
 
