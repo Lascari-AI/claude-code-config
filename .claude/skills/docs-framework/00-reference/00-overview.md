@@ -6,7 +6,12 @@ concepts: [reference, philosophy, architecture, theory, background]
 
 # Reference
 
-Background theory and philosophy. This section explains the "why" behind the framework — the problem it solves, the bets it makes, and the architectural model that enables it.
+Background theory and philosophy. 
+
+This section explains the "why" behind the framework
+- The problem it solves
+- The bets it makes
+- The architectural model that enables it.
 
 ---
 

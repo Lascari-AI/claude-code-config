@@ -1,126 +1,192 @@
 ---
 covers: Why documentation is the source of truth — the philosophy behind docs-first development.
-concepts: [philosophy, lossy-projection, specs-as-source, progressive-revelation, overview-as-abstract, docs-first, domain-driven-design, ubiquitous-language, bounded-contexts]
+concepts: [philosophy, lossy-projection, specs-as-source, repair-manual, docs-first]
 ---
 
-# Why This Framework
+# The Problem
 
-**Code is a lossy projection of intent.** You can't reconstruct "why" from "how."
+Models are already intelligent enough to do complex coding tasks. Intelligence isn't the bottleneck.
 
-The real work isn't writing code — it's explaining the problem, deciding how to solve it, and capturing what you learn. 
+The problem is context.
 
-Code is one expression of that understanding. It can be rewritten entirely. The decisions and reasoning are what persist.
+Every invocation starts fresh:
 
-This framework structures that understanding so both humans and AI agents can read it.
+- No memory of previous sessions
+- No knowledge of your architecture, patterns, or decisions
+- No understanding of why the code is structured the way it is
 
----
+Without structure, agents reverse-engineer intent from code on every task. Slow, error-prone, misaligned.
 
-## The Problem
+# The Question
 
-AI agents have intelligence. What they lack is context.
+If we want agents to scale and operate independently, how do we get there?
 
-Every invocation starts fresh — no memory of your architecture, patterns, or decisions. Without documentation, agents reverse-engineer intent from code: slow, error-prone, misaligned.
+You can't be there every time to:
 
-The fix isn't smarter AI. It's shared understanding.
+- Point them to the right files
+- Explain how systems connect
+- Remind them of decisions made months ago
 
----
+What would a system need to look like for agents to find the information they need without your input? Every invocation. On their own.
 
-## The Insight
+# The Mental Model
 
-**Specs change slowly. Code changes fast.**
+## Car Repair Manuals
 
-Your decisions — architecture, flows, trade-offs — evolve over months. Code changes constantly: refactors, rewrites, migrations. 
+When you open a car repair manual, you don't get a list of every bolt in the car.
 
-If specs are solid, you can rebuild correctly every time. 
+Everything is thoroughly documented, but it's structured so you can solve any problem efficiently:
 
-**The specification contains more information than the code it produces.**
+1. The index
+   - Here are all the systems: 
+     - Engine
+     - Transmission
+     - Brakes
+     - Electrical
+     - AC
+     - etc.
+   - You only read the sections relevant to your problem
+2. Per-system overviews
+   - "Here's how the engine works as a complete unit" before any part-level details
+   - You understand the overall system first
+3. Progressive drilling
+   - System → subsystem → component → procedure
+   - You delve into specifics only when you need to focus on an individual subsystem
 
-Physical engineering knows this. A mechanic in Tokyo rebuilds a Detroit engine using only the manual. Boeing documents every component and tolerance — "the plane is the documentation" would be absurd. The US Constitution is a versioned specification: amendments update it, judicial review checks compliance, precedents test edge cases.
+The structure enables efficient lookup. 
 
-Software abandoned this rigor. We're correcting it.
+You see the engine, find the relevant subsystem, locate the specific component. 
 
----
+If you need to understand something adjacent, there's an efficient path to that too. 
 
-## Domain-Driven Design
+But you're never forced to read sections you don't need.
 
-**The domain is the heart of software.**
+## The Software Problem
 
-Domain-Driven Design (DDD) teaches that software should model the business domain — not technical concerns. The most valuable code isn't clever algorithms; it's code that accurately represents how the business actually works.
+This works for cars because physical objects are fixed once manufactured.
 
-This framework embraces DDD principles:
+When you change a transmission design, you can't replace every transmission already in the field. 
+- Recalls happen, but they're expensive and rare. 
+  
+The nature of physical objects means once you build it, you can't easily update it.
 
-- **Ubiquitous Language** — Documentation uses the same terms as domain experts. When code says `Order`, docs say `Order`, and stakeholders say `Order`. No translation layer.
-- **Bounded Contexts** — Each major section (L2) represents a distinct domain boundary. Dependencies and translations between contexts are explicit.
-- **Domain at the Center** — L3 concept docs capture domain logic and rules. Technical implementation details are secondary to domain understanding.
+So the manual can be static. The thing it documents doesn't change.
 
-Documentation becomes the **shared model** between humans and AI. When an agent reads your docs, it learns the domain language, understands the boundaries, and can reason about business rules — not just call functions.
+Software is fluid:
 
-DDD and docs-first reinforce each other: documenting the domain forces clarity, and clear domain models make documentation straightforward.
+- Refactors reshape the codebase
+- Features add new systems
+- Migrations swap out foundations
+- The "shape" of the system evolves constantly
 
----
+You can't assume a static manual works when the system itself is constantly changing.
 
-## Progressive Revelation
+## Factorio as the Bridge
 
-Engineers build understanding progressively, not randomly:
+Factorio provides a mental model for documentation that can keep up with change.
 
-1. What is this system? → L1
-2. What are the major parts? → L2
-3. How does this domain work? → L3
-4. What does this file do? → L4
-5. What does this function promise? → L5
-6. How is it implemented? → L6
+Each factory system owns its operation completely:
 
-This framework codifies that pattern. Agents navigate from intent to implementation the way experienced engineers do — loading only what's needed for the task at hand.
+- Clear boundaries
+  - The transmission section is completely separate from the engine section
+  - Even though they're mechanically connected
+- Defined interfaces
+  - You only need to know what comes in and what goes out
+  - "Torque comes in here, gear ratio happens, power goes out there"
+- Self-contained
+  - You can work on the transmission without understanding combustion dynamics
 
----
+When something changes, you update that slice. 
 
-## The Overview as Abstract
+The boundaries contain the blast radius. 
 
-Think of overviews like chapter abstracts in a textbook or abstracts in academic papers.
+Adjacent systems only care about the interface—if inputs and outputs stay stable, their docs don't need to change.
 
-Before reading a paper, you read the abstract. It tells you:
-- What problem is being addressed
-- The approach taken
-- Key findings or components
-- What you'll learn by reading further
+This makes documentation maintainable:
 
-After reading the abstract, you have a mental model. You understand the shape of what's coming. You can decide whether to read deeper — and if you do, the details slot into a framework you already hold.
-
-**Overviews serve the same purpose.** An L1 overview should give you the system's shape. An L2 overview should give you the domain's mental model. After reading an overview, you should be able to:
-
-1. Explain the domain to a colleague
-2. Understand what you'll find if you go deeper
-3. Decide whether this is the section you need
-
-Navigation is a side effect, not the goal. The goal is **comprehension at that level**. Child documents exist for depth, not for initial understanding.
-
-This is why L2 overviews need substance — flows, components, key concepts — not just a list of files. The list of files is table of contents. The overview is the abstract.
-
----
-
-## Docs-First Development
-
-An opinionated approach:
-
-1. **Document decisions and intent** — the slow-changing source of truth
-2. **Implement against that documentation** — code expresses the spec
-3. **Keep them synchronized** — docs evolve with the system
-
-As AI writes more code, the highest-leverage skill becomes expressing intent clearly. Documentation becomes the source; generated code becomes the artifact.
-
-Structure beats brute force. Even with massive context windows, signal-to-noise matters — structured docs find exactly what's needed, fast.
-
----
-
-## The Bottom Line
-
-This framework encodes your mental model so agents can execute against it.
-
-Not by making AI smarter, but by making your intelligence shareable.
+- Small, focused updates instead of rewriting everything
+- Changes stay local to the affected slice
+- The structure survives evolution
 
 ---
 
-## References
+# The Vision
+
+The key idea: 
+
+- Code is a lossy projection of intent.
+
+What does this mean?
+
+- Every company has an intent behind what they're trying to build. 
+- Every project has a goal it's trying to achieve. 
+- The medium we use to solve these problems is code.
+
+Each attempt (each release, each pull request, etc.) is a projection into the space of completing that intent. 
+- You're taking the idea in your head and projecting it out into executable code.
+
+Think about compiling C code to assembly and back. 
+- You lose the comments, the variable names, the structure that told you what the code was doing. 
+ 
+The information that gave meaning is gone.
+
+The same thing happens at a higher level. 
+
+When you try to understand what was being built by just looking at the code, you fail. 
+
+The intent isn't there anymore. It's been projected away.
+
+This is exactly what coding agents do today. 
+- They look at your code and try to deduce what your intent was
+- This is why they go down wrong paths—they're trying to reconstruct something that was lost in the projection
+
+If you separate these two—keep the intent explicit in documentation, separate from the code—you can rebuild the system exactly as you designed it. Or better.
+
+The intent behind any product is what matters. The code is just the current means to achieve it.
+
+The goal: you could give a smart system all of your documentation, and it should be able to rebuild the system the way you built it.
+
+## Why This Wasn't Possible Before
+
+Because software changes rapidly, keeping docs up to date was never a priority. 
+- It took too much time 
+- The docs would rot
+- Eventually people stopped maintaining them all together
+
+Agents change this equation.
+
+Agents can create and maintain documentation alongside the code. 
+- The time cost drops dramatically
+- What was impractical becomes possible
+
+## The Workflow
+
+1. Specify your intent
+   - What you want to build, how it should work
+2. Project out the code
+   - The agent implements against the spec
+3. Update the docs
+   - Capture what changed and why
+
+The intent and structure you set up becomes the source. 
+
+Each change projects out into code, then reflects back into documentation.
+
+## The End State
+
+A constantly evolving documentation set that captures intent, decisions, and domain knowledge.
+
+If you lost all the code and needed to rebuild from scratch, this documentation provides the source to recreate it.
+
+If a dramatically better coding model comes out next year, you give it the docs and it rewrites everything—ideally better—while maintaining all the constraints, ideas, and decisions you specified.
+
+The documentation is the durable artifact. 
+
+The code is just the current projection.
+
+---
+
+# Inspiration / References
 
 - [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents) — Dex Horthy
 - [Specs are the New Code](https://www.youtube.com/watch?v=8rABwKRsec4) — Sean Grove, AI Engineer 2025

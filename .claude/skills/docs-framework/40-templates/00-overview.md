@@ -10,11 +10,27 @@ Reusable templates organized by documentation layer. Each layer folder contains 
 
 ---
 
-## Philosophy
+## Principles Over Prescriptions
 
-Templates aren't rigid forms to fill in. They're starting points that encode best practices for each documentation layer. Pick the archetype that best fits your content, then adapt as needed.
+Templates are examples, not mandates.
 
-**Key principle**: L2 Section Overviews get multiple archetypes because sections vary widely (services vs. domains vs. infrastructure). Other layers are more uniform.
+This framework teaches principles:
+
+- Overviews must give working understanding at that level
+- Sections must have clear boundaries and interfaces
+- Progressive revelation from general to specific
+- Domain language throughout
+
+How you achieve these principles varies by what you're documenting:
+
+- A real-time event system looks different from a CRUD API
+- A data pipeline looks different from a UI component library
+
+Templates provide starting points ("here's how a service section might look"). Use them as guides, blend elements, or write something entirely custom.
+
+The principle is what matters: can someone understand this system well enough to work on it?
+
+L2 Section Overviews get multiple archetypes because sections vary widely (services vs. domains vs. infrastructure). Other layers are more uniform.
 
 ## File Tree
 

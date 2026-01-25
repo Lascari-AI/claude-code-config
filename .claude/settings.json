@@ -70,6 +70,11 @@
         "hooks": [
           {
             "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/core/import-cleanup.py\"",
+            "timeout": 30000
+          },
+          {
+            "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/logging/universal_hook_logger.py\""
           }
         ]

@@ -5,16 +5,20 @@
 # ///
 
 """
-Unified Auto-Format Hook for Claude Code
-=========================================
+Auto-Format Hook for Claude Code (Formatting Only)
+===================================================
 Type: PostToolUse
 Triggers: Edit, Write, MultiEdit
 
-A comprehensive formatting hook that handles:
-- Python: ruff format + ruff check (linting, import sorting, unused import removal)
-- JavaScript/TypeScript: prettier + eslint
-- Go: goimports (formatting + import organization)
+A formatting-only hook that handles code style without modifying imports:
+- Python: ruff format (code formatting only)
+- JavaScript/TypeScript: prettier (code formatting only)
+- Go: gofmt (formatting only, NOT goimports which removes unused)
 - Rust: rustfmt
+
+NOTE: Import sorting and unused import removal are handled separately by
+import-cleanup.py which runs on Stop hook. This prevents premature removal
+of imports that haven't been used yet during multi-step edits.
 
 All formatters are optional - the hook gracefully skips if a tool isn't installed.
 """
@@ -32,6 +36,7 @@ from typing import Optional
 @dataclass
 class FormatResult:
     """Result of formatting a single file."""
+
     file_path: str
     language: str
     formatted: bool = False
@@ -90,10 +95,11 @@ def has_ruff_config(file_path: str) -> bool:
 
 def format_python(file_path: str) -> FormatResult:
     """
-    Format Python file using ruff.
+    Format Python file using ruff format only.
 
-    ruff replaces: black (formatting), isort (import sorting),
-    autoflake (unused imports), flake8/pylint (linting)
+    This hook ONLY handles code formatting (like black).
+    Import sorting and unused import removal are handled by import-cleanup.py
+    which runs on the Stop hook to avoid removing imports prematurely.
 
     Respects existing project configuration if found.
     """
@@ -107,44 +113,10 @@ def format_python(file_path: str) -> FormatResult:
     has_config = has_ruff_config(file_path)
     result.used_project_config = has_config
 
-    # Step 1: Run ruff check with auto-fix
-    if has_config:
-        # Use project's configuration - don't override with --select
-        cmd = ["ruff", "check", "--fix", file_path]
-    else:
-        # No config found - use sensible defaults
-        # --select I = isort rules (import sorting)
-        # --select F = all pyflakes rules (including F401 unused imports)
-        # --select E = pycodestyle errors
-        # --select W = pycodestyle warnings
-        cmd = [
-            "ruff", "check", "--fix",
-            "--select", "I,F,E,W",
-            "--ignore", "E501",  # Line too long - let formatter handle
-            file_path
-        ]
-
-    success, _, stderr = run_command(cmd)
-
-    if success:
-        result.linted = True
-        result.imports_organized = True
-        result.tools_used.append("ruff check --fix")
-    else:
-        # Ruff check may return non-zero if there are unfixable issues
-        # This is informational, not a blocking error
-        if "error" in stderr.lower():
-            result.errors.append(f"ruff check: {stderr.strip()}")
-        else:
-            # Warnings are okay, still mark as processed
-            result.linted = True
-            result.imports_organized = True
-            result.tools_used.append("ruff check --fix")
-
-    # Step 2: Run ruff format (black-compatible formatting)
-    success, _, stderr = run_command([
-        "ruff", "format", file_path
-    ])
+    # Run ruff format only (black-compatible formatting)
+    # NOTE: ruff check --fix (linting, import sorting, unused imports) is
+    # intentionally NOT run here - see import-cleanup.py for Stop hook
+    success, _, stderr = run_command(["ruff", "format", file_path])
 
     if success:
         result.formatted = True
@@ -161,8 +133,14 @@ def has_eslint_config(file_path: str) -> bool:
 
     current = Path(file_path).parent
     eslint_configs = [
-        "eslint.config.js", "eslint.config.mjs", "eslint.config.cjs",
-        ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".eslintrc.yaml", ".eslintrc.yml"
+        "eslint.config.js",
+        "eslint.config.mjs",
+        "eslint.config.cjs",
+        ".eslintrc.js",
+        ".eslintrc.cjs",
+        ".eslintrc.json",
+        ".eslintrc.yaml",
+        ".eslintrc.yml",
     ]
     for _ in range(10):
         for config in eslint_configs:
@@ -173,6 +151,7 @@ def has_eslint_config(file_path: str) -> bool:
         if pkg_json.exists():
             try:
                 import json
+
                 with open(pkg_json) as f:
                     pkg = json.load(f)
                 if "eslintConfig" in pkg:
@@ -191,8 +170,14 @@ def has_prettier_config(file_path: str) -> bool:
 
     current = Path(file_path).parent
     prettier_configs = [
-        ".prettierrc", ".prettierrc.json", ".prettierrc.yaml", ".prettierrc.yml",
-        ".prettierrc.js", ".prettierrc.cjs", "prettier.config.js", "prettier.config.cjs"
+        ".prettierrc",
+        ".prettierrc.json",
+        ".prettierrc.yaml",
+        ".prettierrc.yml",
+        ".prettierrc.js",
+        ".prettierrc.cjs",
+        "prettier.config.js",
+        "prettier.config.cjs",
     ]
     for _ in range(10):
         for config in prettier_configs:
@@ -203,6 +188,7 @@ def has_prettier_config(file_path: str) -> bool:
         if pkg_json.exists():
             try:
                 import json
+
                 with open(pkg_json) as f:
                     pkg = json.load(f)
                 if "prettier" in pkg:
@@ -217,7 +203,10 @@ def has_prettier_config(file_path: str) -> bool:
 
 def format_javascript(file_path: str) -> FormatResult:
     """
-    Format JavaScript/TypeScript file using prettier and eslint.
+    Format JavaScript/TypeScript file using prettier only.
+
+    NOTE: ESLint is intentionally NOT run here because it can remove unused imports.
+    ESLint (including import-related rules) is handled by import-cleanup.py on Stop hook.
 
     Respects existing project configuration if found.
     Only runs tools if project has appropriate config.
@@ -225,79 +214,41 @@ def format_javascript(file_path: str) -> FormatResult:
     result = FormatResult(file_path=file_path, language="javascript/typescript")
 
     has_prettier = has_prettier_config(file_path)
-    has_eslint = has_eslint_config(file_path)
-    result.used_project_config = has_prettier or has_eslint
+    result.used_project_config = has_prettier
 
-    # Step 1: Prettier for formatting (only if config exists)
+    # Prettier for formatting only (only if config exists)
+    # NOTE: ESLint is handled by import-cleanup.py on Stop hook
     if tool_exists("prettier") and has_prettier:
-        success, _, stderr = run_command([
-            "prettier", "--write", file_path
-        ])
+        success, _, stderr = run_command(["prettier", "--write", file_path])
         if success:
             result.formatted = True
             result.tools_used.append("prettier")
         else:
             result.errors.append(f"prettier: {stderr.strip()}")
 
-    # Step 2: ESLint for linting (with auto-fix) - only if config exists
-    if tool_exists("eslint") and has_eslint:
-        success, _, stderr = run_command([
-            "eslint", "--fix", file_path
-        ])
-        if success:
-            result.linted = True
-            result.tools_used.append("eslint --fix")
-        else:
-            # ESLint returns non-zero for unfixable issues
-            if "error" not in stderr.lower():
-                result.linted = True
-                result.tools_used.append("eslint --fix")
-            else:
-                result.errors.append(f"eslint: {stderr.strip()}")
-
-    # Note: For import sorting in JS/TS, you can use:
-    # - eslint-plugin-import with import/order rule
-    # - prettier-plugin-organize-imports
-    # These require project-level configuration
-
-    # Only report missing config if no tools ran - this is expected for projects without JS config
-    if not result.formatted and not result.linted and (has_prettier or has_eslint):
-        result.errors.append("JS/TS config found but formatters not installed")
-
     return result
 
 
 def format_go(file_path: str) -> FormatResult:
     """
-    Format Go file using goimports (preferred) or gofmt.
+    Format Go file using gofmt only.
 
-    goimports = gofmt + import organization
+    NOTE: goimports (which removes unused imports) is intentionally NOT used here.
+    Import organization is handled by import-cleanup.py on the Stop hook.
     """
     result = FormatResult(file_path=file_path, language="go")
 
-    # Prefer goimports (includes gofmt + import organization)
-    if tool_exists("goimports"):
-        success, _, stderr = run_command([
-            "goimports", "-w", file_path
-        ])
-        if success:
-            result.formatted = True
-            result.imports_organized = True
-            result.tools_used.append("goimports")
-        else:
-            result.errors.append(f"goimports: {stderr.strip()}")
-    elif tool_exists("gofmt"):
-        # Fallback to gofmt (formatting only, no import organization)
-        success, _, stderr = run_command([
-            "gofmt", "-w", file_path
-        ])
+    # Use gofmt for formatting only (no import manipulation)
+    # goimports is handled by import-cleanup.py on Stop hook
+    if tool_exists("gofmt"):
+        success, _, stderr = run_command(["gofmt", "-w", file_path])
         if success:
             result.formatted = True
             result.tools_used.append("gofmt")
         else:
             result.errors.append(f"gofmt: {stderr.strip()}")
     else:
-        result.errors.append("No Go formatters available (goimports, gofmt)")
+        result.errors.append("gofmt not installed")
 
     return result
 
@@ -307,9 +258,7 @@ def format_rust(file_path: str) -> FormatResult:
     result = FormatResult(file_path=file_path, language="rust")
 
     if tool_exists("rustfmt"):
-        success, _, stderr = run_command([
-            "rustfmt", file_path
-        ])
+        success, _, stderr = run_command(["rustfmt", file_path])
         if success:
             result.formatted = True
             result.tools_used.append("rustfmt")
@@ -368,7 +317,9 @@ def format_output(results: list[FormatResult]) -> str:
             filename = Path(r.file_path).name
             tools = ", ".join(r.tools_used)
             config_indicator = " (project config)" if r.used_project_config else ""
-            lines.append(f"  {filename}: {' + '.join(status_parts)} [{tools}]{config_indicator}")
+            lines.append(
+                f"  {filename}: {' + '.join(status_parts)} [{tools}]{config_indicator}"
+            )
 
         for error in r.errors:
             lines.append(f"  {Path(r.file_path).name}: {error}")
