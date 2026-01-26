@@ -129,13 +129,16 @@ docs/
 ```
 
 ### Foundation (`00-foundation/`)
-**Why we build, how we decide.**
+**Understanding before implementation.**
 
-Contains purpose, principles, and boundaries that guide all decisions. This is the philosophical grounding—rarely changes, but informs everything.
+The thinking layer—captures how you understand the problem, the shape of the solution, and the direction you're heading. This is NOT a PRD or formal requirements doc. It's exploratory: the artifact of working through what you're building and why.
 
-- Purpose: What problem does this project solve?
-- Principles: What trade-offs do we make and why?
-- Boundaries: What will we NOT do?
+Structure is freeform. Only `00-overview.md` is required. Common patterns include:
+- Problem/landscape/approach (what's broken, what exists, how we'll tackle it)
+- Vision/constraints/direction (where we're going, what shapes the path)
+- Context/ideas/decisions (background, explorations, choices made)
+
+Rarely changes once established, but informs everything that follows.
 
 ### Codebase (`10-codebase/`)
 **What we built, how it works.**
@@ -170,7 +173,7 @@ Within the **Codebase** zone, documentation follows a six-layer depth hierarchy:
 
 | Zone/Layer | Question | Example |
 |------------|----------|---------|
-| Foundation | "Why does this project exist?" | "We build X to solve Y for Z" |
+| Foundation | "What are we building and why?" | "Here's the problem, our vision, and how we're approaching it" |
 | L1-L3 | "Why is it architected this way?" | "We use event sourcing because..." |
 | L4 | "What does this file do?" | "Handles user session lifecycle" |
 | L5 | "What does this function promise?" | "Returns validated token or throws" |

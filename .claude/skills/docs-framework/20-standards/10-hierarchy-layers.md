@@ -39,12 +39,23 @@ docs/
 
 ### Foundation Zone (`00-foundation/`)
 
-Captures intent that precedes and informs all architecture decisions.
+Captures understanding before implementation—the thinking layer where you work through what you're building and why.
 
-**Contains**:
-- **Purpose** (`10-purpose.md`): Why this system exists, the problem it solves, who it serves
-- **Principles** (`20-principles.md`): Decision-making heuristics that apply everywhere
-- **Boundaries** (`30-boundaries.md`): What the system explicitly will NOT do
+This is NOT a PRD or formal requirements document. It's exploratory: capturing how you understand the problem, the shape of the solution, and the direction you're heading. Think of it as the artifact of your thinking process.
+
+**Required**:
+- `00-overview.md`: Entry point explaining what this section contains
+
+**Structure is freeform**. Use numbered files (10-, 20-, etc.) organized however captures your understanding. Example patterns:
+
+| Pattern | Example Files | Captures |
+|---------|---------------|----------|
+| Problem-focused | `10-problem.md`, `20-landscape.md`, `30-approach.md` | What's broken, what exists, how we'll tackle it |
+| Vision-focused | `10-vision.md`, `20-constraints.md`, `30-direction.md` | Where we're going, what shapes the path, how we'll move |
+| Thinking-focused | `10-context.md`, `20-ideas.md`, `30-decisions.md` | Background, explorations, choices made |
+| Narrative | `10-story.md` | Single document walking through the whole understanding |
+
+The goal: someone reading Foundation should understand *what you're trying to do* and *how you're thinking about it*—before they ever look at how it's implemented.
 
 ### Codebase Zone (`10-codebase/`)
 

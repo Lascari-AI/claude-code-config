@@ -15,11 +15,9 @@ Every project using this framework organizes `docs/` into three zones:
 
 ```
 docs/
-├── 00-foundation/           # Intent zone (fixed structure)
-│   ├── 00-overview.md
-│   ├── 10-purpose.md
-│   ├── 20-principles.md
-│   └── 30-boundaries.md
+├── 00-foundation/           # Understanding zone (freeform structure)
+│   ├── 00-overview.md       # Required: entry point
+│   └── [your structure]     # Numbered files capturing your understanding
 ├── 10-codebase/             # Structure zone (mirrors src/)
 │   ├── 00-overview.md       # L1
 │   └── [sections...]        # L2-L3
@@ -27,7 +25,7 @@ docs/
     └── ...
 ```
 
-- **Foundation** (`00-foundation/`): Fixed structure. Purpose, principles, boundaries.
+- **Foundation** (`00-foundation/`): Freeform structure. Captures understanding of what you're building and why. Only `00-overview.md` is required.
 - **Codebase** (`10-codebase/`): Mirrors your source code structure. Contains L1-L6 documentation.
 - **Appendix** (`99-appendix/`): Setup guides, tooling, conventions.
 
@@ -57,8 +55,9 @@ If you're working in `src/core/workflow/`, the documentation is in `docs/10-code
 Every folder in docs/ MUST contain a `00-overview.md` file.
 
 **Foundation Overview** — `docs/00-foundation/00-overview.md`:
-- Links to purpose, principles, boundaries
-- Guidance on when to read Foundation
+- Entry point explaining what understanding is captured here
+- Links to whatever documents comprise your Foundation
+- Guidance on when to read Foundation (before diving into implementation)
 
 **Codebase Overview (L1)** — `docs/10-codebase/00-overview.md`:
 - System architecture
@@ -121,7 +120,7 @@ docs/
 └── 99-appendix/             # Reserved: Operational zone
 ```
 
-- `00-foundation/` has a fixed structure (purpose, principles, boundaries)
+- `00-foundation/` has freeform structure (only `00-overview.md` is required)
 - `10-codebase/` uses 10-80 range for your application sections
 - `99-appendix/` is for documentation *about* the project operations, not the application itself
 
@@ -160,11 +159,11 @@ No entry point = no navigation aid.
 my-project/
 ├── README.md
 ├── docs/
-│   ├── 00-foundation/                     # Intent zone
+│   ├── 00-foundation/                     # Understanding zone (freeform)
 │   │   ├── 00-overview.md
-│   │   ├── 10-purpose.md
-│   │   ├── 20-principles.md
-│   │   └── 30-boundaries.md
+│   │   ├── 10-problem.md                  # Example: what we're solving
+│   │   ├── 20-vision.md                   # Example: where we're heading
+│   │   └── 30-approach.md                 # Example: how we'll get there
 │   ├── 10-codebase/                       # Structure zone
 │   │   ├── 00-overview.md                 # L1
 │   │   ├── 10-core/
