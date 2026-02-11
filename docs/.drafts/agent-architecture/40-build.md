@@ -156,7 +156,7 @@ The BUILD phase executes the plan checkpoint by checkpoint.
 │                           FIX MODE                                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  Triggered when: Tests fail, verification fails, or user requests          │
+│   Triggered when: Tests fail, verification fails, or user requests          │
 │                                                                             │
 │                    ┌─────────────────────┐                                  │
 │                    │  Issue Detected     │                                  │

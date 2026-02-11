@@ -1,0 +1,2089 @@
+{
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
+  "session_id": "2026-02-11_build-initial-management-ui_mn3z2n",
+  "spec_reference": "./spec.md",
+  "created_at": "2026-02-11T21:30:00+00:00",
+  "updated_at": "2026-02-11T22:30:00+00:00",
+  "status": "complete",
+
+  "checkpoints": [
+    {
+      "id": 1,
+      "title": "Project Entity - Model to UI End-to-End",
+      "goal": "Create the Project model, add FastAPI backend with CRUD endpoints, scaffold Next.js frontend, and display a basic projects list. This establishes the complete vertical slice from database to UI.",
+      "prerequisites": [],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [],
+          "tree": ""
+        },
+        "ending": {
+          "files": [],
+          "tree": ""
+        }
+      },
+      "testing_strategy": {
+        "approach": "Backend API tests + manual frontend verification",
+        "verification_steps": []
+      },
+      "task_groups": [
+        {
+          "id": "1.1",
+          "title": "Database Layer - Project Model",
+          "objective": "Create Project SQLModel with all required fields (id, name, slug, path, status, onboarding_status, timestamps) and CRUD operations mirroring existing Session patterns",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.1.1",
+              "title": "Create Project SQLModel",
+              "file_path": "apps/core/session_db/models.py",
+              "description": "Add Project SQLModel class with fields: id (UUID PK), name (str), slug (str unique indexed), path (str - absolute codebase path), repo_url (optional str), status (Literal enum), onboarding_status (JSON dict), metadata_ (JSON), created_at, updated_at. Mirror Session model patterns for field definitions and relationships. Add ProjectStatus Literal type.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "1-120",
+                    "purpose": "Understand existing Session model patterns, type aliases, and SQLModel conventions"
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-11_build-initial-management-ui_mn3z2n/spec.md",
+                    "lines": "79-128",
+                    "purpose": "Reference Project model requirements from spec"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.1.1.1",
+                  "command": "CREATE TYPE ProjectStatus Literal['pending', 'onboarding', 'active', 'paused', 'archived']",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.1.2",
+                  "command": "CREATE CLASS Project(SQLModel, table=True) with __tablename__='projects', fields: id (UUID PK default_factory=uuid4), name (str), slug (str unique index), path (str), repo_url (Optional[str]), status (str default='pending' index), onboarding_status (dict[str,Any] JSON), metadata_ (dict[str,Any] JSON column='metadata'), created_at (datetime default_factory), updated_at (datetime default_factory)",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.1.3",
+                  "command": "ADD Relationship sessions: list['Session'] = Relationship(back_populates='project') to Project class",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.2",
+              "title": "Create Project DTOs",
+              "file_path": "apps/core/session_db/models.py",
+              "description": "Add ProjectCreate, ProjectUpdate, and ProjectSummary DTO classes following existing Session DTO patterns. ProjectCreate: name, slug, path, repo_url optional, status optional, onboarding_status optional, metadata_ optional. ProjectUpdate: all fields optional for partial updates. ProjectSummary: lightweight view for list endpoints.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "500-620",
+                    "purpose": "Reference existing DTO patterns (SessionCreate, SessionUpdate, SessionSummary)"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {
+                  "id": "1.1.2.1",
+                  "command": "CREATE CLASS ProjectSummary(SQLModel) with fields: id (UUID), name (str), slug (str), status (str), path (str), created_at (datetime), updated_at (datetime)",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.2.2",
+                  "command": "CREATE CLASS ProjectCreate(SQLModel) with fields: name (str), slug (str), path (str), repo_url (Optional[str]=None), status (str='pending'), onboarding_status (dict[str,Any]=Field(default_factory=dict)), metadata_ (dict[str,Any]=Field(default_factory=dict))",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.2.3",
+                  "command": "CREATE CLASS ProjectUpdate(SQLModel) with all optional fields: name, slug, path, repo_url, status, onboarding_status, metadata_",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.3",
+              "title": "Add Project CRUD operations",
+              "file_path": "apps/core/session_db/crud.py",
+              "description": "Implement CRUD functions for Project: create_project, get_project, get_project_by_slug, list_projects, list_project_summaries, update_project, delete_project. Follow existing Session CRUD patterns with async/await, optional filtering, pagination support.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "1-220",
+                    "purpose": "Reference Session CRUD patterns for consistency"
+                  },
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "project model section",
+                    "purpose": "Access Project model definition created in 1.1.1"
+                  }
+                ],
+                "related_files": ["apps/core/session_db/database.py"]
+              },
+              "depends_on": ["1.1.2"],
+              "actions": [
+                {
+                  "id": "1.1.3.1",
+                  "command": "ADD import Project, ProjectCreate, ProjectUpdate, ProjectSummary from models",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.2",
+                  "command": "CREATE FUNCTION create_project(db: AsyncSession, data: ProjectCreate) -> Project: MIRROR create_session pattern",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.3",
+                  "command": "CREATE FUNCTION get_project(db: AsyncSession, project_id: UUID) -> Project | None: USE db.get pattern",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.4",
+                  "command": "CREATE FUNCTION get_project_by_slug(db: AsyncSession, slug: str) -> Project | None: MIRROR get_session_by_slug",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.5",
+                  "command": "CREATE FUNCTION list_projects(db: AsyncSession, status: str|None, limit: int=100, offset: int=0) -> Sequence[Project]: with optional status filter",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.6",
+                  "command": "CREATE FUNCTION list_project_summaries(db: AsyncSession, limit: int=100, offset: int=0) -> list[ProjectSummary]: convert to summaries",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.7",
+                  "command": "CREATE FUNCTION update_project(db: AsyncSession, project_id: UUID, data: ProjectUpdate) -> Project | None: MIRROR update_session",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.8",
+                  "command": "CREATE FUNCTION delete_project(db: AsyncSession, project_id: UUID) -> bool: MIRROR delete_session",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.4",
+              "title": "Export Project from package",
+              "file_path": "apps/core/session_db/__init__.py",
+              "description": "Add Project, ProjectStatus, ProjectCreate, ProjectUpdate, ProjectSummary to package imports and __all__ exports. Add Project CRUD functions to exports. Maintain existing import organization.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/__init__.py",
+                    "lines": "1-120",
+                    "purpose": "Understand existing export structure and organization"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.3"],
+              "actions": [
+                {
+                  "id": "1.1.4.1",
+                  "command": "ADD import ProjectStatus, Project, ProjectSummary, ProjectCreate, ProjectUpdate from .models",
+                  "file": "apps/core/session_db/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.4.2",
+                  "command": "ADD import create_project, get_project, get_project_by_slug, list_projects, list_project_summaries, update_project, delete_project from .crud",
+                  "file": "apps/core/session_db/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.4.3",
+                  "command": "UPDATE __all__ list: ADD 'ProjectStatus', 'Project', 'ProjectSummary', 'ProjectCreate', 'ProjectUpdate' to type aliases section",
+                  "file": "apps/core/session_db/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.4.4",
+                  "command": "UPDATE __all__ list: ADD 'create_project', 'get_project', 'get_project_by_slug', 'list_projects', 'list_project_summaries', 'update_project', 'delete_project' to Project CRUD section",
+                  "file": "apps/core/session_db/__init__.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "FastAPI Backend Setup",
+          "objective": "Scaffold FastAPI application structure with project CRUD endpoints, database connection, and CORS configuration",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.2.1",
+              "title": "Create FastAPI app structure",
+              "file_path": "apps/core/api/",
+              "description": "Create the FastAPI application directory structure with main.py entry point, routers directory, and dependencies module. Set up CORS middleware for frontend communication. Configure database lifecycle events (startup/shutdown).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/database.py",
+                    "lines": "1-80",
+                    "purpose": "Understand database connection patterns for FastAPI integration"
+                  }
+                ],
+                "related_files": ["apps/README.md"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.2.1.1",
+                  "command": "CREATE FILE apps/core/api/__init__.py with docstring",
+                  "file": "apps/core/api/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.2",
+                  "command": "CREATE FILE apps/core/api/main.py with FastAPI app, CORS middleware, lifespan context manager for db init/close",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.3",
+                  "command": "CREATE FILE apps/core/api/dependencies.py with get_db dependency using get_async_session",
+                  "file": "apps/core/api/dependencies.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.4",
+                  "command": "CREATE FILE apps/core/api/routers/__init__.py",
+                  "file": "apps/core/api/routers/__init__.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.2.2",
+              "title": "Create projects router",
+              "file_path": "apps/core/api/routers/projects.py",
+              "description": "Create FastAPI router with CRUD endpoints for projects: GET /projects (list), GET /projects/{id} (get by id), GET /projects/slug/{slug} (get by slug), POST /projects (create), PATCH /projects/{id} (update), DELETE /projects/{id} (delete). Use Pydantic response models.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "project crud section",
+                    "purpose": "Access CRUD functions to call from endpoints"
+                  },
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "Project DTOs",
+                    "purpose": "Use DTOs as request/response models"
+                  }
+                ],
+                "related_files": ["apps/core/api/dependencies.py"]
+              },
+              "depends_on": ["1.2.1"],
+              "actions": [
+                {
+                  "id": "1.2.2.1",
+                  "command": "CREATE FILE apps/core/api/routers/projects.py with APIRouter prefix='/projects' tag='projects'",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.2",
+                  "command": "CREATE FUNCTION list_projects endpoint: GET / returning list[ProjectSummary] with optional status filter, limit, offset params",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.3",
+                  "command": "CREATE FUNCTION get_project endpoint: GET /{project_id} returning Project with 404 handling",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.4",
+                  "command": "CREATE FUNCTION get_project_by_slug endpoint: GET /slug/{slug} returning Project with 404 handling",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.5",
+                  "command": "CREATE FUNCTION create_project endpoint: POST / accepting ProjectCreate returning Project status 201",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.6",
+                  "command": "CREATE FUNCTION update_project endpoint: PATCH /{project_id} accepting ProjectUpdate returning Project with 404 handling",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.7",
+                  "command": "CREATE FUNCTION delete_project endpoint: DELETE /{project_id} returning 204 No Content with 404 handling",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.2.3",
+              "title": "Register router and add health endpoint",
+              "file_path": "apps/core/api/main.py",
+              "description": "Include projects router in main app. Add health check endpoint at GET /health for deployment verification.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/main.py",
+                    "lines": "all",
+                    "purpose": "Update existing main.py with router registration"
+                  }
+                ],
+                "related_files": ["apps/core/api/routers/projects.py"]
+              },
+              "depends_on": ["1.2.2"],
+              "actions": [
+                {
+                  "id": "1.2.3.1",
+                  "command": "ADD import projects router from .routers.projects",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.3.2",
+                  "command": "ADD app.include_router(projects.router) to main.py",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.3.3",
+                  "command": "CREATE FUNCTION health_check: GET /health returning {'status': 'healthy'}",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.3",
+          "title": "Next.js Frontend Scaffold",
+          "objective": "Initialize Next.js 14+ app with App Router, Tailwind CSS, shadcn/ui components, and Zustand store",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.3.1",
+              "title": "Initialize Next.js project",
+              "file_path": "apps/web/",
+              "description": "Create Next.js 14+ app with App Router using create-next-app. Configure for TypeScript, Tailwind CSS, ESLint. Set up in apps/web/ directory.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/README.md",
+                    "lines": "all",
+                    "purpose": "Understand apps directory structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.3.1.1",
+                  "command": "RUN npx create-next-app@latest apps/web --typescript --tailwind --eslint --app --src-dir --import-alias '@/*' --no-git",
+                  "file": "apps/web/",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.2",
+                  "command": "UPDATE apps/web/package.json: ADD name='@lai/web'",
+                  "file": "apps/web/package.json",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.3.2",
+              "title": "Install and configure shadcn/ui",
+              "file_path": "apps/web/",
+              "description": "Initialize shadcn/ui component library. Install base components: button, card, badge, input for MVP UI.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/tailwind.config.ts", "apps/web/components.json"]
+              },
+              "depends_on": ["1.3.1"],
+              "actions": [
+                {
+                  "id": "1.3.2.1",
+                  "command": "RUN npx shadcn-ui@latest init in apps/web/",
+                  "file": "apps/web/",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.2.2",
+                  "command": "RUN npx shadcn-ui@latest add button card badge input in apps/web/",
+                  "file": "apps/web/components/ui/",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.3.3",
+              "title": "Set up Zustand store",
+              "file_path": "apps/web/src/store/",
+              "description": "Install Zustand and create projects store with state: projects list, loading state, error state. Actions: fetchProjects, createProject, updateProject, deleteProject.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["1.3.1"],
+              "actions": [
+                {
+                  "id": "1.3.3.1",
+                  "command": "RUN npm install zustand in apps/web/",
+                  "file": "apps/web/package.json",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.3.2",
+                  "command": "CREATE FILE apps/web/src/store/index.ts exporting all stores",
+                  "file": "apps/web/src/store/index.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.3.3",
+                  "command": "CREATE FILE apps/web/src/store/projects.ts with useProjectsStore: state (projects, isLoading, error), actions (fetchProjects, createProject, updateProject, deleteProject)",
+                  "file": "apps/web/src/store/projects.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.3.4",
+              "title": "Configure API client",
+              "file_path": "apps/web/src/lib/api.ts",
+              "description": "Create API client module with base URL configuration, fetch wrapper with error handling, typed API functions for projects endpoints.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/routers/projects.py",
+                    "lines": "all",
+                    "purpose": "Match API endpoint signatures"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.3.1"],
+              "actions": [
+                {
+                  "id": "1.3.4.1",
+                  "command": "CREATE FILE apps/web/src/lib/api.ts with API_BASE_URL from env, fetchApi wrapper function",
+                  "file": "apps/web/src/lib/api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.4.2",
+                  "command": "CREATE FILE apps/web/src/types/project.ts with Project, ProjectCreate, ProjectUpdate, ProjectSummary TypeScript interfaces",
+                  "file": "apps/web/src/types/project.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.4.3",
+                  "command": "CREATE FILE apps/web/src/lib/projects-api.ts with getProjects, getProject, createProject, updateProject, deleteProject functions",
+                  "file": "apps/web/src/lib/projects-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.4.4",
+                  "command": "CREATE FILE apps/web/.env.local with NEXT_PUBLIC_API_URL=http://localhost:8000",
+                  "file": "apps/web/.env.local",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.4",
+          "title": "Projects List UI",
+          "objective": "Build projects list page that fetches from API and displays project cards with status indicators",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.4.1",
+              "title": "Create ProjectCard component",
+              "file_path": "apps/web/src/components/projects/ProjectCard.tsx",
+              "description": "Create reusable ProjectCard component displaying: project name, status badge, path, created date. Use shadcn Card and Badge components. Include click handler for navigation.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/types/project.ts",
+                    "lines": "all",
+                    "purpose": "Use Project type for props"
+                  }
+                ],
+                "related_files": ["apps/web/src/components/ui/card.tsx", "apps/web/src/components/ui/badge.tsx"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.4.1.1",
+                  "command": "CREATE FILE apps/web/src/components/projects/ProjectCard.tsx with interface ProjectCardProps {project: ProjectSummary}, Card layout, Badge for status, formatted date",
+                  "file": "apps/web/src/components/projects/ProjectCard.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.4.2",
+              "title": "Create ProjectsList component",
+              "file_path": "apps/web/src/components/projects/ProjectsList.tsx",
+              "description": "Create ProjectsList component that uses Zustand store to fetch and display projects. Handle loading state, error state, empty state. Render grid of ProjectCards.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/store/projects.ts",
+                    "lines": "all",
+                    "purpose": "Use projects store for state management"
+                  }
+                ],
+                "related_files": ["apps/web/src/components/projects/ProjectCard.tsx"]
+              },
+              "depends_on": ["1.4.1"],
+              "actions": [
+                {
+                  "id": "1.4.2.1",
+                  "command": "CREATE FILE apps/web/src/components/projects/ProjectsList.tsx with useEffect to fetch projects, loading spinner, error message, empty state, responsive grid of ProjectCards",
+                  "file": "apps/web/src/components/projects/ProjectsList.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.2.2",
+                  "command": "CREATE FILE apps/web/src/components/projects/index.ts exporting ProjectCard, ProjectsList",
+                  "file": "apps/web/src/components/projects/index.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.4.3",
+              "title": "Create projects page",
+              "file_path": "apps/web/src/app/projects/page.tsx",
+              "description": "Create projects page at /projects route using App Router. Include page header with title, ProjectsList component. This is the main entry point for the projects UI.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/src/components/projects/ProjectsList.tsx"]
+              },
+              "depends_on": ["1.4.2"],
+              "actions": [
+                {
+                  "id": "1.4.3.1",
+                  "command": "CREATE FILE apps/web/src/app/projects/page.tsx with 'use client', page title 'Projects', ProjectsList component",
+                  "file": "apps/web/src/app/projects/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.3.2",
+                  "command": "UPDATE apps/web/src/app/page.tsx: redirect to /projects or add link to projects",
+                  "file": "apps/web/src/app/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.4.4",
+              "title": "Create basic layout",
+              "file_path": "apps/web/src/app/layout.tsx",
+              "description": "Update root layout with app title, basic navigation header, consistent styling. Set up metadata for SEO.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/app/layout.tsx",
+                    "lines": "all",
+                    "purpose": "Modify existing layout"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.4.4.1",
+                  "command": "UPDATE apps/web/src/app/layout.tsx: ADD metadata title='LAI Session Manager', ADD basic header with app name, ADD container wrapper for main content",
+                  "file": "apps/web/src/app/layout.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Session-Project Link + Swimlane View",
+      "goal": "Add project_id FK to Session model, create migration, build session API endpoints, and implement the swimlane view showing sessions as horizontal lanes progressing through SPEC→PLAN→BUILD→DOCS phases.",
+      "prerequisites": [1],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [],
+          "tree": ""
+        },
+        "ending": {
+          "files": [],
+          "tree": ""
+        }
+      },
+      "testing_strategy": {
+        "approach": "Migration verification + API tests + visual swimlane inspection",
+        "verification_steps": []
+      },
+      "task_groups": [
+        {
+          "id": "2.1",
+          "title": "Session-Project Database Link",
+          "objective": "Add project_id foreign key to Session model, update Session DTOs, create Alembic migration",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.1.1",
+              "title": "Add project_id FK to Session model",
+              "file_path": "apps/core/session_db/models.py",
+              "description": "Add project_id UUID foreign key field to Session model with optional relationship. Add Relationship back to Project. Update Session to support project association.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "78-215",
+                    "purpose": "Understand existing Session model structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.1.1.1",
+                  "command": "ADD field project_id: Optional[UUID] = Field(default=None, foreign_key='projects.id', index=True) to Session model",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.2",
+                  "command": "ADD relationship project: Optional['Project'] = Relationship(back_populates='sessions') to Session model",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.1.2",
+              "title": "Update Session DTOs",
+              "file_path": "apps/core/session_db/models.py",
+              "description": "Add project_id to SessionCreate and SessionUpdate DTOs. Add project_id to SessionSummary for list views.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "SessionCreate and SessionUpdate sections",
+                    "purpose": "Update existing DTOs"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {
+                  "id": "2.1.2.1",
+                  "command": "ADD field project_id: Optional[UUID] = None to SessionCreate",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.2.2",
+                  "command": "ADD field project_id: Optional[UUID] = None to SessionUpdate",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.2.3",
+                  "command": "ADD field project_id: Optional[UUID] to SessionSummary",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.1.3",
+              "title": "Update Session CRUD for project filtering",
+              "file_path": "apps/core/session_db/crud.py",
+              "description": "Update list_sessions and list_session_summaries to accept optional project_id filter. Update create_session to handle project_id.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "99-165",
+                    "purpose": "Update list_sessions function"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.2"],
+              "actions": [
+                {
+                  "id": "2.1.3.1",
+                  "command": "UPDATE FUNCTION list_sessions: ADD parameter project_id: UUID | None = None, ADD where clause for project_id filter",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.3.2",
+                  "command": "UPDATE FUNCTION create_session: ADD project_id assignment from data",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.3.3",
+                  "command": "UPDATE FUNCTION list_session_summaries: ADD project_id to summary conversion",
+                  "file": "apps/core/session_db/crud.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.1.4",
+              "title": "Import Project in database.py for table creation",
+              "file_path": "apps/core/session_db/database.py",
+              "description": "Import Project model in database.py to ensure it's registered for SQLModel table creation.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/database.py",
+                    "lines": "1-35",
+                    "purpose": "See existing model imports"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.1.4.1",
+                  "command": "ADD import Project to model imports in database.py",
+                  "file": "apps/core/session_db/database.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Sessions API Endpoints",
+          "objective": "Create FastAPI router for sessions with CRUD endpoints and project-scoped queries",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.2.1",
+              "title": "Create sessions router",
+              "file_path": "apps/core/api/routers/sessions.py",
+              "description": "Create FastAPI router with session endpoints: GET /sessions (list with project filter), GET /sessions/{id}, GET /projects/{project_id}/sessions (project-scoped). Support filtering by status.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/routers/projects.py",
+                    "lines": "all",
+                    "purpose": "Follow established router patterns"
+                  },
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "session crud section",
+                    "purpose": "Use session CRUD functions"
+                  }
+                ],
+                "related_files": ["apps/core/api/dependencies.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.2.1.1",
+                  "command": "CREATE FILE apps/core/api/routers/sessions.py with APIRouter prefix='/sessions' tag='sessions'",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.1.2",
+                  "command": "CREATE FUNCTION list_sessions endpoint: GET / returning list[SessionSummary] with optional status, project_id, limit, offset params",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.1.3",
+                  "command": "CREATE FUNCTION get_session endpoint: GET /{session_id} returning Session with 404 handling",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.1.4",
+                  "command": "CREATE FUNCTION get_session_by_slug endpoint: GET /slug/{slug} returning Session with 404 handling",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.2.2",
+              "title": "Add project-sessions nested endpoint",
+              "file_path": "apps/core/api/routers/projects.py",
+              "description": "Add endpoint to projects router: GET /projects/{project_id}/sessions to list sessions for a specific project.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/routers/projects.py",
+                    "lines": "all",
+                    "purpose": "Add to existing projects router"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.2.1"],
+              "actions": [
+                {
+                  "id": "2.2.2.1",
+                  "command": "CREATE FUNCTION list_project_sessions endpoint: GET /{project_id}/sessions returning list[SessionSummary] filtered by project_id",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.2.3",
+              "title": "Register sessions router",
+              "file_path": "apps/core/api/main.py",
+              "description": "Include sessions router in main FastAPI app.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/main.py",
+                    "lines": "all",
+                    "purpose": "Add router registration"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.2.1"],
+              "actions": [
+                {
+                  "id": "2.2.3.1",
+                  "command": "ADD import sessions router from .routers.sessions",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.3.2",
+                  "command": "ADD app.include_router(sessions.router)",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Frontend Sessions Store and API",
+          "objective": "Add sessions state management and API client functions in frontend",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.3.1",
+              "title": "Add Session types",
+              "file_path": "apps/web/src/types/session.ts",
+              "description": "Create TypeScript interfaces for Session, SessionSummary matching backend models. Include phase status type.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "Session model section",
+                    "purpose": "Match backend types"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.3.1.1",
+                  "command": "CREATE FILE apps/web/src/types/session.ts with Session, SessionSummary, SessionStatus types",
+                  "file": "apps/web/src/types/session.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.3.2",
+              "title": "Add sessions API client",
+              "file_path": "apps/web/src/lib/sessions-api.ts",
+              "description": "Create API functions: getSessions, getSession, getProjectSessions for fetching session data.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/lib/api.ts",
+                    "lines": "all",
+                    "purpose": "Use existing API helpers"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.3.1"],
+              "actions": [
+                {
+                  "id": "2.3.2.1",
+                  "command": "CREATE FILE apps/web/src/lib/sessions-api.ts with getSessions, getSession, getSessionBySlug, getProjectSessions functions",
+                  "file": "apps/web/src/lib/sessions-api.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.3.3",
+              "title": "Add sessions Zustand store",
+              "file_path": "apps/web/src/store/sessions.ts",
+              "description": "Create Zustand store for sessions: state (sessions by project, current session, loading), actions (fetchProjectSessions, setCurrentSession).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/store/projects.ts",
+                    "lines": "all",
+                    "purpose": "Follow existing store patterns"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.3.2"],
+              "actions": [
+                {
+                  "id": "2.3.3.1",
+                  "command": "CREATE FILE apps/web/src/store/sessions.ts with useSessionsStore: state (sessionsByProject Map, currentSession, isLoading), actions (fetchProjectSessions, setCurrentSession)",
+                  "file": "apps/web/src/store/sessions.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.3.2",
+                  "command": "UPDATE apps/web/src/store/index.ts: ADD export for sessions store",
+                  "file": "apps/web/src/store/index.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.4",
+          "title": "Swimlane View Component",
+          "objective": "Build the visual swimlane component showing sessions as horizontal lanes with phase progression",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.4.1",
+              "title": "Create PhaseIndicator component",
+              "file_path": "apps/web/src/components/sessions/PhaseIndicator.tsx",
+              "description": "Create component showing a single phase (SPEC/PLAN/BUILD/DOCS) with status indicator: checkmark for complete, dot for in-progress, empty for not started. Clickable for drill-down.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/src/components/ui/badge.tsx"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.4.1.1",
+                  "command": "CREATE FILE apps/web/src/components/sessions/PhaseIndicator.tsx with props: phase, status, onClick. Visual states: complete (green check), in_progress (blue dot), pending (gray empty)",
+                  "file": "apps/web/src/components/sessions/PhaseIndicator.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.4.2",
+              "title": "Create SessionLane component",
+              "file_path": "apps/web/src/components/sessions/SessionLane.tsx",
+              "description": "Create horizontal lane component showing session name and 4 phase indicators (SPEC→PLAN→BUILD→DOCS). Each phase clickable to navigate to drill-down view.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/components/sessions/PhaseIndicator.tsx",
+                    "lines": "all",
+                    "purpose": "Use PhaseIndicator component"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.4.1"],
+              "actions": [
+                {
+                  "id": "2.4.2.1",
+                  "command": "CREATE FILE apps/web/src/components/sessions/SessionLane.tsx with session prop, horizontal layout, session name/title, 4 PhaseIndicators connected by arrows/lines",
+                  "file": "apps/web/src/components/sessions/SessionLane.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.4.3",
+              "title": "Create Swimlane component",
+              "file_path": "apps/web/src/components/sessions/Swimlane.tsx",
+              "description": "Create container component that renders multiple SessionLane components vertically. Handle loading state, empty state (no sessions).",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/src/components/sessions/SessionLane.tsx"]
+              },
+              "depends_on": ["2.4.2"],
+              "actions": [
+                {
+                  "id": "2.4.3.1",
+                  "command": "CREATE FILE apps/web/src/components/sessions/Swimlane.tsx with sessions array prop, vertical stack of SessionLanes, loading spinner, empty state message",
+                  "file": "apps/web/src/components/sessions/Swimlane.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.4.3.2",
+                  "command": "CREATE FILE apps/web/src/components/sessions/index.ts exporting PhaseIndicator, SessionLane, Swimlane",
+                  "file": "apps/web/src/components/sessions/index.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.4.4",
+              "title": "Create Project detail page with swimlane",
+              "file_path": "apps/web/src/app/projects/[slug]/page.tsx",
+              "description": "Create project detail page at /projects/[slug]. Fetch project by slug, fetch sessions for project, render Swimlane component with sessions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/app/projects/page.tsx",
+                    "lines": "all",
+                    "purpose": "Follow existing page patterns"
+                  }
+                ],
+                "related_files": ["apps/web/src/components/sessions/Swimlane.tsx"]
+              },
+              "depends_on": ["2.4.3"],
+              "actions": [
+                {
+                  "id": "2.4.4.1",
+                  "command": "CREATE FILE apps/web/src/app/projects/[slug]/page.tsx with 'use client', useParams for slug, fetch project and sessions, render project header + Swimlane",
+                  "file": "apps/web/src/app/projects/[slug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.4.4.2",
+                  "command": "UPDATE apps/web/src/components/projects/ProjectCard.tsx: ADD Link wrapper to navigate to /projects/{slug} on click",
+                  "file": "apps/web/src/components/projects/ProjectCard.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Phase Drill-Down Views",
+      "goal": "Implement phase-specific views: SPEC (render spec.md markdown), PLAN (render plan.json as visual hierarchy), BUILD (list agents with status), DOCS (show doc updates summary). Click-through navigation from swimlane to phase details.",
+      "prerequisites": [2],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [],
+          "tree": ""
+        },
+        "ending": {
+          "files": [],
+          "tree": ""
+        }
+      },
+      "testing_strategy": {
+        "approach": "Manual navigation testing + content rendering verification",
+        "verification_steps": []
+      },
+      "task_groups": [
+        {
+          "id": "3.1",
+          "title": "Session Artifacts API",
+          "objective": "Create API endpoints to serve session artifacts (spec.md content, plan.json, state.json) from filesystem",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.1.1",
+              "title": "Add session artifacts endpoints",
+              "file_path": "apps/core/api/routers/sessions.py",
+              "description": "Add endpoints to serve session artifacts: GET /sessions/{slug}/spec (returns spec.md content), GET /sessions/{slug}/plan (returns plan.json), GET /sessions/{slug}/state (returns state.json). Read from filesystem using session_dir.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/routers/sessions.py",
+                    "lines": "all",
+                    "purpose": "Add to existing sessions router"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.1.1.1",
+                  "command": "CREATE FUNCTION get_session_spec endpoint: GET /{slug}/spec returning {content: string} by reading spec.md from session folder",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.2",
+                  "command": "CREATE FUNCTION get_session_plan endpoint: GET /{slug}/plan returning plan.json as dict with 404 if not exists",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.3",
+                  "command": "CREATE FUNCTION get_session_state endpoint: GET /{slug}/state returning state.json as dict",
+                  "file": "apps/core/api/routers/sessions.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.1.2",
+              "title": "Add agents list endpoint",
+              "file_path": "apps/core/api/routers/agents.py",
+              "description": "Create agents router with endpoint to list agents for a session. Returns agent summaries with status, type, cost info.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "agent crud section",
+                    "purpose": "Use agent CRUD functions"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.1.2.1",
+                  "command": "CREATE FILE apps/core/api/routers/agents.py with APIRouter prefix='/agents' tag='agents'",
+                  "file": "apps/core/api/routers/agents.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.2.2",
+                  "command": "CREATE FUNCTION list_session_agents endpoint: GET /session/{session_id} returning list[AgentSummary]",
+                  "file": "apps/core/api/routers/agents.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.2.3",
+                  "command": "ADD import and app.include_router(agents.router) to main.py",
+                  "file": "apps/core/api/main.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Frontend Phase API and Types",
+          "objective": "Add frontend API functions and types for fetching phase content",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.2.1",
+              "title": "Add phase content API functions",
+              "file_path": "apps/web/src/lib/sessions-api.ts",
+              "description": "Add functions to fetch phase content: getSessionSpec, getSessionPlan, getSessionState, getSessionAgents.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/lib/sessions-api.ts",
+                    "lines": "all",
+                    "purpose": "Add to existing sessions API"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.2.1.1",
+                  "command": "ADD FUNCTION getSessionSpec(slug: string) -> Promise<{content: string}>",
+                  "file": "apps/web/src/lib/sessions-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.1.2",
+                  "command": "ADD FUNCTION getSessionPlan(slug: string) -> Promise<Plan>",
+                  "file": "apps/web/src/lib/sessions-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.1.3",
+                  "command": "ADD FUNCTION getSessionState(slug: string) -> Promise<SessionState>",
+                  "file": "apps/web/src/lib/sessions-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.1.4",
+                  "command": "ADD FUNCTION getSessionAgents(sessionId: string) -> Promise<AgentSummary[]>",
+                  "file": "apps/web/src/lib/sessions-api.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.2.2",
+              "title": "Add plan and agent types",
+              "file_path": "apps/web/src/types/",
+              "description": "Create TypeScript types for plan.json structure (Checkpoint, TaskGroup, Task, Action) and Agent types.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/skills/session/plan/templates/plan.json",
+                    "lines": "all",
+                    "purpose": "Match plan.json structure"
+                  },
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "Agent and AgentSummary sections",
+                    "purpose": "Match agent types"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.2.2.1",
+                  "command": "CREATE FILE apps/web/src/types/plan.ts with Plan, Checkpoint, TaskGroup, Task, Action interfaces",
+                  "file": "apps/web/src/types/plan.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.2.2",
+                  "command": "CREATE FILE apps/web/src/types/agent.ts with Agent, AgentSummary, AgentStatus, AgentType interfaces",
+                  "file": "apps/web/src/types/agent.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.2.3",
+                  "command": "CREATE FILE apps/web/src/types/index.ts exporting all types",
+                  "file": "apps/web/src/types/index.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Phase View Components",
+          "objective": "Create drill-down view components for each phase (SPEC, PLAN, BUILD, DOCS)",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.3.1",
+              "title": "Create SpecView component",
+              "file_path": "apps/web/src/components/phases/SpecView.tsx",
+              "description": "Create component to render spec.md content as formatted markdown. Use react-markdown for rendering. Handle loading state.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.3.1.1",
+                  "command": "RUN npm install react-markdown in apps/web/",
+                  "file": "apps/web/package.json",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.1.2",
+                  "command": "CREATE FILE apps/web/src/components/phases/SpecView.tsx with sessionSlug prop, fetch spec content, render with ReactMarkdown, loading state",
+                  "file": "apps/web/src/components/phases/SpecView.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.3.2",
+              "title": "Create PlanView component",
+              "file_path": "apps/web/src/components/phases/PlanView.tsx",
+              "description": "Create component to render plan.json as visual hierarchy: checkpoints as cards, task groups as collapsible sections, tasks as list items with status indicators.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/types/plan.ts",
+                    "lines": "all",
+                    "purpose": "Use plan types"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.3.1"],
+              "actions": [
+                {
+                  "id": "3.3.2.1",
+                  "command": "CREATE FILE apps/web/src/components/phases/CheckpointCard.tsx with checkpoint prop, shows title, goal, progress bar, expandable task groups",
+                  "file": "apps/web/src/components/phases/CheckpointCard.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.2.2",
+                  "command": "CREATE FILE apps/web/src/components/phases/PlanView.tsx with sessionSlug prop, fetch plan, render list of CheckpointCards, loading state",
+                  "file": "apps/web/src/components/phases/PlanView.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.3.3",
+              "title": "Create BuildView component",
+              "file_path": "apps/web/src/components/phases/BuildView.tsx",
+              "description": "Create component to show build agents. List agents with type, status badge, checkpoint info, cost. Click agent to navigate to agent detail (future).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/types/agent.ts",
+                    "lines": "all",
+                    "purpose": "Use agent types"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.3.2"],
+              "actions": [
+                {
+                  "id": "3.3.3.1",
+                  "command": "CREATE FILE apps/web/src/components/phases/AgentCard.tsx with agent prop, shows type, status badge, checkpoint, tokens, cost",
+                  "file": "apps/web/src/components/phases/AgentCard.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.3.2",
+                  "command": "CREATE FILE apps/web/src/components/phases/BuildView.tsx with sessionId prop, fetch agents, render AgentCards grid, loading/empty states",
+                  "file": "apps/web/src/components/phases/BuildView.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.3.4",
+              "title": "Create DocsView component",
+              "file_path": "apps/web/src/components/phases/DocsView.tsx",
+              "description": "Create simple component showing doc updates from state.json. Display list of updated files or 'No documentation updates' message.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["3.3.3"],
+              "actions": [
+                {
+                  "id": "3.3.4.1",
+                  "command": "CREATE FILE apps/web/src/components/phases/DocsView.tsx with sessionSlug prop, fetch state, show doc_updates list or empty message",
+                  "file": "apps/web/src/components/phases/DocsView.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.4.2",
+                  "command": "CREATE FILE apps/web/src/components/phases/index.ts exporting SpecView, PlanView, BuildView, DocsView",
+                  "file": "apps/web/src/components/phases/index.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "Phase Drill-Down Page",
+          "objective": "Create dynamic route for phase drill-down with tab-based navigation",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.4.1",
+              "title": "Create session phase page",
+              "file_path": "apps/web/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+              "description": "Create session detail page with tabs for each phase (SPEC, PLAN, BUILD, DOCS). Default to current phase based on session status. Render appropriate phase view component.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/src/components/phases/"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.4.1.1",
+                  "command": "RUN npx shadcn-ui@latest add tabs in apps/web/",
+                  "file": "apps/web/components/ui/tabs.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.4.1.2",
+                  "command": "CREATE FILE apps/web/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx with 'use client', useParams, tabs for SPEC/PLAN/BUILD/DOCS, render phase views",
+                  "file": "apps/web/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.4.2",
+              "title": "Update PhaseIndicator to navigate",
+              "file_path": "apps/web/src/components/sessions/PhaseIndicator.tsx",
+              "description": "Update PhaseIndicator to use Next.js Link for navigation. Clicking a phase navigates to /projects/[slug]/sessions/[sessionSlug]?phase=[phase].",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/components/sessions/PhaseIndicator.tsx",
+                    "lines": "all",
+                    "purpose": "Add navigation behavior"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.4.1"],
+              "actions": [
+                {
+                  "id": "3.4.2.1",
+                  "command": "UPDATE apps/web/src/components/sessions/PhaseIndicator.tsx: ADD Link wrapper with href to session phase page, ADD projectSlug and sessionSlug to props",
+                  "file": "apps/web/src/components/sessions/PhaseIndicator.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.4.2.2",
+                  "command": "UPDATE apps/web/src/components/sessions/SessionLane.tsx: pass projectSlug and sessionSlug to PhaseIndicators",
+                  "file": "apps/web/src/components/sessions/SessionLane.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Hook Logger DB Integration + Events View",
+      "goal": "Modify universal_hook_logger.py for dual-write (JSONL + database). Add agent events API endpoint. Build agent detail view with event timeline showing tool calls, responses, and thinking blocks.",
+      "prerequisites": [3],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [],
+          "tree": ""
+        },
+        "ending": {
+          "files": [],
+          "tree": ""
+        }
+      },
+      "testing_strategy": {
+        "approach": "Hook execution test + event ingestion verification + timeline rendering",
+        "verification_steps": []
+      },
+      "task_groups": [
+        {
+          "id": "4.1",
+          "title": "Hook Logger Dual-Write",
+          "objective": "Modify universal_hook_logger.py to write events to both JSONL files and PostgreSQL database",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.1.1",
+              "title": "Add database writer module",
+              "file_path": ".claude/hooks/logging/db_writer.py",
+              "description": "Create async database writer module that creates AgentLog entries. Import from session_db, handle connection pooling for hook context. Include error handling to not block hook execution.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/hooks/logging/universal_hook_logger.py",
+                    "lines": "all",
+                    "purpose": "Understand current hook structure"
+                  },
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "create_agent_log section",
+                    "purpose": "Use AgentLog creation pattern"
+                  }
+                ],
+                "related_files": ["apps/core/session_db/database.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.1.1.1",
+                  "command": "CREATE FILE .claude/hooks/logging/db_writer.py with async write_event_to_db function, imports session_db, handles connection setup/teardown, error handling",
+                  "file": ".claude/hooks/logging/db_writer.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.1.2",
+              "title": "Update hook logger for dual-write",
+              "file_path": ".claude/hooks/logging/universal_hook_logger.py",
+              "description": "Modify main() to call both JSONL writer and database writer. Add SESSION_DB_URL env check to enable/disable DB write. Make DB write non-blocking.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": ".claude/hooks/logging/universal_hook_logger.py",
+                    "lines": "all",
+                    "purpose": "Modify existing logger"
+                  },
+                  {
+                    "file": ".claude/hooks/logging/db_writer.py",
+                    "lines": "all",
+                    "purpose": "Import db writer"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1"],
+              "actions": [
+                {
+                  "id": "4.1.2.1",
+                  "command": "UPDATE universal_hook_logger.py: ADD import db_writer, ADD env check for SESSION_DB_URL, ADD call to db_writer.write_event_to_db in main()",
+                  "file": ".claude/hooks/logging/universal_hook_logger.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.1.2.2",
+                  "command": "ADD error handling around db write to ensure JSONL write always succeeds even if DB fails",
+                  "file": ".claude/hooks/logging/universal_hook_logger.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.1.3",
+              "title": "Add pyproject.toml for hook dependencies",
+              "file_path": ".claude/hooks/logging/pyproject.toml",
+              "description": "Create pyproject.toml with dependencies needed for database writing (asyncpg, sqlmodel, session_db as local path).",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.1.3.1",
+                  "command": "CREATE FILE .claude/hooks/logging/pyproject.toml with [project] section, dependencies for asyncpg, sqlmodel, python-dotenv",
+                  "file": ".claude/hooks/logging/pyproject.toml",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Agent Events API",
+          "objective": "Create API endpoints for querying agent logs/events",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.2.1",
+              "title": "Add agent logs endpoints",
+              "file_path": "apps/core/api/routers/agents.py",
+              "description": "Add endpoints: GET /agents/{agent_id} (agent detail), GET /agents/{agent_id}/logs (event timeline with pagination and filtering).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/routers/agents.py",
+                    "lines": "all",
+                    "purpose": "Add to existing agents router"
+                  },
+                  {
+                    "file": "apps/core/session_db/crud.py",
+                    "lines": "agent log crud section",
+                    "purpose": "Use log query functions"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.2.1.1",
+                  "command": "CREATE FUNCTION get_agent endpoint: GET /{agent_id} returning Agent with full details",
+                  "file": "apps/core/api/routers/agents.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.2.1.2",
+                  "command": "CREATE FUNCTION list_agent_logs endpoint: GET /{agent_id}/logs returning list[AgentLog] with event_category filter, limit, offset params",
+                  "file": "apps/core/api/routers/agents.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Agent Events UI",
+          "objective": "Build agent detail view with event timeline",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.3.1",
+              "title": "Add agent events API and types",
+              "file_path": "apps/web/src/lib/agents-api.ts",
+              "description": "Create API functions for agent detail and logs. Add AgentLog TypeScript type.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "AgentLog section",
+                    "purpose": "Match AgentLog type"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.3.1.1",
+                  "command": "CREATE FILE apps/web/src/lib/agents-api.ts with getAgent, getAgentLogs functions",
+                  "file": "apps/web/src/lib/agents-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.1.2",
+                  "command": "UPDATE apps/web/src/types/agent.ts: ADD AgentLog interface with all fields",
+                  "file": "apps/web/src/types/agent.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.3.2",
+              "title": "Create EventTimeline component",
+              "file_path": "apps/web/src/components/agents/EventTimeline.tsx",
+              "description": "Create timeline component showing events chronologically. Different rendering for hook events (tool use), response blocks, phase transitions. Expandable details.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["4.3.1"],
+              "actions": [
+                {
+                  "id": "4.3.2.1",
+                  "command": "CREATE FILE apps/web/src/components/agents/EventItem.tsx with event prop, different renders for hook/response/phase events, expandable content",
+                  "file": "apps/web/src/components/agents/EventItem.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.2.2",
+                  "command": "CREATE FILE apps/web/src/components/agents/EventTimeline.tsx with agentId prop, fetch logs, render EventItems in chronological order, load more pagination",
+                  "file": "apps/web/src/components/agents/EventTimeline.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.3.3",
+              "title": "Create agent detail page",
+              "file_path": "apps/web/src/app/agents/[agentId]/page.tsx",
+              "description": "Create agent detail page showing agent info header and EventTimeline. Link from AgentCard in BuildView.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/src/components/agents/EventTimeline.tsx"]
+              },
+              "depends_on": ["4.3.2"],
+              "actions": [
+                {
+                  "id": "4.3.3.1",
+                  "command": "CREATE FILE apps/web/src/app/agents/[agentId]/page.tsx with 'use client', fetch agent, show header with type/status/model/cost, render EventTimeline",
+                  "file": "apps/web/src/app/agents/[agentId]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.3.2",
+                  "command": "UPDATE apps/web/src/components/phases/AgentCard.tsx: ADD Link to /agents/{agentId}",
+                  "file": "apps/web/src/components/phases/AgentCard.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.3.3",
+                  "command": "CREATE FILE apps/web/src/components/agents/index.ts exporting EventItem, EventTimeline",
+                  "file": "apps/web/src/components/agents/index.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Polish, Refinement, and Edge Cases",
+      "goal": "Add loading states, error handling, empty states, status indicators. Implement project onboarding flow (path validation, .claude directory check). Final UI polish with consistent styling.",
+      "prerequisites": [4],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [],
+          "tree": ""
+        },
+        "ending": {
+          "files": [],
+          "tree": ""
+        }
+      },
+      "testing_strategy": {
+        "approach": "End-to-end user flow testing + edge case verification",
+        "verification_steps": []
+      },
+      "task_groups": [
+        {
+          "id": "5.1",
+          "title": "Project Onboarding Flow",
+          "objective": "Implement project creation with path validation and .claude directory checks",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.1.1",
+              "title": "Add project onboarding API endpoint",
+              "file_path": "apps/core/api/routers/projects.py",
+              "description": "Add POST /projects/onboard endpoint that validates path exists, checks for .claude directory, creates project with onboarding_status tracking.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/api/routers/projects.py",
+                    "lines": "all",
+                    "purpose": "Add to existing router"
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-11_build-initial-management-ui_mn3z2n/spec.md",
+                    "lines": "102-128",
+                    "purpose": "Reference onboarding requirements"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.1.1.1",
+                  "command": "CREATE FUNCTION onboard_project endpoint: POST /onboard accepting {name, path}, validates path exists, checks .claude dir, returns Project with onboarding_status",
+                  "file": "apps/core/api/routers/projects.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.1.2",
+              "title": "Create onboarding dialog in frontend",
+              "file_path": "apps/web/src/components/projects/OnboardingDialog.tsx",
+              "description": "Create dialog/modal for onboarding a new project. Form with name and path inputs. Display validation results. Show onboarding status after creation.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["5.1.1"],
+              "actions": [
+                {
+                  "id": "5.1.2.1",
+                  "command": "RUN npx shadcn-ui@latest add dialog in apps/web/",
+                  "file": "apps/web/components/ui/dialog.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.2.2",
+                  "command": "CREATE FILE apps/web/src/components/projects/OnboardingDialog.tsx with form inputs, submit handler calling onboard API, validation feedback, success state",
+                  "file": "apps/web/src/components/projects/OnboardingDialog.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.2.3",
+                  "command": "UPDATE apps/web/src/app/projects/page.tsx: ADD 'Add Project' button that opens OnboardingDialog",
+                  "file": "apps/web/src/app/projects/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Loading and Error States",
+          "objective": "Add consistent loading spinners, error messages, and empty states across all views",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.2.1",
+              "title": "Create shared UI components",
+              "file_path": "apps/web/src/components/shared/",
+              "description": "Create reusable LoadingSpinner, ErrorMessage, and EmptyState components with consistent styling.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.2.1.1",
+                  "command": "CREATE FILE apps/web/src/components/shared/LoadingSpinner.tsx with size variants (sm, md, lg), centered option",
+                  "file": "apps/web/src/components/shared/LoadingSpinner.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.1.2",
+                  "command": "CREATE FILE apps/web/src/components/shared/ErrorMessage.tsx with message prop, retry button option, styled alert",
+                  "file": "apps/web/src/components/shared/ErrorMessage.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.1.3",
+                  "command": "CREATE FILE apps/web/src/components/shared/EmptyState.tsx with title, description, icon, action button props",
+                  "file": "apps/web/src/components/shared/EmptyState.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.1.4",
+                  "command": "CREATE FILE apps/web/src/components/shared/index.ts exporting all shared components",
+                  "file": "apps/web/src/components/shared/index.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.2.2",
+              "title": "Update list components with states",
+              "file_path": "apps/web/src/components/",
+              "description": "Update ProjectsList, Swimlane, BuildView, EventTimeline to use shared LoadingSpinner, ErrorMessage, EmptyState components.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/web/src/components/shared/index.ts",
+                    "lines": "all",
+                    "purpose": "Import shared components"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["5.2.1"],
+              "actions": [
+                {
+                  "id": "5.2.2.1",
+                  "command": "UPDATE apps/web/src/components/projects/ProjectsList.tsx: USE LoadingSpinner, ErrorMessage, EmptyState",
+                  "file": "apps/web/src/components/projects/ProjectsList.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.2.2",
+                  "command": "UPDATE apps/web/src/components/sessions/Swimlane.tsx: USE LoadingSpinner, ErrorMessage, EmptyState for no sessions",
+                  "file": "apps/web/src/components/sessions/Swimlane.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.2.3",
+                  "command": "UPDATE apps/web/src/components/phases/BuildView.tsx: USE LoadingSpinner, ErrorMessage, EmptyState for no agents",
+                  "file": "apps/web/src/components/phases/BuildView.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.2.4",
+                  "command": "UPDATE apps/web/src/components/agents/EventTimeline.tsx: USE LoadingSpinner, ErrorMessage, EmptyState for no events",
+                  "file": "apps/web/src/components/agents/EventTimeline.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.3",
+          "title": "Visual Polish",
+          "objective": "Final styling improvements, consistent spacing, hover states, transitions",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.3.1",
+              "title": "Add status color utilities",
+              "file_path": "apps/web/src/lib/utils.ts",
+              "description": "Create utility functions for consistent status colors: project status, session phase status, agent status. Map to Tailwind color classes.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/web/tailwind.config.ts"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.3.1.1",
+                  "command": "CREATE FUNCTION getProjectStatusColor(status) returning Tailwind color classes for badge variants",
+                  "file": "apps/web/src/lib/utils.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.1.2",
+                  "command": "CREATE FUNCTION getPhaseStatusColor(status) returning colors for complete/in_progress/pending phases",
+                  "file": "apps/web/src/lib/utils.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.1.3",
+                  "command": "CREATE FUNCTION getAgentStatusColor(status) returning colors for agent statuses",
+                  "file": "apps/web/src/lib/utils.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.3.2",
+              "title": "Add hover and transition effects",
+              "file_path": "apps/web/src/components/",
+              "description": "Add hover effects to cards, smooth transitions on state changes, cursor pointers on clickable elements.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["5.3.1"],
+              "actions": [
+                {
+                  "id": "5.3.2.1",
+                  "command": "UPDATE apps/web/src/components/projects/ProjectCard.tsx: ADD hover:shadow-md transition-shadow cursor-pointer",
+                  "file": "apps/web/src/components/projects/ProjectCard.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.2.2",
+                  "command": "UPDATE apps/web/src/components/sessions/SessionLane.tsx: ADD hover effect, transition styles",
+                  "file": "apps/web/src/components/sessions/SessionLane.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.2.3",
+                  "command": "UPDATE apps/web/src/components/phases/AgentCard.tsx: ADD hover effect, transition styles",
+                  "file": "apps/web/src/components/phases/AgentCard.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.3.3",
+              "title": "Add breadcrumb navigation",
+              "file_path": "apps/web/src/components/shared/Breadcrumbs.tsx",
+              "description": "Create breadcrumb component for deep navigation: Projects > Project Name > Session Name > Phase. Add to relevant pages.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.3.3.1",
+                  "command": "CREATE FILE apps/web/src/components/shared/Breadcrumbs.tsx with items array prop, separator, Link for each item",
+                  "file": "apps/web/src/components/shared/Breadcrumbs.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.3.2",
+                  "command": "UPDATE apps/web/src/app/projects/[slug]/page.tsx: ADD Breadcrumbs (Projects > {project.name})",
+                  "file": "apps/web/src/app/projects/[slug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.3.3",
+                  "command": "UPDATE apps/web/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx: ADD Breadcrumbs (Projects > {project.name} > {session.title})",
+                  "file": "apps/web/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.3.4",
+                  "command": "UPDATE apps/web/src/app/agents/[agentId]/page.tsx: ADD Breadcrumbs (back to session)",
+                  "file": "apps/web/src/app/agents/[agentId]/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

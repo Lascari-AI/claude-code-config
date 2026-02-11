@@ -1,8 +1,6 @@
-# AI Docs
+# AI Documentation Sources
 
-> Resources to fetch and load into ai_docs/<section>/*.md at runtime
->
-> Sections use snake_case folder names (e.g., `claude_code`, `uv`)
+This directory contains cached AI documentation for agents to use as context.
 
 ## claude_code
 
@@ -13,6 +11,34 @@ Claude Code CLI tool documentation from Anthropic.
 - https://code.claude.com/docs/en/skills
 - https://docs.anthropic.com/en/docs/claude-code/slash-commands
 - https://docs.anthropic.com/en/docs/claude-code/sub-agents
+
+## claude_agent_sdk
+
+Agent SDK documentation from the Claude Platform.
+
+- https://platform.claude.com/docs/en/agent-sdk/sessions
+- https://platform.claude.com/docs/en/agent-sdk/slash-commands
+- https://platform.claude.com/docs/en/agent-sdk/hooks
+- https://platform.claude.com/docs/en/agent-sdk/python
+- https://platform.claude.com/docs/en/agent-sdk/custom-tools
+- https://platform.claude.com/docs/en/agent-sdk/skills
+- https://platform.claude.com/docs/en/agent-sdk/structured-outputs
+- https://platform.claude.com/docs/en/agent-sdk/subagents
+
+## agents_and_tools
+
+Agent skills and tool development guides.
+
+- https://platform.claude.com/docs/en/build-with-claude/skills-guide
+- https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices
+- https://platform.claude.com/docs/en/agent-sdk/cost-tracking
+- https://www.anthropic.com/engineering/writing-tools-for-agents
+
+## models
+
+Claude model documentation and overview.
+
+- https://platform.claude.com/docs/en/about-claude/models/overview
 
 ## uv
 

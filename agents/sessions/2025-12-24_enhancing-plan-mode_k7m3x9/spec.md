@@ -24,7 +24,7 @@ Adapt the existing external 4-phase planning system into the **session workflow'
 │                                                                             │
 │        ┌───────┐                                  ┌───────┐                 │
 │        │       │                                  │       │                 │
-│        │  v1   │ ════════════════════════════▶   │  v2   │                 │
+│        │  v1   │ ════════════════════════════▶    │  v2   │                 │
 │        │       │          THE PLAN                │       │                 │
 │        └───────┘         (the bridge)             └───────┘                 │
 │                                                                             │
