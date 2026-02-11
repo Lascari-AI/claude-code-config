@@ -26,6 +26,10 @@ from .models import (
     SessionCreate,
     SessionUpdate,
     SessionSummary,
+    Project,
+    ProjectCreate,
+    ProjectUpdate,
+    ProjectSummary,
     Agent,
     AgentCreate,
     AgentUpdate,
@@ -33,6 +37,184 @@ from .models import (
     AgentLog,
     AgentLogCreate,
 )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROJECT CRUD
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+async def create_project(db: AsyncSession, data: ProjectCreate) -> Project:
+    """
+    Create a new project.
+
+    Args:
+        db: Database session
+        data: Project creation data
+
+    Returns:
+        The created project
+    """
+    project = Project(
+        name=data.name,
+        slug=data.slug,
+        path=data.path,
+        repo_url=data.repo_url,
+        status=data.status,
+        onboarding_status=data.onboarding_status,
+        metadata_=data.metadata_,
+    )
+    db.add(project)
+    await db.flush()
+    await db.refresh(project)
+    return project
+
+
+async def get_project(db: AsyncSession, project_id: UUID) -> Project | None:
+    """
+    Get a project by ID.
+
+    Args:
+        db: Database session
+        project_id: Project UUID
+
+    Returns:
+        The project or None if not found
+    """
+    return await db.get(Project, project_id)
+
+
+async def get_project_by_slug(db: AsyncSession, slug: str) -> Project | None:
+    """
+    Get a project by its slug.
+
+    Args:
+        db: Database session
+        slug: Project slug
+
+    Returns:
+        The project or None if not found
+    """
+    result = await db.exec(select(Project).where(Project.slug == slug))
+    return result.first()
+
+
+async def list_projects(
+    db: AsyncSession,
+    *,
+    status: str | None = None,
+    limit: int = 100,
+    offset: int = 0,
+) -> Sequence[Project]:
+    """
+    List projects with optional filtering.
+
+    Args:
+        db: Database session
+        status: Filter by status
+        limit: Maximum number of results
+        offset: Number of results to skip
+
+    Returns:
+        List of projects
+    """
+    query = select(Project).order_by(Project.created_at.desc())
+
+    if status:
+        query = query.where(Project.status == status)
+
+    query = query.limit(limit).offset(offset)
+    result = await db.exec(query)
+    return result.all()
+
+
+async def list_project_summaries(
+    db: AsyncSession,
+    *,
+    status: str | None = None,
+    limit: int = 100,
+    offset: int = 0,
+) -> list[ProjectSummary]:
+    """
+    List project summaries (lightweight view).
+
+    Args:
+        db: Database session
+        status: Filter by status
+        limit: Maximum number of results
+        offset: Number of results to skip
+
+    Returns:
+        List of project summaries
+    """
+    projects = await list_projects(db, status=status, limit=limit, offset=offset)
+    return [
+        ProjectSummary(
+            id=p.id,
+            name=p.name,
+            slug=p.slug,
+            status=p.status,
+            path=p.path,
+            created_at=p.created_at,
+            updated_at=p.updated_at,
+        )
+        for p in projects
+    ]
+
+
+async def update_project(
+    db: AsyncSession,
+    project_id: UUID,
+    data: ProjectUpdate,
+) -> Project | None:
+    """
+    Update a project.
+
+    Args:
+        db: Database session
+        project_id: Project UUID
+        data: Update data (only non-None fields are updated)
+
+    Returns:
+        The updated project or None if not found
+    """
+    project = await db.get(Project, project_id)
+    if not project:
+        return None
+
+    update_data = data.model_dump(exclude_unset=True, exclude_none=True)
+
+    for key, value in update_data.items():
+        setattr(project, key, value)
+
+    project.updated_at = datetime.utcnow()
+    db.add(project)
+    await db.flush()
+    await db.refresh(project)
+    return project
+
+
+async def delete_project(db: AsyncSession, project_id: UUID) -> bool:
+    """
+    Delete a project.
+
+    Note: This will fail if sessions reference this project.
+    Consider archiving instead of deleting.
+
+    Args:
+        db: Database session
+        project_id: Project UUID
+
+    Returns:
+        True if deleted, False if not found
+    """
+    project = await db.get(Project, project_id)
+    if not project:
+        return False
+
+    await db.delete(project)
+    await db.flush()
+    return True
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -601,6 +601,18 @@ class SessionSummary(SQLModel):
     updated_at: datetime
 
 
+class ProjectSummary(SQLModel):
+    """Lightweight project info for list views."""
+
+    id: UUID
+    name: str
+    slug: str
+    status: str
+    path: str
+    created_at: datetime
+    updated_at: datetime
+
+
 class AgentSummary(SQLModel):
     """Lightweight agent info for session detail views."""
 
@@ -652,6 +664,30 @@ class SessionUpdate(SQLModel):
     total_cost: Optional[float] = None
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    metadata_: Optional[dict[str, Any]] = None
+
+
+class ProjectCreate(SQLModel):
+    """DTO for creating a new project."""
+
+    name: str
+    slug: str
+    path: str
+    repo_url: Optional[str] = None
+    status: str = "pending"
+    onboarding_status: dict[str, Any] = Field(default_factory=dict)
+    metadata_: dict[str, Any] = Field(default_factory=dict)
+
+
+class ProjectUpdate(SQLModel):
+    """DTO for updating project fields."""
+
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    path: Optional[str] = None
+    repo_url: Optional[str] = None
+    status: Optional[str] = None
+    onboarding_status: Optional[dict[str, Any]] = None
     metadata_: Optional[dict[str, Any]] = None
 
 

@@ -16,16 +16,21 @@ from .models import (
     AgentType,
     AgentStatus,
     EventCategory,
+    ProjectStatus,
     # Core models
     Session,
     Agent,
     AgentLog,
+    Project,
     # Summary models
     SessionSummary,
     AgentSummary,
+    ProjectSummary,
     # DTOs
     SessionCreate,
     SessionUpdate,
+    ProjectCreate,
+    ProjectUpdate,
     AgentCreate,
     AgentUpdate,
     AgentLogCreate,
@@ -41,6 +46,14 @@ from .database import (
 )
 
 from .crud import (
+    # Project CRUD
+    create_project,
+    get_project,
+    get_project_by_slug,
+    list_projects,
+    list_project_summaries,
+    update_project,
+    delete_project,
     # Session CRUD
     create_session,
     get_session,
@@ -73,16 +86,21 @@ __all__ = [
     "AgentType",
     "AgentStatus",
     "EventCategory",
+    "ProjectStatus",
     # Core models
     "Session",
     "Agent",
     "AgentLog",
+    "Project",
     # Summary models
     "SessionSummary",
     "AgentSummary",
+    "ProjectSummary",
     # DTOs
     "SessionCreate",
     "SessionUpdate",
+    "ProjectCreate",
+    "ProjectUpdate",
     "AgentCreate",
     "AgentUpdate",
     "AgentLogCreate",
@@ -93,6 +111,14 @@ __all__ = [
     "drop_db",
     "reset_db",
     "close_db",
+    # Project CRUD
+    "create_project",
+    "get_project",
+    "get_project_by_slug",
+    "list_projects",
+    "list_project_summaries",
+    "update_project",
+    "delete_project",
     # Session CRUD
     "create_session",
     "get_session",
