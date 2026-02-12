@@ -57,6 +57,7 @@ export function SessionLane({
                 <PhaseIndicator
                   phase={phase}
                   status={getPhaseStatus(phase, session.status)}
+                  href={`/projects/${projectSlug}/sessions/${session.session_slug}?phase=${phase}`}
                   onClick={onPhaseClick ? () => onPhaseClick(phase) : undefined}
                 />
                 {index < phases.length - 1 && (

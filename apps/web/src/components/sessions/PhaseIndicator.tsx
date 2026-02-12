@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { SessionPhase, PhaseStatus } from "@/types/session";
 
 interface PhaseIndicatorProps {
   phase: SessionPhase;
   status: PhaseStatus;
+  href?: string;
   onClick?: () => void;
   className?: string;
 }
@@ -28,23 +30,14 @@ const phaseLabels: Record<SessionPhase, string> = {
 export function PhaseIndicator({
   phase,
   status,
+  href,
   onClick,
   className,
 }: PhaseIndicatorProps) {
-  const isClickable = !!onClick;
+  const isClickable = !!onClick || !!href;
 
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={!isClickable}
-      className={cn(
-        "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors",
-        isClickable && "hover:bg-muted cursor-pointer",
-        !isClickable && "cursor-default",
-        className
-      )}
-    >
+  const content = (
+    <>
       {/* Status indicator */}
       <div
         className={cn(
@@ -76,6 +69,34 @@ export function PhaseIndicator({
       >
         {phaseLabels[phase]}
       </span>
+    </>
+  );
+
+  const baseClassName = cn(
+    "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors",
+    isClickable && "hover:bg-muted cursor-pointer",
+    !isClickable && "cursor-default",
+    className
+  );
+
+  // If href is provided, use a Link
+  if (href) {
+    return (
+      <Link href={href} className={baseClassName}>
+        {content}
+      </Link>
+    );
+  }
+
+  // Otherwise use a button
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!isClickable}
+      className={baseClassName}
+    >
+      {content}
     </button>
   );
 }

@@ -6,6 +6,9 @@
 
 import { fetchApi } from "./api";
 import type { Session, SessionSummary, SessionStatus, SessionType } from "@/types/session";
+import type { Plan } from "@/types/plan";
+import type { SessionState } from "@/types/session-state";
+import type { AgentSummary } from "@/types/agent";
 
 /**
  * Filter options for listing sessions.
@@ -72,3 +75,58 @@ export async function getProjectSessions(
   const query = params.toString();
   return fetchApi<SessionSummary[]>(`/projects/${projectId}/sessions?${query}`);
 }
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SESSION ARTIFACTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Response type for spec content.
+ */
+export interface SpecContent {
+  content: string;
+  exists: boolean;
+}
+
+/**
+ * Fetch the spec.md content for a session.
+ *
+ * @param slug - Session slug
+ * @returns Spec markdown content
+ */
+export async function getSessionSpec(slug: string): Promise<SpecContent> {
+  return fetchApi<SpecContent>(`/sessions/${slug}/spec`);
+}
+
+/**
+ * Fetch the plan.json content for a session.
+ *
+ * @param slug - Session slug
+ * @returns Full plan object
+ */
+export async function getSessionPlan(slug: string): Promise<Plan> {
+  return fetchApi<Plan>(`/sessions/${slug}/plan`);
+}
+
+/**
+ * Fetch the state.json content for a session.
+ *
+ * @param slug - Session slug
+ * @returns Session state object
+ */
+export async function getSessionState(slug: string): Promise<SessionState> {
+  return fetchApi<SessionState>(`/sessions/${slug}/state`);
+}
+
+/**
+ * Fetch agents for a session.
+ *
+ * @param sessionId - Session UUID
+ * @returns List of agent summaries
+ */
+export async function getSessionAgents(sessionId: string): Promise<AgentSummary[]> {
+  return fetchApi<AgentSummary[]>(`/agents/session/${sessionId}`);
+}
+
+
