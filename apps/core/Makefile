@@ -1,14 +1,15 @@
 # LAI Session Manager - Development Commands
 #
-# Usage:
-#   make help     - Show available commands
-#   make up       - Start all services
-#   make down     - Stop all services
-#   make logs     - View logs from all services
+# Recommended development workflow (3 terminals):
+#   Terminal 1: make db          # Start database
+#   Terminal 2: make dev-backend # Run backend with hot reload
+#   Terminal 3: make dev-frontend # Run frontend with hot reload
+#
+# Or use Docker for everything: make up
 
-.PHONY: help up down stop restart logs logs-backend logs-frontend logs-db \
-        build rebuild shell-backend shell-frontend shell-db db-shell \
-        db-reset db-migrate clean status ps
+.PHONY: help dev db dev-backend dev-frontend install up down stop restart \
+        logs logs-db build rebuild shell-db db-shell db-reset db-backup \
+        db-restore clean prune test-backend lint-frontend status ps
 
 # Default target
 .DEFAULT_GOAL := help
@@ -20,103 +21,128 @@
 help: ## Show this help message
 	@echo "LAI Session Manager - Development Commands"
 	@echo ""
-	@echo "Usage: make [target]"
+	@echo "╔═══════════════════════════════════════════════════════════════════╗"
+	@echo "║  RECOMMENDED: Local dev with 3 terminals                         ║"
+	@echo "║                                                                   ║"
+	@echo "║  Terminal 1: make db           (database in Docker)              ║"
+	@echo "║  Terminal 2: make dev-backend  (FastAPI with hot reload)         ║"
+	@echo "║  Terminal 3: make dev-frontend (Next.js with hot reload)         ║"
+	@echo "╚═══════════════════════════════════════════════════════════════════╝"
 	@echo ""
-	@echo "Targets:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@echo "URLs:"
+	@echo "  Frontend: http://localhost:3456"
+	@echo "  Backend:  http://localhost:8765"
+	@echo "  API Docs: http://localhost:8765/docs"
+	@echo ""
+	@echo "All commands:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# DOCKER COMPOSE COMMANDS
+# LOCAL DEVELOPMENT (RECOMMENDED)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-up: ## Start all services (database, backend, frontend)
+dev: ## Show local development instructions
+	@echo ""
+	@echo "Local Development Setup (3 terminals):"
+	@echo ""
+	@echo "  Terminal 1 - Database:"
+	@echo "    cd apps/core && make db"
+	@echo ""
+	@echo "  Terminal 2 - Backend (FastAPI):"
+	@echo "    cd apps/core && make dev-backend"
+	@echo ""
+	@echo "  Terminal 3 - Frontend (Next.js):"
+	@echo "    cd apps/core && make dev-frontend"
+	@echo ""
+	@echo "First time? Run 'make install' to install dependencies."
+	@echo ""
+
+db: ## Start database only (Docker) - run in Terminal 1
+	docker compose up db
+	@echo ""
+	@echo "Database running at localhost:54320"
+
+dev-backend: ## Run backend locally with hot reload - run in Terminal 2
+	@echo "Starting FastAPI backend on http://localhost:8765"
+	@echo "API docs at http://localhost:8765/docs"
+	@echo ""
+	uv run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8765
+
+dev-frontend: ## Run frontend locally with hot reload - run in Terminal 3
+	@echo "Starting Next.js frontend on http://localhost:3456"
+	@echo ""
+	cd frontend && npm run dev -- --port 3456
+
+install: ## Install all dependencies (backend + frontend)
+	@echo "Installing backend dependencies..."
+	uv sync
+	@echo ""
+	@echo "Installing frontend dependencies..."
+	cd frontend && npm install
+	@echo ""
+	@echo "Done! Run 'make dev' to see development instructions."
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DOCKER COMPOSE (ALTERNATIVE)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+up: ## Start all services in Docker (alternative to local dev)
 	docker compose up -d
 	@echo ""
-	@echo "Services starting..."
+	@echo "All services starting in Docker..."
 	@echo "  Frontend: http://localhost:3456"
 	@echo "  Backend:  http://localhost:8765"
 	@echo "  API Docs: http://localhost:8765/docs"
 	@echo "  Database: localhost:54320"
 	@echo ""
 	@echo "Run 'make logs' to view logs"
+	@echo ""
+	@echo "TIP: For better hot reload, use local dev instead:"
+	@echo "     make dev"
 
-down: ## Stop all services
+down: ## Stop all Docker services
 	docker compose down
 
-stop: ## Stop services without removing containers
+stop: ## Stop Docker services without removing containers
 	docker compose stop
 
-restart: ## Restart all services
+restart: ## Restart all Docker services
 	docker compose restart
 
-status: ## Show status of all services
+status: ## Show status of Docker services
 	docker compose ps
 
 ps: status ## Alias for status
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# LOGS
+# LOGS (Docker mode)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-logs: ## View logs from all services (follow mode)
+logs: ## View logs from all Docker services
 	docker compose logs -f
-
-logs-backend: ## View backend logs only (follow mode)
-	docker compose logs -f backend
-
-logs-frontend: ## View frontend logs only (follow mode)
-	docker compose logs -f frontend
 
 logs-db: ## View database logs only
 	docker compose logs -f db
 
-logs-recent: ## Show last 100 lines from all services (no follow)
-	docker compose logs --tail=100
-
-logs-backend-recent: ## Show last 50 lines from backend (no follow)
-	docker compose logs --tail=50 backend
-
-logs-frontend-recent: ## Show last 50 lines from frontend (no follow)
-	docker compose logs --tail=50 frontend
-
-logs-errors: ## Show only error lines from backend
-	docker compose logs backend 2>&1 | grep -iE "(error|exception|traceback|failed)"
-
 # ═══════════════════════════════════════════════════════════════════════════════
-# BUILD
+# BUILD (Docker)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 build: ## Build all Docker images
 	docker compose build
 
-rebuild: ## Rebuild all images from scratch (no cache)
+rebuild: ## Rebuild all Docker images from scratch
 	docker compose build --no-cache
 
-build-backend: ## Build backend image only
-	docker compose build backend
-
-build-frontend: ## Build frontend image only
-	docker compose build frontend
-
 # ═══════════════════════════════════════════════════════════════════════════════
-# SHELL ACCESS
+# DATABASE
 # ═══════════════════════════════════════════════════════════════════════════════
-
-shell-backend: ## Open shell in backend container
-	docker compose exec backend /bin/bash
-
-shell-frontend: ## Open shell in frontend container
-	docker compose exec frontend /bin/sh
 
 shell-db: ## Open shell in database container
 	docker compose exec db /bin/bash
 
 db-shell: ## Connect to PostgreSQL with psql
 	docker compose exec db psql -U postgres -d session_db
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# DATABASE
-# ═══════════════════════════════════════════════════════════════════════════════
 
 db-reset: ## Reset database (WARNING: destroys all data)
 	@echo "WARNING: This will delete all data in the database!"
@@ -149,27 +175,11 @@ prune: ## Remove unused Docker resources
 	docker system prune -f
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# DEVELOPMENT HELPERS
-# ═══════════════════════════════════════════════════════════════════════════════
-
-install-backend: ## Install backend dependencies locally (using uv)
-	uv sync
-
-install-frontend: ## Install frontend dependencies locally
-	cd frontend && npm install
-
-dev-backend: ## Run backend locally (without Docker)
-	uv run uvicorn backend.main:app --reload --port 8000
-
-dev-frontend: ## Run frontend locally (without Docker)
-	cd frontend && npm run dev
-
-# ═══════════════════════════════════════════════════════════════════════════════
 # TESTING
 # ═══════════════════════════════════════════════════════════════════════════════
 
 test-backend: ## Run backend tests
-	docker compose exec backend uv run pytest
+	uv run pytest
 
 lint-frontend: ## Run frontend linter
-	docker compose exec frontend npm run lint
+	cd frontend && npm run lint
