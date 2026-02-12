@@ -1,0 +1,83 @@
+# Docker Compose for LAI Session Manager Development
+#
+# Services:
+#   - db: PostgreSQL database
+#   - backend: FastAPI with hot reload
+#   - frontend: Next.js with hot reload
+#
+# Usage:
+#   make up        # Start all services
+#   make down      # Stop all services
+#   make logs      # View logs
+#   make db-shell  # Connect to database
+
+services:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # DATABASE
+  # ═══════════════════════════════════════════════════════════════════════════════
+  db:
+    image: postgres:16-alpine
+    container_name: lai-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: session_db
+    ports:
+      - "54320:5432"  # Use non-standard port to avoid conflicts with local PostgreSQL
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d session_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # BACKEND - FastAPI
+  # ═══════════════════════════════════════════════════════════════════════════════
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: lai-backend
+    environment:
+      SESSION_DB_URL: postgresql+asyncpg://postgres:postgres@db:5432/session_db
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source for hot reload
+      - ./backend:/app/backend:ro
+      - ./session_db:/app/session_db:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # FRONTEND - Next.js
+  # ═══════════════════════════════════════════════════════════════════════════════
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lai-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      WATCHPACK_POLLING: "true"  # Enable polling for file changes in Docker
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source for hot reload (exclude node_modules and .next)
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: lai-postgres-data
