@@ -6,7 +6,15 @@
 
 """
 Universal Hook Logger - Claude Code Hook
-Logs all hook payloads to session-specific JSONL files
+
+Logs all hook payloads to session-specific JSONL files AND optionally
+to the PostgreSQL database for UI consumption.
+
+Dual-write ensures:
+1. JSONL files always written (primary backup)
+2. Database written if SESSION_DB_URL is configured
+
+Database write errors do NOT block JSONL writing.
 """
 
 import json
@@ -43,6 +51,36 @@ def write_log_entry(session_id: str, hook_name: str, log_entry: dict) -> None:
         f.write(json.dumps(log_entry) + "\n")
 
 
+def write_to_database(input_data: dict) -> bool:
+    """
+    Write event to database if configured.
+
+    Returns True if written successfully, False otherwise.
+    Errors are logged but do not block execution.
+    """
+    # Check if database is configured
+    db_url = os.environ.get("SESSION_DB_URL")
+    if not db_url:
+        # No DB configured - this is fine, just skip
+        return False
+
+    try:
+        # Import the db_writer module (relative import from same directory)
+        from db_writer import write_event_sync
+
+        return write_event_sync(input_data)
+
+    except ImportError as e:
+        # db_writer not available - log and continue
+        print(f"Hook logger: db_writer import failed: {e}", file=sys.stderr)
+        return False
+
+    except Exception as e:
+        # Any other error - log and continue
+        print(f"Hook logger DB error: {e}", file=sys.stderr)
+        return False
+
+
 def main():
     try:
         # Read hook input from stdin
@@ -52,9 +90,18 @@ def main():
         session_id = input_data.get("session_id", "unknown")
         hook_name = get_hook_name(input_data)
 
-        # Create and write log entry
+        # Create and write log entry to JSONL (always)
         log_entry = create_log_entry(input_data)
         write_log_entry(session_id, hook_name, log_entry)
+
+        # Write to database (if configured, non-blocking)
+        # This is wrapped in try/except to ensure JSONL write success
+        # even if DB write fails
+        try:
+            write_to_database(input_data)
+        except Exception as e:
+            # Log but don't fail - JSONL was already written
+            print(f"Hook logger: DB write skipped: {e}", file=sys.stderr)
 
         # Success - exit silently
         sys.exit(0)

@@ -733,6 +733,21 @@ class AgentUpdate(SQLModel):
     metadata_: Optional[dict[str, Any]] = None
 
 
+class AgentLogSummary(SQLModel):
+    """Lightweight log entry for timeline views."""
+
+    id: UUID
+    agent_id: UUID
+    session_id: UUID
+    event_category: str
+    event_type: str
+    tool_name: Optional[str]
+    content: Optional[str]
+    summary: Optional[str]
+    timestamp: datetime
+    duration_ms: Optional[int]
+
+
 class AgentLogCreate(SQLModel):
     """DTO for creating a new log entry."""
 

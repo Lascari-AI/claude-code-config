@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,8 @@ import { getAgentTypeLabel, getAgentStatusColor } from "@/types/agent";
 interface AgentCardProps {
   agent: AgentSummary;
   onClick?: () => void;
+  /** When true, wraps the card in a Link to /agents/[id] */
+  linkToDetail?: boolean;
   className?: string;
 }
 
@@ -22,10 +25,10 @@ interface AgentCardProps {
  * - Token counts and cost
  * - Timing info
  */
-export function AgentCard({ agent, onClick, className }: AgentCardProps) {
-  const isClickable = !!onClick;
+export function AgentCard({ agent, onClick, linkToDetail = true, className }: AgentCardProps) {
+  const isClickable = !!onClick || linkToDetail;
 
-  return (
+  const cardElement = (
     <Card
       className={cn(
         "transition-all",
@@ -93,6 +96,17 @@ export function AgentCard({ agent, onClick, className }: AgentCardProps) {
       </CardContent>
     </Card>
   );
+
+  // Wrap in Link if linkToDetail is true and no custom onClick
+  if (linkToDetail && !onClick) {
+    return (
+      <Link href={`/agents/${agent.id}`} className="block">
+        {cardElement}
+      </Link>
+    );
+  }
+
+  return cardElement;
 }
 
 function AgentTypeBadge({ type }: { type: string }) {

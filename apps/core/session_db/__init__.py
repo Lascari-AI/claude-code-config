@@ -25,6 +25,7 @@ from .models import (
     # Summary models
     SessionSummary,
     AgentSummary,
+    AgentLogSummary,
     ProjectSummary,
     # DTOs
     SessionCreate,
@@ -95,6 +96,7 @@ __all__ = [
     # Summary models
     "SessionSummary",
     "AgentSummary",
+    "AgentLogSummary",
     "ProjectSummary",
     # DTOs
     "SessionCreate",
