@@ -1,7 +1,7 @@
-# Backend Dockerfile - FastAPI with hot reload
+# Backend Dockerfile - FastAPI with uv and hot reload
 #
 # Development image optimized for:
-# - Fast rebuilds
+# - Fast rebuilds with uv
 # - Hot reload via uvicorn --reload
 # - Source mounted as volume
 
@@ -10,21 +10,27 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies and uv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Copy requirements first for layer caching
-COPY requirements.txt .
+# Add uv to PATH
+ENV PATH="/root/.local/bin:$PATH"
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy pyproject.toml and session_db for dependency resolution
+COPY pyproject.toml .
+COPY session_db/pyproject.toml session_db/pyproject.toml
+COPY session_db/session_db session_db/session_db
 
-# Copy application code
-# Note: In development, these are overridden by volume mounts
-COPY . .
+# Install dependencies with uv
+RUN uv sync --frozen --no-dev 2>/dev/null || uv sync --no-dev
+
+# Copy backend code
+COPY backend backend
 
 # Set Python path to include app directory
 ENV PYTHONPATH=/app
@@ -33,4 +39,4 @@ ENV PYTHONPATH=/app
 EXPOSE 8000
 
 # Default command (can be overridden in docker-compose)
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uv", "run", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

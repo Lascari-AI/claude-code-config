@@ -140,14 +140,14 @@ prune: ## Remove unused Docker resources
 # DEVELOPMENT HELPERS
 # ═══════════════════════════════════════════════════════════════════════════════
 
-install-backend: ## Install backend dependencies locally
-	cd backend && pip install -r requirements.txt
+install-backend: ## Install backend dependencies locally (using uv)
+	uv sync
 
 install-frontend: ## Install frontend dependencies locally
 	cd frontend && npm install
 
 dev-backend: ## Run backend locally (without Docker)
-	cd backend && uvicorn main:app --reload --port 8000
+	uv run uvicorn backend.main:app --reload --port 8000
 
 dev-frontend: ## Run frontend locally (without Docker)
 	cd frontend && npm run dev
@@ -157,7 +157,7 @@ dev-frontend: ## Run frontend locally (without Docker)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 test-backend: ## Run backend tests
-	docker compose exec backend pytest
+	docker compose exec backend uv run pytest
 
 lint-frontend: ## Run frontend linter
 	docker compose exec frontend npm run lint
