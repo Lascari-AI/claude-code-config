@@ -61,14 +61,26 @@ ps: status ## Alias for status
 logs: ## View logs from all services (follow mode)
 	docker compose logs -f
 
-logs-backend: ## View backend logs only
+logs-backend: ## View backend logs only (follow mode)
 	docker compose logs -f backend
 
-logs-frontend: ## View frontend logs only
+logs-frontend: ## View frontend logs only (follow mode)
 	docker compose logs -f frontend
 
 logs-db: ## View database logs only
 	docker compose logs -f db
+
+logs-recent: ## Show last 100 lines from all services (no follow)
+	docker compose logs --tail=100
+
+logs-backend-recent: ## Show last 50 lines from backend (no follow)
+	docker compose logs --tail=50 backend
+
+logs-frontend-recent: ## Show last 50 lines from frontend (no follow)
+	docker compose logs --tail=50 frontend
+
+logs-errors: ## Show only error lines from backend
+	docker compose logs backend 2>&1 | grep -iE "(error|exception|traceback|failed)"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # BUILD
