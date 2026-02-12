@@ -4,15 +4,16 @@
  * ProjectCard Component
  *
  * Displays a project summary in a card format with status badge.
+ * Clicking navigates to the project detail page.
  */
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { ProjectSummary } from "@/types/project";
 
 interface ProjectCardProps {
   project: ProjectSummary;
-  onClick?: () => void;
 }
 
 /**
@@ -47,26 +48,25 @@ function formatDate(dateString: string): string {
   });
 }
 
-export function ProjectCard({ project, onClick }: ProjectCardProps) {
+export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Card
-      className={`transition-shadow ${onClick ? "cursor-pointer hover:shadow-md" : ""}`}
-      onClick={onClick}
-    >
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg">{project.name}</CardTitle>
-          <Badge variant={getStatusVariant(project.status)}>{project.status}</Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2 text-sm text-muted-foreground">
-          <p className="font-mono text-xs truncate" title={project.path}>
-            {project.path}
-          </p>
-          <p>Created {formatDate(project.created_at)}</p>
-        </div>
-      </CardContent>
-    </Card>
+    <Link href={`/projects/${project.slug}`}>
+      <Card className="transition-shadow cursor-pointer hover:shadow-md">
+        <CardHeader className="pb-2">
+          <div className="flex items-start justify-between gap-2">
+            <CardTitle className="text-lg">{project.name}</CardTitle>
+            <Badge variant={getStatusVariant(project.status)}>{project.status}</Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p className="font-mono text-xs truncate" title={project.path}>
+              {project.path}
+            </p>
+            <p>Created {formatDate(project.created_at)}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

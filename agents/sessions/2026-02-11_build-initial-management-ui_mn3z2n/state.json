@@ -99,14 +99,21 @@
     "status": "in_progress",
     "checkpoints_total": 5,
     "checkpoints_detailed": 5,
-    "checkpoints_completed": [],
-    "current_checkpoint": 1,
-    "current_task_group": "1.4",
-    "current_task": "1.4.4",
+    "checkpoints_completed": [1],
+    "current_checkpoint": 2,
+    "current_task_group": "2.4",
+    "current_task": "2.4.4",
     "last_updated": "2026-02-12T00:05:00+00:00",
     "summary": "Plan finalized with 5 checkpoints, 18 task groups, ~55 tasks, ~130 actions"
   },
-  "commits": [],
+  "commits": [
+    {
+      "checkpoint_id": 1,
+      "sha": "dec6b45",
+      "message": "feat(session-manager): checkpoint 1 - project entity model to UI",
+      "created_at": "2026-02-12T00:10:00+00:00"
+    }
+  ],
   "research_artifacts": [],
   "doc_updates": []
 }

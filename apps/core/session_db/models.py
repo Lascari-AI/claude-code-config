@@ -195,6 +195,14 @@ class Session(SQLModel, table=True):
         description="Brief description of what this session accomplishes",
     )
 
+    # ─── Project Link ────────────────────────────────────────────────────────────
+    project_id: Optional[UUID] = Field(
+        default=None,
+        foreign_key="projects.id",
+        index=True,
+        description="Optional parent project FK",
+    )
+
     # ─── Workflow State ─────────────────────────────────────────────────────────
     status: str = Field(
         default="created",
@@ -292,6 +300,7 @@ class Session(SQLModel, table=True):
     )
 
     # ─── Relationships ──────────────────────────────────────────────────────────
+    project: Optional["Project"] = Relationship(back_populates="sessions")
     agents: list["Agent"] = Relationship(back_populates="session")
     logs: list["AgentLog"] = Relationship(
         back_populates="session",
@@ -594,6 +603,7 @@ class SessionSummary(SQLModel):
     title: Optional[str]
     status: str
     session_type: str
+    project_id: Optional[UUID] = None
     checkpoints_completed: int
     checkpoints_total: int
     total_cost: float
@@ -642,6 +652,7 @@ class SessionCreate(SQLModel):
     description: Optional[str] = None
     session_type: str = "full"
     working_dir: str
+    project_id: Optional[UUID] = None
     git_worktree: Optional[str] = None
     git_branch: Optional[str] = None
     metadata_: dict[str, Any] = Field(default_factory=dict)
@@ -653,6 +664,7 @@ class SessionUpdate(SQLModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
+    project_id: Optional[UUID] = None
     spec_exists: Optional[bool] = None
     plan_exists: Optional[bool] = None
     checkpoints_total: Optional[int] = None

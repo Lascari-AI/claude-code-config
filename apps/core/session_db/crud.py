@@ -239,6 +239,7 @@ async def create_session(db: AsyncSession, data: SessionCreate) -> Session:
         description=data.description,
         session_type=data.session_type,
         working_dir=data.working_dir,
+        project_id=data.project_id,
         git_worktree=data.git_worktree,
         git_branch=data.git_branch,
         metadata_=data.metadata_,
@@ -283,6 +284,7 @@ async def list_sessions(
     *,
     status: str | None = None,
     session_type: str | None = None,
+    project_id: UUID | None = None,
     limit: int = 100,
     offset: int = 0,
 ) -> Sequence[Session]:
@@ -293,6 +295,7 @@ async def list_sessions(
         db: Database session
         status: Filter by status
         session_type: Filter by session type
+        project_id: Filter by project
         limit: Maximum number of results
         offset: Number of results to skip
 
@@ -305,6 +308,8 @@ async def list_sessions(
         query = query.where(Session.status == status)
     if session_type:
         query = query.where(Session.session_type == session_type)
+    if project_id:
+        query = query.where(Session.project_id == project_id)
 
     query = query.limit(limit).offset(offset)
     result = await db.exec(query)
@@ -314,6 +319,9 @@ async def list_sessions(
 async def list_session_summaries(
     db: AsyncSession,
     *,
+    status: str | None = None,
+    session_type: str | None = None,
+    project_id: UUID | None = None,
     limit: int = 100,
     offset: int = 0,
 ) -> list[SessionSummary]:
@@ -322,13 +330,23 @@ async def list_session_summaries(
 
     Args:
         db: Database session
+        status: Filter by status
+        session_type: Filter by session type
+        project_id: Filter by project
         limit: Maximum number of results
         offset: Number of results to skip
 
     Returns:
         List of session summaries
     """
-    sessions = await list_sessions(db, limit=limit, offset=offset)
+    sessions = await list_sessions(
+        db,
+        status=status,
+        session_type=session_type,
+        project_id=project_id,
+        limit=limit,
+        offset=offset,
+    )
     return [
         SessionSummary(
             id=s.id,
@@ -336,6 +354,7 @@ async def list_session_summaries(
             title=s.title,
             status=s.status,
             session_type=s.session_type,
+            project_id=s.project_id,
             checkpoints_completed=s.checkpoints_completed,
             checkpoints_total=s.checkpoints_total,
             total_cost=s.total_cost,

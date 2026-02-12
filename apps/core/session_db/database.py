@@ -27,7 +27,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from sqlalchemy.orm import sessionmaker
 
-from .models import Session, Agent, AgentLog  # noqa: F401 - needed for table creation
+from .models import Session, Agent, AgentLog, Project  # noqa: F401 - needed for table creation
 
 # Load environment variables from .env file
 load_dotenv()

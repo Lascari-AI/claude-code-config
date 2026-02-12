@@ -5,3 +5,4 @@
  */
 
 export { useProjectsStore } from "./projects";
+export { useSessionsStore, useProjectSessions } from "./sessions";

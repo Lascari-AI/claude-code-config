@@ -14,10 +14,12 @@ from session_db import (
     ProjectCreate,
     ProjectUpdate,
     ProjectSummary,
+    SessionSummary,
     create_project,
     get_project,
     get_project_by_slug,
     list_project_summaries,
+    list_session_summaries,
     update_project,
     delete_project,
 )
@@ -160,3 +162,39 @@ async def delete_project_endpoint(
             detail=f"Project {project_id} not found",
         )
     await db.commit()
+
+
+@router.get("/{project_id}/sessions", response_model=list[SessionSummary])
+async def list_project_sessions_endpoint(
+    project_id: UUID,
+    status_filter: str | None = None,
+    session_type: str | None = None,
+    limit: int = 100,
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+) -> list[SessionSummary]:
+    """
+    List sessions for a specific project.
+
+    Optional filters:
+    - status_filter: Filter by session status
+    - session_type: Filter by type (full, quick, research)
+    - limit: Maximum number of results (default 100)
+    - offset: Number of results to skip (default 0)
+    """
+    # First verify the project exists
+    project = await get_project(db, project_id)
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project {project_id} not found",
+        )
+
+    return await list_session_summaries(
+        db,
+        status=status_filter,
+        session_type=session_type,
+        project_id=project_id,
+        limit=limit,
+        offset=offset,
+    )

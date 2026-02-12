@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from session_db.database import init_db, close_db
 
-from .routers import projects
+from .routers import projects, sessions
 
 
 @asynccontextmanager
@@ -51,6 +51,7 @@ app.add_middleware(
 
 # Register routers
 app.include_router(projects.router)
+app.include_router(sessions.router)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
