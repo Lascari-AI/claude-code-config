@@ -21,12 +21,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Add uv to PATH
 ENV PATH="/root/.local/bin:$PATH"
 
-# Copy pyproject.toml and session_db for dependency resolution
+# Copy pyproject.toml and session_db package for dependency resolution
+# Note: session_db uses flat layout (files directly in session_db/)
 COPY pyproject.toml .
-COPY session_db/pyproject.toml session_db/pyproject.toml
-COPY session_db/session_db session_db/session_db
+COPY session_db session_db
 
 # Install dependencies with uv
+# Falls back to non-frozen if lock file doesn't exist
 RUN uv sync --frozen --no-dev 2>/dev/null || uv sync --no-dev
 
 # Copy backend code
