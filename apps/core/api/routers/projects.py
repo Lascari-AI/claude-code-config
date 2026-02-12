@@ -4,9 +4,11 @@ Projects Router
 CRUD endpoints for managing projects.
 """
 
+import os
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from session_db import (
@@ -25,6 +27,23 @@ from session_db import (
 )
 
 from ..dependencies import get_db
+
+
+# Request model for onboarding
+class OnboardProjectRequest(BaseModel):
+    """Request body for onboarding a new project."""
+
+    name: str
+    path: str
+
+
+# Response model for onboarding validation
+class OnboardingValidation(BaseModel):
+    """Validation results for onboarding."""
+
+    path_validated: bool
+    claude_dir_exists: bool
+    path_error: str | None = None
 
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -197,4 +216,108 @@ async def list_project_sessions_endpoint(
         project_id=project_id,
         limit=limit,
         offset=offset,
+    )
+
+
+@router.post("/onboard", response_model=Project, status_code=status.HTTP_201_CREATED)
+async def onboard_project_endpoint(
+    data: OnboardProjectRequest,
+    db: AsyncSession = Depends(get_db),
+) -> Project:
+    """
+    Onboard a new project with path validation.
+
+    Validates:
+    - Path exists and is accessible
+    - Checks for .claude directory
+
+    Creates the project with onboarding_status tracking the validation results.
+    """
+    # Validate the path
+    path = os.path.expanduser(data.path)
+    path_validated = os.path.isdir(path)
+    path_error = None
+
+    if not path_validated:
+        if not os.path.exists(path):
+            path_error = "Path does not exist"
+        elif not os.path.isdir(path):
+            path_error = "Path is not a directory"
+
+    # Check for .claude directory
+    claude_dir_path = os.path.join(path, ".claude")
+    claude_dir_exists = os.path.isdir(claude_dir_path) if path_validated else False
+
+    # Build onboarding status
+    onboarding_status = {
+        "path_validated": path_validated,
+        "claude_dir_exists": claude_dir_exists,
+        "settings_configured": False,
+        "skills_linked": False,
+        "agents_linked": False,
+        "docs_foundation": False,
+    }
+
+    # Determine project status based on validation
+    if path_validated and claude_dir_exists:
+        project_status = "active"
+    elif path_validated:
+        project_status = "onboarding"
+    else:
+        project_status = "pending"
+
+    # Generate slug from name
+    slug = data.name.lower().replace(" ", "-").replace("_", "-")
+    # Remove any non-alphanumeric characters except hyphens
+    slug = "".join(c for c in slug if c.isalnum() or c == "-")
+
+    # Check if slug already exists
+    existing = await get_project_by_slug(db, slug)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Project with slug '{slug}' already exists",
+        )
+
+    # Create the project
+    project_data = ProjectCreate(
+        name=data.name,
+        slug=slug,
+        path=path,
+        status=project_status,
+        onboarding_status=onboarding_status,
+    )
+
+    project = await create_project(db, project_data)
+    await db.commit()
+
+    return project
+
+
+@router.post("/validate-path", response_model=OnboardingValidation)
+async def validate_project_path(
+    data: OnboardProjectRequest,
+) -> OnboardingValidation:
+    """
+    Validate a project path without creating a project.
+
+    Useful for checking path validity before onboarding.
+    """
+    path = os.path.expanduser(data.path)
+    path_validated = os.path.isdir(path)
+    path_error = None
+
+    if not path_validated:
+        if not os.path.exists(path):
+            path_error = "Path does not exist"
+        elif not os.path.isdir(path):
+            path_error = "Path is not a directory"
+
+    claude_dir_path = os.path.join(path, ".claude")
+    claude_dir_exists = os.path.isdir(claude_dir_path) if path_validated else False
+
+    return OnboardingValidation(
+        path_validated=path_validated,
+        claude_dir_exists=claude_dir_exists,
+        path_error=path_error,
     )

@@ -6,8 +6,9 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { SpecView, PlanView, BuildView, DocsView } from "@/components/phases";
+import { Breadcrumbs, LoadingSpinner, ErrorMessage } from "@/components/shared";
 import { getSessionBySlug } from "@/lib/sessions-api";
-import { cn } from "@/lib/utils";
+import { cn, getSessionStatusColor, getPhaseStatusColor } from "@/lib/utils";
 import type { Session, SessionPhase } from "@/types/session";
 import { getCurrentPhase, getPhaseStatus } from "@/types/session";
 
@@ -70,26 +71,28 @@ export default function SessionDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
-          <span className="text-sm text-muted-foreground">Loading session...</span>
-        </div>
+      <div className="py-24">
+        <LoadingSpinner size="lg" centered text="Loading session..." />
       </div>
     );
   }
 
   if (error || !session) {
     return (
-      <div className="py-12 text-center">
-        <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
-        <p className="text-muted-foreground">{error || "Session not found"}</p>
-        <Link
-          href={`/projects/${projectSlug}`}
-          className="text-primary hover:underline mt-4 inline-block"
-        >
-          ← Back to project
-        </Link>
+      <div className="py-12">
+        <ErrorMessage
+          title="Error"
+          message={error || "Session not found"}
+          onRetry={() => window.location.reload()}
+        />
+        <div className="text-center mt-4">
+          <Link
+            href={`/projects/${projectSlug}`}
+            className="text-primary hover:underline"
+          >
+            ← Back to project
+          </Link>
+        </div>
       </div>
     );
   }
@@ -98,21 +101,17 @@ export default function SessionDetailPage() {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: "Projects", href: "/projects" },
+          { label: projectSlug, href: `/projects/${projectSlug}` },
+          { label: session.title || session.session_slug },
+        ]}
+      />
+
       {/* Header */}
       <div>
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-          <Link href="/projects" className="hover:text-foreground">
-            Projects
-          </Link>
-          <span>/</span>
-          <Link href={`/projects/${projectSlug}`} className="hover:text-foreground">
-            {projectSlug}
-          </Link>
-          <span>/</span>
-          <span className="text-foreground">{session.session_slug}</span>
-        </div>
-
         {/* Title and status */}
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -184,23 +183,10 @@ export default function SessionDetailPage() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    created: "bg-gray-100 text-gray-700",
-    spec: "bg-blue-100 text-blue-700",
-    spec_done: "bg-blue-100 text-blue-700",
-    plan: "bg-purple-100 text-purple-700",
-    plan_done: "bg-purple-100 text-purple-700",
-    build: "bg-orange-100 text-orange-700",
-    docs: "bg-green-100 text-green-700",
-    complete: "bg-green-100 text-green-700",
-    failed: "bg-red-100 text-red-700",
-    paused: "bg-yellow-100 text-yellow-700",
-  };
-
   return (
     <Badge
       variant="secondary"
-      className={cn(colors[status] || "bg-gray-100 text-gray-700")}
+      className={getSessionStatusColor(status)}
     >
       {status.replace("_", " ")}
     </Badge>
@@ -210,12 +196,7 @@ function StatusBadge({ status }: { status: string }) {
 function PhaseStatusDot({ status }: { status: "pending" | "in_progress" | "complete" }) {
   return (
     <div
-      className={cn(
-        "w-2 h-2 rounded-full",
-        status === "complete" && "bg-green-500",
-        status === "in_progress" && "bg-blue-500 animate-pulse",
-        status === "pending" && "bg-gray-300"
-      )}
+      className={cn("w-2 h-2 rounded-full", getPhaseStatusColor(status))}
     />
   );
 }

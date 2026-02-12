@@ -4,7 +4,7 @@ import { PhaseIndicator } from "./PhaseIndicator";
 import { Card, CardContent } from "@/components/ui/card";
 import type { SessionSummary, SessionPhase, SessionStatus } from "@/types/session";
 import { getPhaseStatus } from "@/types/session";
-import { cn } from "@/lib/utils";
+import { cn, getSessionStatusColor, getPhaseStatusColor } from "@/lib/utils";
 
 interface SessionLaneProps {
   session: SessionSummary;
@@ -80,24 +80,11 @@ export function SessionLane({
 }
 
 function StatusBadge({ status }: { status: SessionStatus }) {
-  const statusColors: Record<string, string> = {
-    created: "bg-gray-100 text-gray-700",
-    spec: "bg-blue-100 text-blue-700",
-    spec_done: "bg-blue-100 text-blue-700",
-    plan: "bg-purple-100 text-purple-700",
-    plan_done: "bg-purple-100 text-purple-700",
-    build: "bg-orange-100 text-orange-700",
-    docs: "bg-green-100 text-green-700",
-    complete: "bg-green-100 text-green-700",
-    failed: "bg-red-100 text-red-700",
-    paused: "bg-yellow-100 text-yellow-700",
-  };
-
   return (
     <span
       className={cn(
         "px-2 py-0.5 rounded-full text-xs font-medium",
-        statusColors[status] || "bg-gray-100 text-gray-700"
+        getSessionStatusColor(status)
       )}
     >
       {status.replace("_", " ")}
@@ -109,10 +96,10 @@ function Arrow({ status }: { status: "complete" | "in_progress" | "pending" }) {
   return (
     <div
       className={cn(
-        "w-6 h-0.5 mx-1",
+        "w-6 h-0.5 mx-1 transition-colors",
         status === "complete" && "bg-green-400",
         status === "in_progress" && "bg-blue-400",
-        status === "pending" && "bg-gray-200"
+        status === "pending" && "bg-gray-200 dark:bg-gray-600"
       )}
     />
   );

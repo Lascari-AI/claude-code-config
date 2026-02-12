@@ -5,6 +5,7 @@ import { getSessionAgents } from "@/lib/sessions-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AgentCard } from "./AgentCard";
 import { cn } from "@/lib/utils";
+import { LoadingSpinner, ErrorMessage, EmptyState, DocumentIcon } from "@/components/shared";
 import type { AgentSummary } from "@/types/agent";
 
 interface BuildViewProps {
@@ -43,40 +44,38 @@ export function BuildView({ sessionId, className }: BuildViewProps) {
 
   if (isLoading) {
     return (
-      <div className={cn("flex items-center justify-center py-12", className)}>
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
-          <span className="text-sm text-muted-foreground">Loading agents...</span>
-        </div>
+      <div className={cn("py-12", className)}>
+        <LoadingSpinner size="lg" centered text="Loading agents..." />
       </div>
     );
   }
 
   if (error) {
     return (
-      <Card className={cn("border-red-200", className)}>
-        <CardHeader>
-          <CardTitle className="text-red-600">Error Loading Agents</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">{error}</p>
-        </CardContent>
-      </Card>
+      <ErrorMessage
+        title="Error Loading Agents"
+        message={error}
+        onRetry={() => {
+          setError(null);
+          setIsLoading(true);
+          getSessionAgents(sessionId)
+            .then(setAgents)
+            .catch((err) => setError(err.message))
+            .finally(() => setIsLoading(false));
+        }}
+        className={className}
+      />
     );
   }
 
   if (!agents.length) {
     return (
-      <Card className={cn("border-dashed", className)}>
-        <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">
-            No build agents found for this session.
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Agents will appear here when the build phase starts.
-          </p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={<DocumentIcon />}
+        title="No build agents found"
+        description="Agents will appear here when the build phase starts."
+        className={className}
+      />
     );
   }
 

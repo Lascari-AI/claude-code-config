@@ -6,3 +6,4 @@
 
 export { ProjectCard } from "./ProjectCard";
 export { ProjectsList } from "./ProjectsList";
+export { OnboardingDialog } from "./OnboardingDialog";

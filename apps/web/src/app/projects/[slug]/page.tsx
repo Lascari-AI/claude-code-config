@@ -12,7 +12,9 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Swimlane } from "@/components/sessions";
+import { Breadcrumbs, LoadingSpinner } from "@/components/shared";
 import { useProjectsStore, useSessionsStore, useProjectSessions } from "@/store";
+import { getProjectStatusColor } from "@/lib/utils";
 import type { SessionPhase } from "@/types/session";
 
 export default function ProjectDetailPage() {
@@ -63,15 +65,7 @@ export default function ProjectDetailPage() {
   if (projectLoading) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/3 mb-4" />
-          <div className="h-4 bg-muted rounded w-1/2 mb-8" />
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 bg-muted rounded" />
-            ))}
-          </div>
-        </div>
+        <LoadingSpinner size="lg" centered text="Loading project..." />
       </div>
     );
   }
@@ -94,23 +88,27 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: "Projects", href: "/projects" },
+          { label: selectedProject.name },
+        ]}
+        className="mb-4"
+      />
+
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-          <Link href="/projects" className="hover:underline">
-            Projects
-          </Link>
-          <span>/</span>
-          <span>{selectedProject.name}</span>
-        </div>
-
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold tracking-tight">
                 {selectedProject.name}
               </h1>
-              <Badge variant={selectedProject.status === "active" ? "default" : "outline"}>
+              <Badge
+                variant="secondary"
+                className={getProjectStatusColor(selectedProject.status)}
+              >
                 {selectedProject.status}
               </Badge>
             </div>

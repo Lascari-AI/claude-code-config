@@ -4,12 +4,13 @@
  * ProjectsList Component
  *
  * Fetches and displays a grid of project cards.
- * Handles loading, error, and empty states.
+ * Handles loading, error, and empty states using shared components.
  */
 
 import { useEffect } from "react";
 import { useProjectsStore } from "@/store";
 import { ProjectCard } from "./ProjectCard";
+import { LoadingSpinner, ErrorMessage, EmptyState, FolderIcon } from "@/components/shared";
 
 export function ProjectsList() {
   const { projects, isLoading, error, fetchProjects, clearError } =
@@ -21,46 +22,31 @@ export function ProjectsList() {
 
   // Loading state
   if (isLoading && projects.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading projects...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner size="lg" centered text="Loading projects..." />;
   }
 
   // Error state
   if (error) {
     return (
-      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6">
-        <h3 className="font-semibold text-destructive mb-2">
-          Error loading projects
-        </h3>
-        <p className="text-sm text-muted-foreground mb-4">{error}</p>
-        <button
-          onClick={() => {
-            clearError();
-            fetchProjects();
-          }}
-          className="text-sm text-primary hover:underline"
-        >
-          Try again
-        </button>
-      </div>
+      <ErrorMessage
+        title="Error loading projects"
+        message={error}
+        onRetry={() => {
+          clearError();
+          fetchProjects();
+        }}
+      />
     );
   }
 
   // Empty state
   if (projects.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed p-12 text-center">
-        <h3 className="font-semibold mb-2">No projects yet</h3>
-        <p className="text-sm text-muted-foreground">
-          Create your first project to get started.
-        </p>
-      </div>
+      <EmptyState
+        icon={<FolderIcon />}
+        title="No projects yet"
+        description="Create your first project to get started with session workflows."
+      />
     );
   }
 

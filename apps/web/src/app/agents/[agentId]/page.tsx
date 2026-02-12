@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getAgentStatusColorUtil } from "@/lib/utils";
+import { Breadcrumbs, LoadingSpinner, ErrorMessage } from "@/components/shared";
 import { EventTimeline } from "@/components/agents/EventTimeline";
 import { getAgent } from "@/lib/agents-api";
 import type { Agent } from "@/types/agent";
@@ -46,10 +47,7 @@ export default function AgentDetailPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner />
-          <span className="ml-2 text-muted-foreground">Loading agent...</span>
-        </div>
+        <LoadingSpinner size="lg" centered text="Loading agent..." />
       </div>
     );
   }
@@ -58,23 +56,26 @@ export default function AgentDetailPage() {
   if (error || !agent) {
     return (
       <div className="container mx-auto py-8">
-        <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-destructive">{error || "Agent not found"}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-4"
-            onClick={() => router.back()}
-          >
-            Go Back
-          </Button>
-        </div>
+        <ErrorMessage
+          title="Error"
+          message={error || "Agent not found"}
+          onRetry={() => router.back()}
+        />
       </div>
     );
   }
 
   return (
     <div className="container mx-auto py-8">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: "Session", href: "#" }, // Will go back
+          { label: agent.name || getAgentTypeLabel(agent.agent_type) },
+        ]}
+        className="mb-4"
+      />
+
       {/* Back navigation */}
       <Button
         variant="ghost"
@@ -82,7 +83,7 @@ export default function AgentDetailPage() {
         className="mb-4"
         onClick={() => router.back()}
       >
-        ← Back
+        ← Back to Session
       </Button>
 
       {/* Agent header card */}
@@ -217,27 +218,4 @@ function formatDuration(start: string, end: string): string {
   return `${diffHour}h ${remainingMin}m`;
 }
 
-function LoadingSpinner() {
-  return (
-    <svg
-      className="animate-spin w-5 h-5 text-muted-foreground"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
-  );
-}
+// Note: LoadingSpinner, ErrorMessage, Breadcrumbs imported from shared components

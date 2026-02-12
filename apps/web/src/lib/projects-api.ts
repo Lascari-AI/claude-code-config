@@ -78,3 +78,38 @@ export async function deleteProject(id: string): Promise<void> {
     method: "DELETE",
   });
 }
+
+/**
+ * Onboarding validation result.
+ */
+export interface OnboardingValidation {
+  path_validated: boolean;
+  claude_dir_exists: boolean;
+  path_error: string | null;
+}
+
+/**
+ * Onboard a new project with path validation.
+ */
+export async function onboardProject(data: {
+  name: string;
+  path: string;
+}): Promise<Project> {
+  return fetchApi<Project>("/projects/onboard", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Validate a project path without creating a project.
+ */
+export async function validateProjectPath(data: {
+  name: string;
+  path: string;
+}): Promise<OnboardingValidation> {
+  return fetchApi<OnboardingValidation>("/projects/validate-path", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { EventItem } from "./EventItem";
 import { getAgentLogs } from "@/lib/agents-api";
+import { LoadingSpinner, ErrorMessage, EmptyState, ClockIcon } from "@/components/shared";
 import type { AgentLogSummary, EventCategory } from "@/types/agent";
 
 interface EventTimelineProps {
@@ -83,9 +84,8 @@ export function EventTimeline({
   // Loading state
   if (isLoading && events.length === 0) {
     return (
-      <div className={cn("flex flex-col items-center justify-center py-12", className)}>
-        <LoadingSpinner />
-        <p className="mt-4 text-sm text-muted-foreground">Loading events...</p>
+      <div className={cn("py-12", className)}>
+        <LoadingSpinner size="lg" centered text="Loading events..." />
       </div>
     );
   }
@@ -93,42 +93,30 @@ export function EventTimeline({
   // Error state
   if (error && events.length === 0) {
     return (
-      <div className={cn("flex flex-col items-center justify-center py-12", className)}>
-        <p className="text-sm text-destructive">{error}</p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-4"
-          onClick={() => fetchEvents(0, true)}
-        >
-          Retry
-        </Button>
-      </div>
+      <ErrorMessage
+        title="Error Loading Events"
+        message={error}
+        onRetry={() => fetchEvents(0, true)}
+        className={className}
+      />
     );
   }
 
   // Empty state
   if (!isLoading && events.length === 0) {
     return (
-      <div className={cn("flex flex-col items-center justify-center py-12", className)}>
-        <div className="rounded-full bg-muted p-4 mb-4">
-          <EmptyIcon className="w-8 h-8 text-muted-foreground" />
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {categoryFilter
-            ? `No ${categoryFilter} events found.`
-            : "No events recorded yet."}
-        </p>
-        {categoryFilter && (
-          <Button
-            variant="link"
-            size="sm"
-            className="mt-2"
-            onClick={() => handleCategoryFilter(null)}
-          >
-            Clear filter
-          </Button>
-        )}
+      <div className={className}>
+        <EmptyState
+          icon={<ClockIcon />}
+          title={categoryFilter ? `No ${categoryFilter} events` : "No events yet"}
+          description={
+            categoryFilter
+              ? `No ${categoryFilter} events found. Try a different filter.`
+              : "Events will appear here as the agent executes."
+          }
+          actionLabel={categoryFilter ? "Clear filter" : undefined}
+          onAction={categoryFilter ? () => handleCategoryFilter(null) : undefined}
+        />
       </div>
     );
   }
@@ -194,7 +182,7 @@ export function EventTimeline({
           >
             {isLoading ? (
               <>
-                <LoadingSpinner className="w-4 h-4 mr-2" />
+                <LoadingSpinner size="sm" className="mr-2" />
                 Loading...
               </>
             ) : (
@@ -233,45 +221,4 @@ function FilterButton({
   );
 }
 
-function LoadingSpinner({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn("animate-spin text-muted-foreground", className || "w-6 h-6")}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
-  );
-}
-
-function EmptyIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  );
-}
+// Note: LoadingSpinner, ErrorMessage, EmptyState, and ClockIcon are imported from shared components
