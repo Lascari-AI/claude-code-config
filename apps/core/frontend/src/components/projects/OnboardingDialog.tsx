@@ -28,6 +28,7 @@ import {
   type OnboardingValidation,
 } from "@/lib/projects-api";
 import { useProjectsStore } from "@/store";
+import { DirectoryBrowser } from "./DirectoryBrowser";
 
 interface OnboardingDialogProps {
   trigger?: React.ReactNode;
@@ -45,6 +46,7 @@ interface OnboardingDialogProps {
  */
 export function OnboardingDialog({ trigger, onSuccess }: OnboardingDialogProps) {
   const [open, setOpen] = useState(false);
+  const [browserOpen, setBrowserOpen] = useState(false);
   const [name, setName] = useState("");
   const [path, setPath] = useState("");
   const [isValidating, setIsValidating] = useState(false);
@@ -53,6 +55,23 @@ export function OnboardingDialog({ trigger, onSuccess }: OnboardingDialogProps) 
   const [error, setError] = useState<string | null>(null);
 
   const { fetchProjects } = useProjectsStore();
+
+  // Handle path selection from browser
+  const handlePathSelect = useCallback((selectedPath: string) => {
+    setPath(selectedPath);
+    setValidation(null);
+    // Auto-validate after selection
+    setTimeout(() => {
+      validateProjectPath({ name: name || "temp", path: selectedPath }).then(
+        (result) => {
+          setValidation(result);
+          if (result.path_error) {
+            setError(result.path_error);
+          }
+        }
+      );
+    }, 100);
+  }, [name]);
 
   // Reset form when dialog closes
   const handleOpenChange = (newOpen: boolean) => {
@@ -163,9 +182,17 @@ export function OnboardingDialog({ trigger, onSuccess }: OnboardingDialogProps) 
                     setValidation(null);
                   }}
                   placeholder="/path/to/your/project"
-                  className="font-mono text-sm"
+                  className="font-mono text-sm flex-1"
                   disabled={isSubmitting}
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setBrowserOpen(true)}
+                  disabled={isSubmitting}
+                >
+                  <FolderSearchIcon className="w-4 h-4" />
+                </Button>
                 <Button
                   type="button"
                   variant="outline"
@@ -180,6 +207,14 @@ export function OnboardingDialog({ trigger, onSuccess }: OnboardingDialogProps) 
                 </Button>
               </div>
             </div>
+
+            {/* Directory Browser Dialog */}
+            <DirectoryBrowser
+              open={browserOpen}
+              onOpenChange={setBrowserOpen}
+              onSelect={handlePathSelect}
+              initialPath={path || "~"}
+            />
 
             {/* Validation Results */}
             {validation && (
@@ -352,6 +387,26 @@ function WarningIcon({ className }: { className?: string }) {
         strokeLinejoin="round"
         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
       />
+    </svg>
+  );
+}
+
+function FolderSearchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 7v10a2 2 0 002 2h6m4 0h4a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+      />
+      <circle cx="17" cy="17" r="3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-1.5-1.5" />
     </svg>
   );
 }

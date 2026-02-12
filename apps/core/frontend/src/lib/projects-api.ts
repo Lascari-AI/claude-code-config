@@ -113,3 +113,34 @@ export async function validateProjectPath(data: {
     body: JSON.stringify(data),
   });
 }
+
+/**
+ * Directory entry for browsing.
+ */
+export interface DirectoryEntry {
+  name: string;
+  path: string;
+  is_directory: boolean;
+  has_claude_dir: boolean;
+}
+
+/**
+ * Browse response with directory listing.
+ */
+export interface BrowseResponse {
+  current_path: string;
+  parent_path: string | null;
+  entries: DirectoryEntry[];
+  error: string | null;
+}
+
+/**
+ * Browse directories for project selection.
+ */
+export async function browseDirectories(
+  path: string = "~"
+): Promise<BrowseResponse> {
+  const params = new URLSearchParams();
+  params.set("path", path);
+  return fetchApi<BrowseResponse>(`/projects/browse?${params.toString()}`);
+}

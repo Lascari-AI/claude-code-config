@@ -46,6 +46,25 @@ class OnboardingValidation(BaseModel):
     path_error: str | None = None
 
 
+# Response model for directory browsing
+class DirectoryEntry(BaseModel):
+    """A directory entry for browsing."""
+
+    name: str
+    path: str
+    is_directory: bool
+    has_claude_dir: bool = False
+
+
+class BrowseResponse(BaseModel):
+    """Response for directory browsing."""
+
+    current_path: str
+    parent_path: str | None
+    entries: list[DirectoryEntry]
+    error: str | None = None
+
+
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
@@ -320,4 +339,96 @@ async def validate_project_path(
         path_validated=path_validated,
         claude_dir_exists=claude_dir_exists,
         path_error=path_error,
+    )
+
+
+@router.get("/browse", response_model=BrowseResponse)
+async def browse_directories(
+    path: str = "~",
+) -> BrowseResponse:
+    """
+    Browse directories for project selection.
+
+    Lists directories at the given path. Only shows directories (not files)
+    to help users navigate to their project folder.
+
+    Query params:
+    - path: Directory path to browse (default: home directory)
+    """
+    # Expand user home directory
+    expanded_path = os.path.expanduser(path)
+
+    # Normalize the path
+    expanded_path = os.path.normpath(expanded_path)
+
+    # Security check: don't allow browsing certain system directories
+    blocked_prefixes = ["/proc", "/sys", "/dev"]
+    for blocked in blocked_prefixes:
+        if expanded_path.startswith(blocked):
+            return BrowseResponse(
+                current_path=expanded_path,
+                parent_path=None,
+                entries=[],
+                error="Access to system directories is not allowed",
+            )
+
+    # Check if path exists
+    if not os.path.exists(expanded_path):
+        return BrowseResponse(
+            current_path=expanded_path,
+            parent_path=os.path.dirname(expanded_path),
+            entries=[],
+            error="Path does not exist",
+        )
+
+    if not os.path.isdir(expanded_path):
+        return BrowseResponse(
+            current_path=expanded_path,
+            parent_path=os.path.dirname(expanded_path),
+            entries=[],
+            error="Path is not a directory",
+        )
+
+    # Get parent path (None if at root)
+    parent_path = os.path.dirname(expanded_path)
+    if parent_path == expanded_path:  # At root
+        parent_path = None
+
+    # List directory contents
+    entries: list[DirectoryEntry] = []
+    try:
+        for entry_name in sorted(os.listdir(expanded_path)):
+            # Skip hidden files/dirs (except .claude which we check for)
+            if entry_name.startswith("."):
+                continue
+
+            entry_path = os.path.join(expanded_path, entry_name)
+
+            # Only include directories
+            if os.path.isdir(entry_path):
+                # Check if this directory has a .claude subdirectory
+                claude_dir = os.path.join(entry_path, ".claude")
+                has_claude = os.path.isdir(claude_dir)
+
+                entries.append(
+                    DirectoryEntry(
+                        name=entry_name,
+                        path=entry_path,
+                        is_directory=True,
+                        has_claude_dir=has_claude,
+                    )
+                )
+    except PermissionError:
+        return BrowseResponse(
+            current_path=expanded_path,
+            parent_path=parent_path,
+            entries=[],
+            error="Permission denied",
+        )
+
+    return BrowseResponse(
+        current_path=expanded_path,
+        parent_path=parent_path,
+        entries=entries,
+        error=None,
     )
