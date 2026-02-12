@@ -33,9 +33,9 @@ up: ## Start all services (database, backend, frontend)
 	docker compose up -d
 	@echo ""
 	@echo "Services starting..."
-	@echo "  Frontend: http://localhost:3000"
-	@echo "  Backend:  http://localhost:8000"
-	@echo "  API Docs: http://localhost:8000/docs"
+	@echo "  Frontend: http://localhost:3456"
+	@echo "  Backend:  http://localhost:8765"
+	@echo "  API Docs: http://localhost:8765/docs"
 	@echo "  Database: localhost:54320"
 	@echo ""
 	@echo "Run 'make logs' to view logs"

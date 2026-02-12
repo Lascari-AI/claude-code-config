@@ -46,7 +46,7 @@ services:
       SESSION_DB_URL: postgresql+asyncpg://postgres:postgres@db:5432/session_db
       PYTHONUNBUFFERED: 1
     ports:
-      - "8000:8000"
+      - "8765:8000"
     volumes:
       # Mount source for hot reload
       - ./backend:/app/backend:ro
@@ -66,10 +66,10 @@ services:
       dockerfile: Dockerfile
     container_name: lai-frontend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8765
       WATCHPACK_POLLING: "true"  # Enable polling for file changes in Docker
     ports:
-      - "3000:3000"
+      - "3456:3000"
     volumes:
       # Mount source for hot reload (exclude node_modules and .next)
       - ./frontend/src:/app/src:ro
