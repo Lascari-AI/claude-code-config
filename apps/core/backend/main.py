@@ -11,8 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from session_db.database import init_db, close_db
 
-from .routers import agents, projects, sessions
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -41,18 +39,15 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",  # Next.js dev server
+        "http://localhost:3456",  # Next.js dev server (local dev)
+        "http://127.0.0.1:3456",
+        "http://localhost:3000",  # Next.js default port (Docker/fallback)
         "http://127.0.0.1:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Register routers
-app.include_router(agents.router)
-app.include_router(projects.router)
-app.include_router(sessions.router)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
