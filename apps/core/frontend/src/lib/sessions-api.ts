@@ -2,13 +2,14 @@
  * Sessions API Client
  *
  * Typed API functions for session operations.
+ * Uses local Next.js API routes with direct Drizzle database access.
  */
 
-import { fetchApi } from "./api";
 import type { Session, SessionSummary, SessionStatus, SessionType } from "@/types/session";
 import type { Plan } from "@/types/plan";
 import type { SessionState } from "@/types/session-state";
 import type { AgentSummary } from "@/types/agent";
+import { fetchApi } from "./api";
 
 /**
  * Filter options for listing sessions.
@@ -24,6 +25,8 @@ export interface SessionFilters {
 /**
  * Fetch all sessions with optional filters.
  *
+ * Uses local Next.js API route with direct Drizzle database access.
+ *
  * @param filters - Optional filter parameters
  */
 export async function getSessions(
@@ -37,26 +40,57 @@ export async function getSessions(
   params.set("limit", String(filters.limit ?? 100));
   params.set("offset", String(filters.offset ?? 0));
 
-  const query = params.toString();
-  return fetchApi<SessionSummary[]>(`/sessions/?${query}`);
+  // Use local Next.js API route (runs on Node.js server with Drizzle)
+  const response = await fetch(`/api/sessions?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch sessions: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch a single session by ID.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function getSession(id: string): Promise<Session> {
-  return fetchApi<Session>(`/sessions/${id}`);
+  const response = await fetch(`/api/sessions/${id}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Session ${id} not found`);
+    }
+    throw new Error(`Failed to fetch session: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch a single session by slug.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function getSessionBySlug(slug: string): Promise<Session> {
-  return fetchApi<Session>(`/sessions/slug/${slug}`);
+  const response = await fetch(`/api/sessions/slug/${slug}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Session with slug '${slug}' not found`);
+    }
+    throw new Error(`Failed to fetch session: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch sessions for a specific project.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
+ * Calls the sessions endpoint with a project_id filter.
  *
  * @param projectId - Project UUID
  * @param filters - Optional filter parameters
@@ -69,11 +103,18 @@ export async function getProjectSessions(
 
   if (filters.status) params.set("status_filter", filters.status);
   if (filters.sessionType) params.set("session_type", filters.sessionType);
+  params.set("project_id", projectId);
   params.set("limit", String(filters.limit ?? 100));
   params.set("offset", String(filters.offset ?? 0));
 
-  const query = params.toString();
-  return fetchApi<SessionSummary[]>(`/projects/${projectId}/sessions?${query}`);
+  // Use local Next.js API route (runs on Node.js server with Drizzle)
+  const response = await fetch(`/api/sessions?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch project sessions: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 

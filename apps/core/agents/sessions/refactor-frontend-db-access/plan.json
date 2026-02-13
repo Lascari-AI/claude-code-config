@@ -219,7 +219,7 @@
       "title": "Complete Project CRUD Migration",
       "goal": "Migrate remaining project operations (get, create, update, delete, onboard) to frontend Drizzle access.",
       "prerequisites": [1],
-      "status": "pending",
+      "status": "completed",
       "summary": "With Drizzle working for list, extend to full CRUD. Onboarding already partially uses local routes; complete the migration.",
       "task_groups": [
         {
@@ -409,7 +409,7 @@
       "title": "Session Listing via Drizzle",
       "goal": "Migrate session list and get operations to frontend Drizzle access.",
       "prerequisites": [1],
-      "status": "pending",
+      "status": "completed",
       "summary": "Apply same pattern as projects. Sessions list/get moves to frontend DB access.",
       "task_groups": [
         {
