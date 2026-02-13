@@ -660,7 +660,7 @@
       "title": "Agent Listing via Drizzle",
       "goal": "Migrate agent list and log endpoints to frontend Drizzle access.",
       "prerequisites": [3],
-      "status": "pending",
+      "status": "completed",
       "summary": "Final data migration: agents and logs move to frontend DB access.",
       "task_groups": [
         {
