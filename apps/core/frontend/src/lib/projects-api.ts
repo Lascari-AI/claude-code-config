@@ -43,48 +43,97 @@ export async function getProjects(
 
 /**
  * Fetch a single project by ID.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function getProject(id: string): Promise<Project> {
-  return fetchApi<Project>(`/projects/${id}`);
+  const response = await fetch(`/api/projects/${id}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Project ${id} not found`);
+    }
+    throw new Error(`Failed to fetch project: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch a single project by slug.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function getProjectBySlug(slug: string): Promise<Project> {
-  return fetchApi<Project>(`/projects/slug/${slug}`);
+  const response = await fetch(`/api/projects/slug/${slug}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Project with slug '${slug}' not found`);
+    }
+    throw new Error(`Failed to fetch project: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Create a new project.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function createProject(data: ProjectCreate): Promise<Project> {
-  return fetchApi<Project>("/projects/", {
+  const response = await fetch("/api/projects", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to create project: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Update an existing project.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function updateProject(
   id: string,
   data: ProjectUpdate
 ): Promise<Project> {
-  return fetchApi<Project>(`/projects/${id}`, {
+  const response = await fetch(`/api/projects/${id}`, {
     method: "PATCH",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to update project: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Delete a project.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function deleteProject(id: string): Promise<void> {
-  return fetchApi<void>(`/projects/${id}`, {
+  const response = await fetch(`/api/projects/${id}`, {
     method: "DELETE",
   });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to delete project: ${response.statusText}`);
+  }
 }
 
 /**
@@ -98,15 +147,25 @@ export interface OnboardingValidation {
 
 /**
  * Onboard a new project with path validation.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function onboardProject(data: {
   name: string;
   path: string;
 }): Promise<Project> {
-  return fetchApi<Project>("/projects/onboard", {
+  const response = await fetch("/api/projects/onboard", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to onboard project: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
