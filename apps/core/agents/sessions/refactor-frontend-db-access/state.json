@@ -62,7 +62,7 @@
     },
     {
       "checkpoint_id": 3,
-      "sha": "cdf3d81",
+      "sha": "e1ae75b",
       "message": "feat(frontend): migrate session listing to Drizzle",
       "created_at": "2026-02-13T00:00:00Z"
     }
