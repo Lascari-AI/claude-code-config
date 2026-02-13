@@ -27,10 +27,10 @@
     "status": "finalized",
     "checkpoints_total": 6,
     "checkpoints_detailed": 6,
-    "checkpoints_completed": [1, 2, 3],
-    "current_checkpoint": 4,
+    "checkpoints_completed": [1, 2, 3, 4],
+    "current_checkpoint": 5,
     "last_updated": "2026-02-13T00:00:00Z",
-    "summary": "Checkpoint 3 complete: Session list/get operations migrated to frontend Drizzle via Next.js API routes"
+    "summary": "Checkpoint 4 complete: Session artifact API routes created for spec.md, plan.json, state.json"
   },
   "goals": {
     "high_level": [
@@ -64,6 +64,12 @@
       "checkpoint_id": 3,
       "sha": "e1ae75b",
       "message": "feat(frontend): migrate session listing to Drizzle",
+      "created_at": "2026-02-13T00:00:00Z"
+    },
+    {
+      "checkpoint_id": 4,
+      "sha": "0e48440",
+      "message": "feat(frontend): add session artifact API routes",
       "created_at": "2026-02-13T00:00:00Z"
     }
   ],

@@ -532,7 +532,7 @@
       "title": "Session Artifacts via Next.js API Routes",
       "goal": "Create Next.js API routes for reading session artifacts (spec.md, plan.json, state.json) from filesystem.",
       "prerequisites": [3],
-      "status": "pending",
+      "status": "completed",
       "summary": "Artifacts live on filesystem. Create API routes similar to existing /api/browse pattern to serve them.",
       "task_groups": [
         {
