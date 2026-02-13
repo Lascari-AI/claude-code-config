@@ -133,31 +133,64 @@ export interface SpecContent {
 /**
  * Fetch the spec.md content for a session.
  *
+ * Uses local Next.js API route to read spec.md from filesystem.
+ *
  * @param slug - Session slug
  * @returns Spec markdown content
  */
 export async function getSessionSpec(slug: string): Promise<SpecContent> {
-  return fetchApi<SpecContent>(`/sessions/${slug}/spec`);
+  const response = await fetch(`/api/sessions/${slug}/spec`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Spec not found for session '${slug}'`);
+    }
+    throw new Error(`Failed to fetch session spec: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch the plan.json content for a session.
  *
+ * Uses local Next.js API route to read plan.json from filesystem.
+ *
  * @param slug - Session slug
  * @returns Full plan object
  */
 export async function getSessionPlan(slug: string): Promise<Plan> {
-  return fetchApi<Plan>(`/sessions/${slug}/plan`);
+  const response = await fetch(`/api/sessions/${slug}/plan`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Plan not found for session '${slug}'`);
+    }
+    throw new Error(`Failed to fetch session plan: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch the state.json content for a session.
  *
+ * Uses local Next.js API route to read state.json from filesystem.
+ *
  * @param slug - Session slug
  * @returns Session state object
  */
 export async function getSessionState(slug: string): Promise<SessionState> {
-  return fetchApi<SessionState>(`/sessions/${slug}/state`);
+  const response = await fetch(`/api/sessions/${slug}/state`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`State not found for session '${slug}'`);
+    }
+    throw new Error(`Failed to fetch session state: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
