@@ -87,8 +87,13 @@ export const useSessionsStore = create<SessionsState>((set, get) => ({
 }));
 
 /**
+ * Stable empty array to avoid creating new references on every render.
+ */
+const EMPTY_SESSIONS: SessionSummary[] = [];
+
+/**
  * Selector to get sessions for a specific project.
  */
 export function useProjectSessions(projectId: string): SessionSummary[] {
-  return useSessionsStore((state) => state.sessionsByProject.get(projectId) ?? []);
+  return useSessionsStore((state) => state.sessionsByProject.get(projectId) ?? EMPTY_SESSIONS);
 }
