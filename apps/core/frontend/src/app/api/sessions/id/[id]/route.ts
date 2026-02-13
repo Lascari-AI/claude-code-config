@@ -44,7 +44,7 @@ function mapToSession(row: typeof sessions.$inferSelect): Session {
 }
 
 /**
- * GET /api/sessions/[id]
+ * GET /api/sessions/id/[id]
  *
  * Get a single session by UUID.
  */

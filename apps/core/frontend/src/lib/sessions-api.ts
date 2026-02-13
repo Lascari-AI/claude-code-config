@@ -55,7 +55,7 @@ export async function getSessions(
  * Uses local Next.js API route with direct Drizzle database access.
  */
 export async function getSession(id: string): Promise<Session> {
-  const response = await fetch(`/api/sessions/${id}`);
+  const response = await fetch(`/api/sessions/id/${id}`);
 
   if (!response.ok) {
     if (response.status === 404) {
