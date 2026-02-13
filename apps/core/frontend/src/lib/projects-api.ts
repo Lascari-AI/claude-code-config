@@ -15,6 +15,8 @@ import type {
 /**
  * Fetch all projects.
  *
+ * Uses local Next.js API route with direct Drizzle database access.
+ *
  * @param status - Optional status filter
  * @param limit - Maximum results (default 100)
  * @param offset - Number of results to skip (default 0)
@@ -29,8 +31,14 @@ export async function getProjects(
   params.set("limit", String(limit));
   params.set("offset", String(offset));
 
-  const query = params.toString();
-  return fetchApi<ProjectSummary[]>(`/projects/?${query}`);
+  // Use local Next.js API route (runs on Node.js server with Drizzle)
+  const response = await fetch(`/api/projects?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch projects: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
@@ -103,15 +111,26 @@ export async function onboardProject(data: {
 
 /**
  * Validate a project path without creating a project.
+ *
+ * Uses the local Next.js API route for filesystem validation,
+ * avoiding the need for the Python backend for this operation.
  */
 export async function validateProjectPath(data: {
   name: string;
   path: string;
 }): Promise<OnboardingValidation> {
-  return fetchApi<OnboardingValidation>("/projects/validate-path", {
+  // Use local Next.js API route (runs on Node.js server)
+  const response = await fetch("/api/validate-path", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to validate path: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
@@ -136,11 +155,22 @@ export interface BrowseResponse {
 
 /**
  * Browse directories for project selection.
+ *
+ * Uses the local Next.js API route for filesystem access,
+ * avoiding the need for the Python backend for this operation.
  */
 export async function browseDirectories(
   path: string = "~"
 ): Promise<BrowseResponse> {
   const params = new URLSearchParams();
   params.set("path", path);
-  return fetchApi<BrowseResponse>(`/projects/browse?${params.toString()}`);
+
+  // Use local Next.js API route (runs on Node.js server)
+  const response = await fetch(`/api/browse?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to browse directories: ${response.statusText}`);
+  }
+
+  return response.json();
 }

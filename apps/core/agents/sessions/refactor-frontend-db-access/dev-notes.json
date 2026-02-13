@@ -1,0 +1,22 @@
+{
+  "notes": [
+    {
+      "scope": { "type": "checkpoint", "ref": 1 },
+      "category": "discovery",
+      "content": "drizzle-kit pull outputs to ./drizzle/ by default. Schema was copied to src/db/schema.ts for proper organization.",
+      "timestamp": "2026-02-13T00:00:00Z"
+    },
+    {
+      "scope": { "type": "checkpoint", "ref": 1 },
+      "category": "decision",
+      "content": "Used local Next.js API route pattern for getProjects() rather than Server Actions, maintaining consistency with existing /api/browse pattern and client-side Zustand store architecture.",
+      "timestamp": "2026-02-13T00:00:00Z"
+    },
+    {
+      "scope": { "type": "checkpoint", "ref": 1 },
+      "category": "discovery",
+      "content": "Initial drizzle-orm version (0.38.0) had compatibility issues with drizzle-kit (ERR_PACKAGE_PATH_NOT_EXPORTED). Updated to drizzle-orm 0.45.0 and drizzle-kit 0.31.0 which resolved the issue.",
+      "timestamp": "2026-02-13T00:00:00Z"
+    }
+  ]
+}

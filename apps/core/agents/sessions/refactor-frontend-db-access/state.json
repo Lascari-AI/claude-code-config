@@ -1,0 +1,82 @@
+{
+  "session_id": "refactor-frontend-db-access",
+  "topic": "Refactor: Frontend Direct Database Access",
+  "description": "Change architecture so frontend connects directly to database via Drizzle, while backend focuses on running agents",
+  "created_at": "2026-02-13T00:00:00Z",
+  "updated_at": "2026-02-13T00:00:00Z",
+  "current_phase": "build",
+  "prior_session": null,
+  "phases": {
+    "spec": {
+      "status": "finalized",
+      "started_at": "2026-02-13T00:00:00Z",
+      "finalized_at": "2026-02-13T00:00:00Z"
+    },
+    "plan": {
+      "status": "finalized",
+      "started_at": "2026-02-13T00:00:00Z",
+      "finalized_at": "2026-02-13T00:00:00Z"
+    },
+    "build": {
+      "status": "in_progress",
+      "started_at": "2026-02-13T00:00:00Z",
+      "completed_at": null
+    }
+  },
+  "plan_state": {
+    "status": "finalized",
+    "checkpoints_total": 6,
+    "checkpoints_detailed": 6,
+    "checkpoints_completed": [1],
+    "current_checkpoint": 2,
+    "last_updated": "2026-02-13T00:00:00Z",
+    "summary": "Checkpoint 1 complete: Drizzle ORM set up, schema pulled from DB, getProjects migrated to local API route"
+  },
+  "goals": {
+    "high_level": [
+      "Frontend reads directly from PostgreSQL via Drizzle ORM",
+      "Simplify backend to focus on agent execution only",
+      "Establish event pipeline architecture for polling and future WebSocket"
+    ],
+    "mid_level": [
+      "Set up Drizzle ORM in Next.js with drizzle-kit pull",
+      "Create Next.js API routes for filesystem artifact access",
+      "Move all project/session/agent CRUD to frontend",
+      "Strip backend down to health check and future agent endpoints"
+    ],
+    "low_level": []
+  },
+  "open_questions": [],
+  "key_decisions": [
+    {
+      "decision": "Local-only deployment",
+      "rationale": "Agent SDK requires cwd to run, remote deployment out of scope",
+      "implications": ["No auth needed", "Drizzle can connect directly from Next.js"]
+    },
+    {
+      "decision": "Dual real-time approach",
+      "rationale": "Mix of live watching (debugging) and background execution (long runs)",
+      "implications": ["Design event pipeline with WebSocket in mind", "Polling as baseline", "DB is source of truth"]
+    },
+    {
+      "decision": "state.json stays filesystem-only",
+      "rationale": "Agent can easily write via Write tool, keeps things simple for this refactor",
+      "implications": ["Frontend reads state.json from filesystem", "Future: may shift to DB-centric"]
+    },
+    {
+      "decision": "Minimal backend - agent execution only",
+      "rationale": "Keep backend focused, frontend has fs access for everything else",
+      "implications": ["Remove all project/session/agent routes", "All CRUD moves to frontend", "Can move back if issues arise"]
+    },
+    {
+      "decision": "Schema ownership stays with SQLModel",
+      "rationale": "Python/SQLModel is source of truth, drizzle-kit pull syncs to TypeScript",
+      "implications": ["Schema changes in Python first", "Run alembic migrations", "Then drizzle-kit pull to regenerate TS types"]
+    },
+    {
+      "decision": "Filesystem artifacts stay in filesystem",
+      "rationale": "Agents need to walk codebase and read spec.md, plan.json",
+      "implications": ["Frontend reads artifacts via Next.js API routes", "Same pattern as existing /api/browse"]
+    }
+  ]
+}
