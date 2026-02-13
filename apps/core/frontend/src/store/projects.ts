@@ -18,6 +18,7 @@ interface ProjectsState {
   // Actions
   fetchProjects: (status?: string) => Promise<void>;
   fetchProject: (id: string) => Promise<void>;
+  fetchProjectBySlug: (slug: string) => Promise<void>;
   createProject: (data: ProjectCreate) => Promise<Project>;
   updateProject: (id: string, data: ProjectUpdate) => Promise<Project>;
   deleteProject: (id: string) => Promise<void>;
@@ -50,6 +51,19 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const project = await projectsApi.getProject(id);
+      set({ selectedProject: project, isLoading: false });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "Failed to fetch project",
+        isLoading: false,
+      });
+    }
+  },
+
+  fetchProjectBySlug: async (slug: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const project = await projectsApi.getProjectBySlug(slug);
       set({ selectedProject: project, isLoading: false });
     } catch (error) {
       set({

@@ -22,7 +22,7 @@ export default function ProjectDetailPage() {
   const router = useRouter();
   const slug = params.slug as string;
 
-  const { selectedProject, isLoading: projectLoading, fetchProject } = useProjectsStore();
+  const { selectedProject, isLoading: projectLoading, fetchProjectBySlug } = useProjectsStore();
   const { isLoading: sessionsLoading, fetchProjectSessions } = useSessionsStore();
 
   // Get sessions for this project
@@ -31,11 +31,9 @@ export default function ProjectDetailPage() {
   // Fetch project by slug
   useEffect(() => {
     if (slug) {
-      // For now, we need to fetch the project to get its ID
-      // In the future, we could add a fetchProjectBySlug action
       fetchProjectBySlug(slug);
     }
-  }, [slug]);
+  }, [slug, fetchProjectBySlug]);
 
   // Fetch sessions when we have the project
   useEffect(() => {
@@ -43,19 +41,6 @@ export default function ProjectDetailPage() {
       fetchProjectSessions(selectedProject.id);
     }
   }, [selectedProject?.id, fetchProjectSessions]);
-
-  // Temporary: fetch project by slug using the API directly
-  async function fetchProjectBySlug(slug: string) {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/projects/slug/${slug}`);
-      if (response.ok) {
-        const project = await response.json();
-        useProjectsStore.setState({ selectedProject: project, isLoading: false });
-      }
-    } catch (error) {
-      console.error('Failed to fetch project:', error);
-    }
-  }
 
   // Handle phase click - navigate to session detail with phase tab
   const handlePhaseClick = (sessionSlug: string, phase: SessionPhase) => {
