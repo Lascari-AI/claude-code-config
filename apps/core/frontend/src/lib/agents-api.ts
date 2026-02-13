@@ -2,9 +2,9 @@
  * Agents API Client
  *
  * Typed API functions for agent and log operations.
+ * Uses local Next.js API routes with direct Drizzle database access.
  */
 
-import { fetchApi } from "./api";
 import type { Agent, AgentLogSummary, AgentLog } from "@/types/agent";
 
 /**
@@ -20,14 +20,27 @@ export interface AgentLogFilters {
 /**
  * Fetch an agent by ID.
  *
+ * Uses local Next.js API route with direct Drizzle database access.
+ *
  * @param agentId - Agent UUID
  */
 export async function getAgent(agentId: string): Promise<Agent> {
-  return fetchApi<Agent>(`/agents/${agentId}`);
+  const response = await fetch(`/api/agents/${agentId}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Agent ${agentId} not found`);
+    }
+    throw new Error(`Failed to fetch agent: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch logs for an agent.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  *
  * @param agentId - Agent UUID
  * @param filters - Optional filter parameters
@@ -43,12 +56,22 @@ export async function getAgentLogs(
   params.set("limit", String(filters.limit ?? 100));
   params.set("offset", String(filters.offset ?? 0));
 
-  const query = params.toString();
-  return fetchApi<AgentLogSummary[]>(`/agents/${agentId}/logs?${query}`);
+  const response = await fetch(`/api/agents/${agentId}/logs?${params.toString()}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Agent ${agentId} not found`);
+    }
+    throw new Error(`Failed to fetch agent logs: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
  * Fetch a specific log entry with full payload.
+ *
+ * Uses local Next.js API route with direct Drizzle database access.
  *
  * @param agentId - Agent UUID
  * @param logId - Log entry UUID
@@ -57,5 +80,14 @@ export async function getAgentLogDetail(
   agentId: string,
   logId: string
 ): Promise<AgentLog> {
-  return fetchApi<AgentLog>(`/agents/${agentId}/logs/${logId}`);
+  const response = await fetch(`/api/agents/${agentId}/logs/${logId}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Log ${logId} not found for agent ${agentId}`);
+    }
+    throw new Error(`Failed to fetch agent log: ${response.statusText}`);
+  }
+
+  return response.json();
 }

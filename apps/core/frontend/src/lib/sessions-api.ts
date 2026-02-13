@@ -9,7 +9,6 @@ import type { Session, SessionSummary, SessionStatus, SessionType } from "@/type
 import type { Plan } from "@/types/plan";
 import type { SessionState } from "@/types/session-state";
 import type { AgentSummary } from "@/types/agent";
-import { fetchApi } from "./api";
 
 /**
  * Filter options for listing sessions.
@@ -196,11 +195,22 @@ export async function getSessionState(slug: string): Promise<SessionState> {
 /**
  * Fetch agents for a session.
  *
+ * Uses local Next.js API route with direct Drizzle database access.
+ *
  * @param sessionId - Session UUID
  * @returns List of agent summaries
  */
 export async function getSessionAgents(sessionId: string): Promise<AgentSummary[]> {
-  return fetchApi<AgentSummary[]>(`/agents/session/${sessionId}`);
+  const response = await fetch(`/api/agents/session/${sessionId}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+    throw new Error(`Failed to fetch session agents: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 
