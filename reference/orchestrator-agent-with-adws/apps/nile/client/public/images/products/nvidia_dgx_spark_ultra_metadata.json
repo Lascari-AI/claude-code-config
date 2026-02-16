@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_dgx_spark_ultra",
+  "name": "NVIDIA DGX Spark Ultra",
+  "description": "Ultimate desktop AI powerhouse with quad Grace Blackwell configuration, 512GB unified memory, and 4TB NVMe RAID. For teams pushing the boundaries of AI research.",
+  "price": 12999.00,
+  "category": "AI Workstations",
+  "brand": "NVIDIA",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Our small team now has supercomputer-class capabilities.",
+      "rating": 5,
+      "reviewer_name": "ResearchDirector",
+      "review_date": "2025-01-25"
+    },
+    {
+      "review_text": "Fine-tuning 405B models on desktop. Unreal.",
+      "rating": 5,
+      "reviewer_name": "FoundationModelDev",
+      "review_date": "2025-01-21"
+    },
+    {
+      "review_text": "Enterprise power without enterprise complexity.",
+      "rating": 5,
+      "reviewer_name": "AIArchitect",
+      "review_date": "2025-01-17"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "eero_pro_6e_3pack",
+  "name": "Amazon eero Pro 6E (3-pack)",
+  "description": "Tri-band WiFi 6E mesh covering up to 6000 sq ft. Features easy setup, automatic updates, and deep integration with Alexa and Ring. Simple yet powerful.",
+  "price": 499.00,
+  "category": "Networking",
+  "brand": "Amazon",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Easiest mesh setup ever. 5 minutes done.",
+      "rating": 5,
+      "reviewer_name": "SimpleSetuper",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Alexa integration is seamless.",
+      "rating": 5,
+      "reviewer_name": "AlexaHome",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Subscription needed for advanced features.",
+      "rating": 4,
+      "reviewer_name": "SubscriptionAware",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

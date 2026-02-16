@@ -1,0 +1,30 @@
+{
+  "id": "elgato_stream_deck_neo",
+  "name": "Elgato Stream Deck Neo",
+  "description": "Affordable entry into Stream Deck ecosystem with 8 LCD keys. Features full software compatibility, USB-C, and the same customization as premium models.",
+  "price": 99.99,
+  "category": "Stream Decks",
+  "brand": "Elgato",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Perfect entry point. 8 keys is enough for most.",
+      "rating": 5,
+      "reviewer_name": "StreamDeckBeginner",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Same software, lower price. Smart choice.",
+      "rating": 5,
+      "reviewer_name": "BudgetStreamer",
+      "review_date": "2024-12-10"
+    },
+    {
+      "review_text": "Will probably upgrade to XL but great start.",
+      "rating": 4,
+      "reviewer_name": "FutureUpgrader",
+      "review_date": "2024-12-06"
+    }
+  ]
+}

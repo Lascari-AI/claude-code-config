@@ -1,0 +1,30 @@
+{
+  "id": "aoc_agon_pro_ag275qxl",
+  "name": "AOC AGON Pro AG275QXL 27\" QD-OLED",
+  "description": "27-inch QHD QD-OLED monitor with 240Hz refresh rate. Features quantum dot enhancement, 0.03ms response time, and AOC's best gaming features at competitive pricing.",
+  "price": 799.99,
+  "category": "Monitors",
+  "brand": "AOC",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "QD-OLED at under 800 dollars. Incredible value.",
+      "rating": 5,
+      "reviewer_name": "OLEDValue",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Colors are stunning. Gaming is transformed.",
+      "rating": 5,
+      "reviewer_name": "VisualGamer",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Stand is basic but display quality is top tier.",
+      "rating": 4,
+      "reviewer_name": "StandCritic",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

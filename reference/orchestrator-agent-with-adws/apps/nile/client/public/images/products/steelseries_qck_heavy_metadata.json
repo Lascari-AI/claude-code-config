@@ -1,0 +1,30 @@
+{
+  "id": "steelseries_qck_heavy",
+  "name": "SteelSeries QcK Heavy XXL",
+  "description": "Extra-thick cloth mouse pad for cushioned comfort. Features 6mm thickness, QcK micro-woven cloth, and XXL size to cover entire desk area.",
+  "price": 44.99,
+  "category": "Mouse Pads",
+  "brand": "SteelSeries",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Thick pad is comfortable for wrist.",
+      "rating": 5,
+      "reviewer_name": "WristComfort",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "QcK surface is legendary for a reason.",
+      "rating": 5,
+      "reviewer_name": "QcKFan",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Takes time to lay flat from shipping.",
+      "rating": 4,
+      "reviewer_name": "PatientUnboxer",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "aethon_stealth_60",
+  "name": "Aethon Stealth 60",
+  "description": "Minimalist 60% keyboard with silent magnetic switches. Perfect for focused work with zero distractions. Features sound-dampened case and premium lubed stabilizers.",
+  "price": 249.0,
+  "category": "Keyboards",
+  "brand": "Aethon",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "So quiet I forget I am typing. Perfect for late night coding.",
+      "rating": 5,
+      "reviewer_name": "NightOwlDev",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "No RGB, no nonsense. Just pure typing bliss.",
+      "rating": 5,
+      "reviewer_name": "MinimalistCoder",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "Takes adjustment coming from larger keyboards.",
+      "rating": 4,
+      "reviewer_name": "LayoutLearner",
+      "review_date": "2025-01-08"
+    }
+  ]
+}

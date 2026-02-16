@@ -1,0 +1,30 @@
+{
+  "id": "grovemade_desk_pad",
+  "name": "Grovemade Leather Desk Pad",
+  "description": "Premium leather desk pad handcrafted in Portland. Features vegetable-tanned leather that develops unique patina, smooth surface, and minimalist aesthetic.",
+  "price": 130.00,
+  "category": "Mouse Pads",
+  "brand": "Grovemade",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Beautiful patina develops over time.",
+      "rating": 5,
+      "reviewer_name": "PatinaLover",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Handcrafted quality is evident.",
+      "rating": 5,
+      "reviewer_name": "CraftAppreciator",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Premium price for premium leather.",
+      "rating": 4,
+      "reviewer_name": "LeatherCollector",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "crucial_t705_2tb",
+  "name": "Crucial T705 2TB",
+  "description": "Flagship PCIe 5.0 SSD with massive heatsink and 14,500MB/s reads. Currently the fastest consumer SSD available for extreme workstation builds.",
+  "price": 279.99,
+  "category": "Storage",
+  "brand": "Crucial",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Fastest SSD I have ever tested. Numbers are insane.",
+      "rating": 5,
+      "reviewer_name": "StorageReviewer",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "Heatsink is massive but keeps it cool under load.",
+      "rating": 5,
+      "reviewer_name": "ThermalEngineer",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price for premium speed. Worth it for pros.",
+      "rating": 5,
+      "reviewer_name": "ProUser",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

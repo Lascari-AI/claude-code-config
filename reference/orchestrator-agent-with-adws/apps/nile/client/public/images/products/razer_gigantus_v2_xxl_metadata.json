@@ -1,0 +1,29 @@
+{
+  "name": "Razer Gigantus V2 XXL",
+  "description": "Extra-large gaming mouse pad measuring 940x410mm. Features micro-textured cloth surface for precise tracking, anti-slip rubber base, and optimized surface tension for both speed and control.",
+  "price": 29.99,
+  "category": "Mouse Pads",
+  "brand": "Razer",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Covers my entire desk! No more running out of space.",
+      "rating": 5,
+      "reviewer_name": "FPSGamer",
+      "review_date": "2024-11-08"
+    },
+    {
+      "review_text": "Great surface for both gaming and productivity.",
+      "rating": 5,
+      "reviewer_name": "HybridUser",
+      "review_date": "2024-10-12"
+    },
+    {
+      "review_text": "Edges could be stitched better but overall solid.",
+      "rating": 4,
+      "reviewer_name": "DeskSetupPro",
+      "review_date": "2024-09-05"
+    }
+  ]
+}

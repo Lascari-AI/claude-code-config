@@ -1,0 +1,30 @@
+{
+  "id": "nzxt_h7_flow",
+  "name": "NZXT H7 Flow",
+  "description": "Airflow-focused mid-tower with NZXT's signature clean design. Features perforated panels, tool-less installation, and CAM compatibility. Style meets performance.",
+  "price": 129.99,
+  "category": "PC Cases",
+  "brand": "NZXT",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "NZXT finally embraced airflow properly.",
+      "rating": 5,
+      "reviewer_name": "NZXTFan",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Clean design without sacrificing cooling.",
+      "rating": 5,
+      "reviewer_name": "DesignCooler",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "CAM software still needs improvement.",
+      "rating": 4,
+      "reviewer_name": "SoftwareCritic",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

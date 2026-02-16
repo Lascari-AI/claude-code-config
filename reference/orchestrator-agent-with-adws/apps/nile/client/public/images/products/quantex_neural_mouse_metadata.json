@@ -1,0 +1,30 @@
+{
+  "id": "quantex_neural_mouse",
+  "name": "Quantex Neural Mouse",
+  "description": "AI-enhanced mouse that learns your movement patterns. Features predictive tracking, adaptive DPI adjustment, and neural gesture recognition. The future of human-computer interaction.",
+  "price": 299.99,
+  "category": "Mice",
+  "brand": "Quantex",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "AI prediction actually works. Feels like it reads my mind.",
+      "rating": 5,
+      "reviewer_name": "AIEarlyAdopter",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Gesture recognition is surprisingly useful for workflows.",
+      "rating": 5,
+      "reviewer_name": "GestureEnthusiast",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Needs more software polish but hardware is impressive.",
+      "rating": 4,
+      "reviewer_name": "BetaTester",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

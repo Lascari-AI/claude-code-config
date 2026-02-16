@@ -1,0 +1,29 @@
+{
+  "name": "Logitech MX Master 3S",
+  "description": "The ultimate wireless mouse for productivity. Features an 8K DPI sensor, quiet clicks, MagSpeed electromagnetic scrolling, and ergonomic design. Works on any surface including glass. USB-C rechargeable with 70-day battery life.",
+  "price": 99.99,
+  "category": "Mice",
+  "brand": "Logitech",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best mouse I have ever used. The ergonomics are perfect for long coding sessions.",
+      "rating": 5,
+      "reviewer_name": "DevMike",
+      "review_date": "2024-11-15"
+    },
+    {
+      "review_text": "MagSpeed scroll wheel is a game changer for browsing large codebases.",
+      "rating": 5,
+      "reviewer_name": "SarahCodes",
+      "review_date": "2024-10-22"
+    },
+    {
+      "review_text": "Pricey but worth every penny. Battery lasts forever.",
+      "rating": 4,
+      "reviewer_name": "TechNerd42",
+      "review_date": "2024-09-30"
+    }
+  ]
+}

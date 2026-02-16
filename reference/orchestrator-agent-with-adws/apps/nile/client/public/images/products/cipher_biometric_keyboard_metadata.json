@@ -1,0 +1,30 @@
+{
+  "id": "cipher_biometric_keyboard",
+  "name": "Cipher BioKey Pro",
+  "description": "Security-first mechanical keyboard with integrated fingerprint sensor. Features encrypted keystroke transmission, hardware 2FA, and premium Cherry MX switches.",
+  "price": 279.00,
+  "category": "Keyboards",
+  "brand": "Cipher",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Fingerprint login is so convenient. Security made easy.",
+      "rating": 5,
+      "reviewer_name": "SecureEngineer",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "Hardware encryption gives peace of mind.",
+      "rating": 5,
+      "reviewer_name": "SecurityFirst",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "Premium price for security features but worth it.",
+      "rating": 4,
+      "reviewer_name": "SecurityInvestor",
+      "review_date": "2025-01-08"
+    }
+  ]
+}

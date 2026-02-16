@@ -1,0 +1,29 @@
+{
+  "name": "WD Black P10 4TB External HDD",
+  "description": "High-performance portable external hard drive with 4TB capacity. Features durable metal enclosure, USB 3.2 Gen 1 for fast transfers up to 140MB/s, and compatibility with PC, Mac, and gaming consoles.",
+  "price": 119.99,
+  "category": "Storage",
+  "brand": "Western Digital",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Perfect for backing up my entire dev environment.",
+      "rating": 5,
+      "reviewer_name": "BackupPro",
+      "review_date": "2024-11-05"
+    },
+    {
+      "review_text": "Solid build quality. Travels well in my laptop bag.",
+      "rating": 4,
+      "reviewer_name": "DigitalNomad",
+      "review_date": "2024-10-18"
+    },
+    {
+      "review_text": "Good value for the storage capacity.",
+      "rating": 4,
+      "reviewer_name": "BudgetTech",
+      "review_date": "2024-09-22"
+    }
+  ]
+}

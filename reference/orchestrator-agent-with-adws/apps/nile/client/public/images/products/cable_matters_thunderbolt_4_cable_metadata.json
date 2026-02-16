@@ -1,0 +1,30 @@
+{
+  "id": "cable_matters_thunderbolt_4_cable",
+  "name": "Cable Matters Thunderbolt 4 Cable 2m",
+  "description": "Certified Thunderbolt 4 cable with 2m length and 40Gbps speeds. Features 100W charging, braided construction, and Intel certification. The cable that does it all.",
+  "price": 34.99,
+  "category": "Cables",
+  "brand": "Cable Matters",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Finally a 2m TB4 cable that works.",
+      "rating": 5,
+      "reviewer_name": "CableLengthNeeder",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Braided quality feels premium.",
+      "rating": 5,
+      "reviewer_name": "QualityCable",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Expensive for a cable but TB4 certified.",
+      "rating": 4,
+      "reviewer_name": "CableBudget",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

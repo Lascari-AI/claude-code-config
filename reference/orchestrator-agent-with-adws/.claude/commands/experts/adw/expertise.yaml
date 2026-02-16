@@ -1,0 +1,407 @@
+# AI Developer Workflow (ADW) Implementation Expertise
+# Autonomous Multi-Step Workflows with Real-Time Visualization
+
+overview:
+  description: "Fire-and-forget autonomous agent workflows that combine deterministic orchestration with non-deterministic AI execution"
+  core_insight: "The highest leverage point of agentic coding - deterministic Python code orchestrates non-deterministic Claude agents, outperforming both raw agents and raw code alone"
+  architecture_pattern: "Background process spawning with WebSocket real-time updates and swimlane visualization"
+  value_proposition:
+    - "Background execution: Workflows run as detached processes"
+    - "Multi-step orchestration: Chain specialized prompts (plan -> build -> review -> fix)"
+    - "Full observability: Every tool call, response, thinking block logged"
+    - "Real-time visualization: Swimlane UI shows progress as it happens"
+    - "AI-powered summaries: Claude Haiku generates summaries for every event"
+
+workflow_types:
+  plan_build:
+    steps: 2
+    file: "adws/adw_workflows/adw_plan_build.py"
+    flow: "/plan -> /build"
+    use_case: "Quick features - plan the implementation, then build it"
+
+  plan_build_review:
+    steps: 3
+    file: "adws/adw_workflows/adw_plan_build_review.py"
+    flow: "/plan -> /build -> /review"
+    use_case: "Quality-focused - adds risk-tiered code review after building"
+
+  plan_build_review_fix:
+    steps: 4
+    file: "adws/adw_workflows/adw_plan_build_review_fix.py"
+    flow: "/plan -> /build -> /review -> /fix"
+    use_case: "Full automation - automatically fixes issues found in review"
+
+composability:
+  principle: "Each step is deterministic in structure, non-deterministic in execution"
+  steps:
+    plan:
+      deterministic: "Always creates spec file at known path (specs/)"
+      non_deterministic: "Agent reasons about implementation approach"
+      slash_command: "/plan"
+    build:
+      deterministic: "Reads spec, creates files in target directory"
+      non_deterministic: "Agent implements creatively based on spec"
+      slash_command: "/build"
+    review:
+      deterministic: "Always outputs risk-tiered report with PASS/FAIL verdict"
+      non_deterministic: "Agent analyzes code quality and identifies issues"
+      slash_command: "/review"
+    fix:
+      deterministic: "Only runs if review verdict is FAIL"
+      non_deterministic: "Agent resolves issues based on review findings"
+      slash_command: "/fix"
+
+  create_custom_workflow: |
+    1. Copy existing workflow file (e.g., adw_plan_build.py)
+    2. Add/remove steps as needed
+    3. Create corresponding slash command in .claude/commands/
+    4. Update TOTAL_STEPS constant
+    5. Register in adw_triggers/adw_scripts.py
+
+core_implementation:
+  adw_modules:
+    adw_agent_sdk:
+      file: "adws/adw_modules/adw_agent_sdk.py"
+      purpose: "Typed Pydantic wrapper for Claude Agent SDK"
+      key_classes:
+        QueryInput: "Typed input for agent queries"
+        HooksConfig: "Hook configuration for agent events"
+        MessageHandlers: "Handlers for different message types"
+        ModelName: "Enum with OPUS, SONNET, HAIKU aliases"
+      key_functions:
+        query_to_completion: "Full agent run with hooks and streaming"
+        quick_prompt: "Fast single-shot query without hooks"
+
+    adw_logging:
+      file: "adws/adw_modules/adw_logging.py"
+      purpose: "Step lifecycle logging and event capture"
+      key_functions:
+        log_step_start: "Mark step beginning, broadcast StepStart event"
+        log_step_end: "Mark step completion, broadcast StepEnd event"
+        log_agent_event: "Log individual agent events (tool, thinking, response)"
+      database_table: "agent_logs"
+
+    adw_websockets:
+      file: "adws/adw_modules/adw_websockets.py"
+      purpose: "Real-time WebSocket broadcasting from ADW processes"
+      key_functions:
+        broadcast_adw_event: "Send event to all connected frontends"
+        broadcast_adw_created: "Notify UI of new ADW"
+        broadcast_adw_step_change: "Notify UI of step lifecycle"
+        broadcast_adw_event_summary_update: "Send AI-generated summary"
+      resilience: "Fails silently if WebSocket server unavailable"
+
+    adw_summarizer:
+      file: "adws/adw_modules/adw_summarizer.py"
+      purpose: "AI-powered event summaries using Claude Haiku"
+      model: "claude-haiku-4-5-20251001"
+      output: "1-sentence summaries (50-100 chars)"
+      async: true
+      blocking: false
+
+    adw_database:
+      file: "adws/adw_modules/adw_database.py"
+      purpose: "Database operations for ADW processes"
+      key_functions:
+        get_adw: "Fetch ADW record by ID"
+        update_adw_status: "Update ADW status and progress"
+        create_agent_for_step: "Create agent record for workflow step"
+
+  adw_workflows:
+    common_pattern:
+      - "Parse CLI args (--adw-id)"
+      - "Fetch ADW record from database"
+      - "Extract prompt and working_dir from input_data"
+      - "For each step: create agent, log_step_start, run command, log_step_end"
+      - "Update ADW status on completion/failure"
+
+    step_constants:
+      STEP_PLAN: "plan"
+      STEP_BUILD: "build"
+      STEP_REVIEW: "review"
+      STEP_FIX: "fix"
+
+    key_functions:
+      run_plan_step: "Execute /plan command, return spec path"
+      run_build_step: "Execute /build command with spec path"
+      run_review_step: "Execute /review command, extract verdict"
+      run_fix_step: "Execute /fix command if verdict is FAIL"
+
+  adw_triggers:
+    adw_scripts:
+      file: "adws/adw_triggers/adw_scripts.py"
+      purpose: "Spawn background workflow processes"
+      key_function: "run_adw(adw_id, workflow_type)"
+      spawn_method: "subprocess with uv run"
+      command_pattern: "uv run adws/adw_workflows/adw_{workflow_type}.py --adw-id {adw_id}"
+
+    adw_manual_trigger:
+      file: "adws/adw_triggers/adw_manual_trigger.py"
+      purpose: "CLI trigger for testing workflows"
+      usage: "uv run adws/adw_triggers/adw_manual_trigger.py <name> <workflow_type> <prompt> [working_dir]"
+
+orchestrator_integration:
+  start_adw_tool:
+    file: "apps/orchestrator_3_stream/backend/modules/agent_manager.py"
+    lines: "638-742"
+    signature: "start_adw(name_of_adw: str, workflow_type: str, prompt: str, description?: str)"
+    flow:
+      - "Validate required fields (name_of_adw, workflow_type, prompt)"
+      - "Validate workflow file exists at adws/adw_workflows/adw_{workflow_type}.py"
+      - "Create ADW record via create_adw() database function"
+      - "Broadcast adw_started WebSocket event"
+      - "Call run_adw() to spawn background process"
+      - "Return adw_id for tracking"
+
+  check_adw_tool:
+    file: "apps/orchestrator_3_stream/backend/modules/agent_manager.py"
+    lines: "744-851"
+    signature: "check_adw(adw_id: str, tail_count?: int, event_type?: str, include_step_details?: bool)"
+    purpose: "Check ADW status and recent activity"
+
+  database_functions:
+    file: "apps/orchestrator_3_stream/backend/modules/database.py"
+    functions:
+      create_adw:
+        lines: "1608-1660"
+        purpose: "Create new ADW record"
+        stores: "prompt, working_dir in input_data JSONB"
+      get_adw:
+        lines: "1662-1696"
+        purpose: "Fetch ADW by ID"
+      update_adw_status:
+        lines: "1698-1761"
+        purpose: "Update status, current_step, completed_steps"
+      get_adw_logs:
+        lines: "1763-1825"
+        purpose: "Fetch agent_logs for ADW swimlane"
+      get_adw_system_logs:
+        lines: "1827-1890"
+        purpose: "Fetch system_logs for ADW"
+
+websocket_events:
+  adw_created:
+    source: "websocket_manager.py:232-234"
+    fields: ["type", "adw"]
+    trigger: "When new ADW record created"
+
+  adw_updated:
+    source: "websocket_manager.py:236-240"
+    fields: ["type", "adw_id", "adw"]
+    trigger: "Status change, step progress"
+
+  adw_event:
+    source: "websocket_manager.py:242-246"
+    fields: ["type", "adw_id", "event"]
+    trigger: "Agent event for swimlane square"
+
+  adw_step_change:
+    source: "websocket_manager.py:248-261"
+    fields: ["type", "adw_id", "step", "event_type", "payload", "timestamp"]
+    trigger: "StepStart/StepEnd events"
+
+  adw_event_summary_update:
+    source: "websocket_manager.py:263-274"
+    fields: ["type", "adw_id", "event_id", "summary"]
+    trigger: "AI summary generated for event"
+
+frontend_integration:
+  swimlane_component:
+    file: "apps/orchestrator_3_stream/frontend/src/components/AdwSwimlanes.vue"
+    lines: 1024
+    purpose: "Main ADW visualization component"
+    features:
+      - "ADW list with status (pending/in_progress/completed/failed)"
+      - "Step lanes with unique colors per step"
+      - "Event squares with icons by type"
+      - "Event detail panel with AI summaries"
+      - "Filter controls (response, tool, thinking, hook, system)"
+      - "Real-time WebSocket updates"
+
+    event_icons:
+      TextBlock: "response (green)"
+      ToolUseBlock: "tool (orange)"
+      ThinkingBlock: "thinking (purple)"
+      PreToolUse: "hook (cyan)"
+      PostToolUse: "hook (cyan)"
+      StepStart: "start (cyan)"
+      StepEnd: "end (green)"
+      Stop: "stop (red)"
+
+  adw_service:
+    file: "apps/orchestrator_3_stream/frontend/src/services/adwService.ts"
+    key_functions:
+      getAdws: "Fetch all ADWs"
+      getAdwEvents: "Fetch events for swimlane (limit: 2000)"
+      getAdwSummary: "Fetch ADW with step breakdown"
+
+  store_integration:
+    file: "apps/orchestrator_3_stream/frontend/src/stores/orchestratorStore.ts"
+    state:
+      adws: "ref<AiDeveloperWorkflow[]>"
+      adwEvents: "ref<AdwEvent[]>"
+      allAdwEventsByStep: "computed - events grouped by ADW and step"
+    actions:
+      fetchAdws: "Load all ADWs"
+      fetchAdwEvents: "Load events for specific ADW"
+      fetchAllAdwEvents: "Load events for all ADWs"
+    websocket_handlers:
+      onAdwCreated: "Add new ADW to list"
+      onAdwUpdated: "Update ADW in list"
+      onAdwEvent: "Add event to swimlane"
+      onAdwEventSummaryUpdate: "Update event summary"
+
+  types:
+    file: "apps/orchestrator_3_stream/frontend/src/types.d.ts"
+    interfaces:
+      AiDeveloperWorkflow:
+        lines: "405-426"
+        fields: ["id", "orchestrator_agent_id", "adw_name", "workflow_type", "status", "current_step", "total_steps", "completed_steps", "started_at", "completed_at", "duration_seconds", "input_data", "output_data", "error_message"]
+      AdwEvent:
+        lines: "429-439"
+        fields: ["id", "agent_id", "adw_id", "adw_step", "event_category", "event_type", "summary", "payload", "timestamp"]
+      AdwStepSummary:
+        lines: "442-448"
+        fields: ["step", "event_count", "event_types", "agent_id", "started_at", "ended_at"]
+
+slash_commands:
+  plan:
+    file: ".claude/commands/plan.md"
+    purpose: "Create implementation spec"
+    output: "specs/<name>.md"
+
+  build:
+    file: ".claude/commands/build.md"
+    purpose: "Implement from spec"
+    input: "Path to spec file"
+
+  review:
+    file: ".claude/commands/review.md"
+    purpose: "Risk-tiered code review"
+    output: "app_review/review_<timestamp>.md"
+    verdict: "PASS or FAIL"
+
+  fix:
+    file: ".claude/commands/fix.md"
+    purpose: "Fix issues from review"
+    input: "User prompt, plan path, review path"
+    output: "app_fix_reports/fix_<timestamp>.md"
+
+database_schema:
+  ai_developer_workflows:
+    table: "ai_developer_workflows"
+    key_columns:
+      - "id (UUID primary key)"
+      - "orchestrator_agent_id (UUID foreign key)"
+      - "adw_name (VARCHAR)"
+      - "workflow_type (VARCHAR)"
+      - "status (VARCHAR: pending/in_progress/completed/failed/cancelled)"
+      - "current_step (VARCHAR nullable)"
+      - "total_steps (INTEGER)"
+      - "completed_steps (INTEGER default 0)"
+      - "input_data (JSONB - contains prompt, working_dir)"
+      - "output_data (JSONB)"
+      - "error_message (TEXT nullable)"
+      - "started_at, completed_at, duration_seconds"
+
+  agent_logs:
+    table: "agent_logs"
+    purpose: "Store all agent events for ADW swimlanes"
+    key_columns:
+      - "id (UUID)"
+      - "agent_id (UUID)"
+      - "adw_id (UUID nullable)"
+      - "adw_step (VARCHAR nullable)"
+      - "event_category (VARCHAR)"
+      - "event_type (VARCHAR)"
+      - "summary (TEXT nullable)"
+      - "payload (JSONB)"
+
+execution_flow:
+  trigger_to_completion:
+    - "User: 'start adw: plan_build: Build a todo app'"
+    - "Orchestrator: Parse command, call start_adw tool"
+    - "start_adw: Validate inputs, create ADW record in database"
+    - "start_adw: Broadcast adw_created WebSocket event"
+    - "start_adw: Call run_adw() from adw_scripts.py"
+    - "run_adw: Spawn subprocess with uv run adws/adw_workflows/adw_plan_build.py"
+    - "Workflow: Parse --adw-id, fetch ADW record"
+    - "Workflow: Extract prompt and working_dir from input_data"
+    - "Workflow (Step 1): log_step_start('plan'), run /plan, log_step_end('plan')"
+    - "Workflow (Step 2): log_step_start('build'), run /build, log_step_end('build')"
+    - "Workflow: Update ADW status to 'completed'"
+    - "Frontend: Receive events via WebSocket, update swimlane UI"
+
+best_practices:
+  - "Always log step start/end for swimlane visibility"
+  - "Broadcast events immediately after database writes"
+  - "Use AI summarization async (non-blocking)"
+  - "Handle workflow errors gracefully - update ADW with error info"
+  - "Keep slash commands focused - one clear purpose per command"
+  - "Store all inputs in input_data JSONB for workflow recovery"
+  - "Use ModelName enum for consistent model references"
+  - "Default to OPUS for thorough work, HAIKU for summaries"
+
+testing:
+  manual_trigger:
+    file: "adws/adw_triggers/adw_manual_trigger.py"
+    usage: |
+      uv run adws/adw_triggers/adw_manual_trigger.py \
+        "feature-name" \
+        "plan_build_review" \
+        "Build a markdown preview app" \
+        "/path/to/project"
+
+  check_status:
+    via_tool: "check_adw(adw_id='...')"
+    via_ui: "ADW swimlanes panel shows real-time status"
+
+key_file_locations:
+  core_modules:
+    adw_agent_sdk: "adws/adw_modules/adw_agent_sdk.py"
+    adw_logging: "adws/adw_modules/adw_logging.py"
+    adw_websockets: "adws/adw_modules/adw_websockets.py"
+    adw_summarizer: "adws/adw_modules/adw_summarizer.py"
+    adw_database: "adws/adw_modules/adw_database.py"
+
+  workflows:
+    plan_build: "adws/adw_workflows/adw_plan_build.py"
+    plan_build_review: "adws/adw_workflows/adw_plan_build_review.py"
+    plan_build_review_fix: "adws/adw_workflows/adw_plan_build_review_fix.py"
+
+  triggers:
+    scripts: "adws/adw_triggers/adw_scripts.py"
+    manual: "adws/adw_triggers/adw_manual_trigger.py"
+
+  orchestrator:
+    agent_manager: "apps/orchestrator_3_stream/backend/modules/agent_manager.py (start_adw: 638-742)"
+    database: "apps/orchestrator_3_stream/backend/modules/database.py (ADW functions: 1608-1890)"
+    websocket_manager: "apps/orchestrator_3_stream/backend/modules/websocket_manager.py (ADW broadcasts: 232-274)"
+
+  frontend:
+    swimlanes: "apps/orchestrator_3_stream/frontend/src/components/AdwSwimlanes.vue"
+    service: "apps/orchestrator_3_stream/frontend/src/services/adwService.ts"
+    store: "apps/orchestrator_3_stream/frontend/src/stores/orchestratorStore.ts"
+    types: "apps/orchestrator_3_stream/frontend/src/types.d.ts (ADW types: 405-452)"
+
+  slash_commands:
+    plan: ".claude/commands/plan.md"
+    build: ".claude/commands/build.md"
+    review: ".claude/commands/review.md"
+    fix: ".claude/commands/fix.md"
+
+architecture_summary: |
+  AI Developer Workflows represent the fusion of deterministic software engineering
+  with non-deterministic AI intelligence. The orchestration layer (Python code)
+  handles predictable tasks: spawning processes, managing state, logging events,
+  broadcasting updates. The execution layer (Claude agents) handles creative tasks:
+  reasoning about implementation, writing code, reviewing quality, fixing issues.
+
+  This hybrid architecture outperforms both raw agents (which lose context and
+  hallucinate state over multi-step tasks) and raw code (which can't adapt to
+  novel problems). The pattern is infinitely composable - create new workflows
+  by mixing and matching step types.
+
+  Real-time visibility comes from the swimlane UI, where each ADW displays as
+  a card with step lanes and event squares. Every tool call, thinking block,
+  and response is visualized with AI-generated summaries on hover.

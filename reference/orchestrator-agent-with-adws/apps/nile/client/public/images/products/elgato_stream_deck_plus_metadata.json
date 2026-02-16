@@ -1,0 +1,30 @@
+{
+  "id": "elgato_stream_deck_plus",
+  "name": "Elgato Stream Deck +",
+  "description": "Advanced Stream Deck with 8 LCD keys, 4 rotary dials, and touch strip. Perfect for audio mixing, video switching, and creative workflows beyond streaming.",
+  "price": 199.99,
+  "category": "Stream Decks",
+  "brand": "Elgato",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Dials for audio mixing is brilliant. Podcast workflow transformed.",
+      "rating": 5,
+      "reviewer_name": "PodcastProducer",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Touch strip takes getting used to but useful once learned.",
+      "rating": 5,
+      "reviewer_name": "TouchLearner",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Fewer keys than XL but dials make up for it.",
+      "rating": 4,
+      "reviewer_name": "KeyCounter",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

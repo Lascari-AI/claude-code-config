@@ -1,0 +1,29 @@
+{
+  "name": "Autonomous SmartDesk Pro",
+  "description": "Premium electric standing desk with dual-motor system and 4 programmable height presets. Features 53x29 inch solid top, 220lb capacity, whisper-quiet operation, and cable management tray.",
+  "price": 599.0,
+  "category": "Desks",
+  "brand": "Autonomous",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Game changer for my back pain. Smooth and quiet transitions.",
+      "rating": 5,
+      "reviewer_name": "ErgoEnthusiast",
+      "review_date": "2024-11-14"
+    },
+    {
+      "review_text": "Build quality is excellent. Handles all my monitors.",
+      "rating": 5,
+      "reviewer_name": "MultiMonitorDev",
+      "review_date": "2024-10-22"
+    },
+    {
+      "review_text": "Assembly took a while but instructions were clear.",
+      "rating": 4,
+      "reviewer_name": "DIYBuilder",
+      "review_date": "2024-09-18"
+    }
+  ]
+}

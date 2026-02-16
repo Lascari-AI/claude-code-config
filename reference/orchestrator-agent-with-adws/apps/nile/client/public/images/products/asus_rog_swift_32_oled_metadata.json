@@ -1,0 +1,30 @@
+{
+  "id": "asus_rog_swift_32_oled",
+  "name": "ASUS ROG Swift 32\" OLED",
+  "description": "32-inch 4K OLED gaming monitor with 240Hz and 0.03ms response time. Features DisplayPort 2.1 for uncompressed 4K240, ROG-exclusive customization, and premium HDR.",
+  "price": 1299.99,
+  "category": "Monitors",
+  "brand": "ASUS",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "4K 240Hz OLED. The endgame monitor exists.",
+      "rating": 5,
+      "reviewer_name": "EndgameSeeker",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "DP 2.1 finally delivers full bandwidth.",
+      "rating": 5,
+      "reviewer_name": "BandwidthUnlocked",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Expensive but this is the best gaming display.",
+      "rating": 5,
+      "reviewer_name": "NoCompromise",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

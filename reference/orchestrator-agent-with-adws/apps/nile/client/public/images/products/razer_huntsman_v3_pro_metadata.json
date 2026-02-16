@@ -1,0 +1,30 @@
+{
+  "id": "razer_huntsman_v3_pro",
+  "name": "Razer Huntsman V3 Pro",
+  "description": "Flagship gaming keyboard with 2nd-gen Razer Analog Optical Switches. Features adjustable actuation, Snap Tap for instant counter-strafing, and 8000Hz polling rate.",
+  "price": 249.99,
+  "category": "Keyboards",
+  "brand": "Razer",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Snap Tap is legal cheats. Movement is so responsive.",
+      "rating": 5,
+      "reviewer_name": "CompetitiveGamer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "8000Hz polling is placebo but keyboard is solid.",
+      "rating": 5,
+      "reviewer_name": "RealistGamer",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Great for gaming but prefer tactile for typing.",
+      "rating": 4,
+      "reviewer_name": "HybridUseCase",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

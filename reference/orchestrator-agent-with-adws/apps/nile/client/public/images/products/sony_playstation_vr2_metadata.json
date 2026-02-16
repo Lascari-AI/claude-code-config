@@ -1,0 +1,30 @@
+{
+  "id": "sony_playstation_vr2",
+  "name": "Sony PlayStation VR2",
+  "description": "Premium VR for PlayStation 5 with 4K HDR OLED displays. Features eye tracking, haptic feedback in headset, and 3D audio. The best way to play VR games on console.",
+  "price": 549.99,
+  "category": "VR/AR Headsets",
+  "brand": "Sony",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "OLED displays are gorgeous. Best looking VR games.",
+      "rating": 5,
+      "reviewer_name": "PSVRFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Haptic feedback in headset is innovative.",
+      "rating": 5,
+      "reviewer_name": "HapticEnthusiast",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Needs more exclusive games but hardware is great.",
+      "rating": 4,
+      "reviewer_name": "GameLibraryWanter",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

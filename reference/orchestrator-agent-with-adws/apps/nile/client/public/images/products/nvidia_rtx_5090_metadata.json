@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_5090",
+  "name": "NVIDIA GeForce RTX 5090",
+  "description": "The ultimate gaming GPU featuring 32GB GDDR7 memory, Blackwell architecture, and DLSS 4.0 with AI frame generation. Delivers unprecedented 8K gaming performance with next-gen ray tracing.",
+  "price": 1999.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Absolutely insane performance. 8K gaming is finally real.",
+      "rating": 5,
+      "reviewer_name": "UltraEnthusiast",
+      "review_date": "2025-01-15"
+    },
+    {
+      "review_text": "DLSS 4.0 frame gen is witchcraft. 240fps in Cyberpunk.",
+      "rating": 5,
+      "reviewer_name": "FrameChaser",
+      "review_date": "2025-01-10"
+    },
+    {
+      "review_text": "Expensive but if you want the best, this is it.",
+      "rating": 5,
+      "reviewer_name": "NoCompromise",
+      "review_date": "2025-01-05"
+    }
+  ]
+}

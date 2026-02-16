@@ -1,0 +1,30 @@
+{
+  "id": "apple_vision_pro_2",
+  "name": "Apple Vision Pro 2",
+  "description": "Second-generation spatial computer with M4 chip, 30% lighter design, and extended 4-hour battery. Features wider field of view and enhanced hand tracking for productivity.",
+  "price": 2999.00,
+  "category": "VR/AR Headsets",
+  "brand": "Apple",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Finally light enough for all-day use. This is the one.",
+      "rating": 5,
+      "reviewer_name": "SpatialAdopter",
+      "review_date": "2025-01-28"
+    },
+    {
+      "review_text": "Wider FOV makes a huge difference for immersion.",
+      "rating": 5,
+      "reviewer_name": "ImmersionSeeker",
+      "review_date": "2025-01-24"
+    },
+    {
+      "review_text": "Price drop makes it actually reasonable.",
+      "rating": 5,
+      "reviewer_name": "ValueConsumer",
+      "review_date": "2025-01-20"
+    }
+  ]
+}

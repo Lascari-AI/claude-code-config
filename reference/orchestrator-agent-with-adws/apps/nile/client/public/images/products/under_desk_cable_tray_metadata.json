@@ -1,0 +1,30 @@
+{
+  "id": "under_desk_cable_tray",
+  "name": "VIVO Under Desk Cable Tray",
+  "description": "Metal mesh cable tray for hiding cables under desk. Features clamp or screw mounting, 16-inch width, and sturdy steel construction.",
+  "price": 19.99,
+  "category": "Cable Management",
+  "brand": "VIVO",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best 20 dollars spent on my setup.",
+      "rating": 5,
+      "reviewer_name": "BudgetWin",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Hides all cables out of sight.",
+      "rating": 5,
+      "reviewer_name": "CleanDesk",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Metal edges could be smoother.",
+      "rating": 4,
+      "reviewer_name": "FinishCritic",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

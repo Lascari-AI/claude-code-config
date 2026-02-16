@@ -1,0 +1,30 @@
+{
+  "id": "apple_studio_display",
+  "name": "Apple Studio Display",
+  "description": "27-inch 5K Retina display with 600 nits brightness and P3 wide color. Features A13 Bionic chip, Center Stage camera, and six-speaker system. The Mac companion display.",
+  "price": 1599.00,
+  "category": "Monitors",
+  "brand": "Apple",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "5K Retina is gorgeous. Text rendering is perfect.",
+      "rating": 5,
+      "reviewer_name": "RetinaLover",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Center Stage is surprisingly useful for calls.",
+      "rating": 5,
+      "reviewer_name": "VideoCallPro",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Expensive for specs but macOS integration is seamless.",
+      "rating": 4,
+      "reviewer_name": "MacEcosystem",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "autonomous_ergochair_pro",
+  "name": "Autonomous ErgoChair Pro",
+  "description": "Feature-rich ergonomic chair at accessible price. Features adjustable headrest, lumbar support, and recline. Great value alternative to premium brands.",
+  "price": 499.00,
+  "category": "Chairs",
+  "brand": "Autonomous",
+  "rating": 4.5,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "90% of Herman Miller at 30% of the price.",
+      "rating": 5,
+      "reviewer_name": "ValueFinder",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "All the adjustments I need for long coding days.",
+      "rating": 5,
+      "reviewer_name": "DeveloperSitter",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Build quality not quite HM level but solid.",
+      "rating": 4,
+      "reviewer_name": "QualityComparer",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "ugreen_nas_dxp4800",
+  "name": "UGREEN NASync DXP4800 Plus",
+  "description": "4-bay NAS with Intel N100 and UGOS interface. Features hardware transcoding, 2.5GbE, and user-friendly OS. UGREEN's entry into NAS market with style.",
+  "price": 449.99,
+  "category": "Storage",
+  "brand": "UGREEN",
+  "rating": 4.3,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "UGREEN enters NAS market impressively.",
+      "rating": 5,
+      "reviewer_name": "BrandExplorer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Plex transcoding works perfectly.",
+      "rating": 5,
+      "reviewer_name": "PlexUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "New OS needs more time to mature.",
+      "rating": 4,
+      "reviewer_name": "PatientUser",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

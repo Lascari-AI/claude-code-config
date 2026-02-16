@@ -1,0 +1,31 @@
+{
+  "id": "blue_yeti_x_microphone",
+  "name": "Blue Yeti X Microphone",
+  "image_prompt": "Blue Yeti X USB microphone, blackout edition, large condenser capsule, LED meters on front, desktop stand",
+  "description": "Professional USB condenser microphone with four capsule array and high-res LED metering. Features Blue VO!CE software, 48kHz sample rate, and multiple pickup patterns for any recording scenario.",
+  "price": 169.99,
+  "category": "Microphones",
+  "brand": "Blue",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Podcast quality audio right out of the box. Blue VO!CE presets are great.",
+      "rating": 5,
+      "reviewer_name": "PodcastHost",
+      "review_date": "2024-11-08"
+    },
+    {
+      "review_text": "My team can finally hear me clearly in standups.",
+      "rating": 5,
+      "reviewer_name": "ScrumMaster",
+      "review_date": "2024-10-12"
+    },
+    {
+      "review_text": "Picks up some keyboard noise but still excellent.",
+      "rating": 4,
+      "reviewer_name": "StreamerPro",
+      "review_date": "2024-09-18"
+    }
+  ]
+}

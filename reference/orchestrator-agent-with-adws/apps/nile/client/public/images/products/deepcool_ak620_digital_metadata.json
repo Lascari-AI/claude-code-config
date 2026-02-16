@@ -1,0 +1,30 @@
+{
+  "id": "deepcool_ak620_digital",
+  "name": "DeepCool AK620 Digital",
+  "description": "Dual-tower air cooler with real-time LCD display. Features 6 heatpipes, dual FK120 fans, and temperature/clock display. Air cooling with modern features.",
+  "price": 99.99,
+  "category": "Cooling",
+  "brand": "DeepCool",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "LCD on air cooler is clever addition.",
+      "rating": 5,
+      "reviewer_name": "FeatureAppreciator",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Performance rivals NH-D15 at lower cost.",
+      "rating": 5,
+      "reviewer_name": "PerformanceValue",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "LCD software could be better.",
+      "rating": 4,
+      "reviewer_name": "SoftwareUser",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

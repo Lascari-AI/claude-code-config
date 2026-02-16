@@ -1,0 +1,30 @@
+{
+  "id": "herman_miller_aeron",
+  "name": "Herman Miller Aeron Chair",
+  "description": "The iconic ergonomic chair with 8Z Pellicle mesh suspension. Features PostureFit SL lumbar support, fully adjustable arms, and 12-year warranty. The gold standard.",
+  "price": 1395.00,
+  "category": "Chairs",
+  "brand": "Herman Miller",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Worth every penny. 10 years later still perfect.",
+      "rating": 5,
+      "reviewer_name": "LongTermUser",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "Mesh keeps me cool during long coding sessions.",
+      "rating": 5,
+      "reviewer_name": "HotOfficeUser",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Expensive but 12-year warranty is peace of mind.",
+      "rating": 5,
+      "reviewer_name": "WarrantyValuer",
+      "review_date": "2024-12-12"
+    }
+  ]
+}

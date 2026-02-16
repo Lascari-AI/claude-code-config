@@ -1,0 +1,30 @@
+{
+  "id": "apple_thunderbolt_4_pro_cable",
+  "name": "Apple Thunderbolt 4 Pro Cable 3m",
+  "description": "Apple's longest Thunderbolt 4 cable at 3m. Features 40Gbps, 100W charging, and daisy-chain support. When you need distance without compromises.",
+  "price": 159.00,
+  "category": "Cables",
+  "brand": "Apple",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "3m TB4 at full speed. Only option.",
+      "rating": 5,
+      "reviewer_name": "DistanceNeeder",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Apple tax but it actually works.",
+      "rating": 5,
+      "reviewer_name": "ApplePremium",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Expensive but unique in the market.",
+      "rating": 4,
+      "reviewer_name": "UniqueProduct",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

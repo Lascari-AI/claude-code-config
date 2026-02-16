@@ -1,0 +1,30 @@
+{
+  "id": "noctua_nh_u12a",
+  "name": "Noctua NH-U12A CPU Cooler",
+  "description": "Compact single-tower cooler matching dual-tower performance. Features two NF-A12x25 fans, 7 heatpipes, and 158mm height for case compatibility. Noctua engineering excellence.",
+  "price": 109.99,
+  "category": "Cooling",
+  "brand": "Noctua",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Single tower matches NH-D15 performance.",
+      "rating": 5,
+      "reviewer_name": "CoolingExpert",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Fits in smaller cases with big cooling.",
+      "rating": 5,
+      "reviewer_name": "SFFBuilder",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price but Noctua quality.",
+      "rating": 5,
+      "reviewer_name": "QualityFirst",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

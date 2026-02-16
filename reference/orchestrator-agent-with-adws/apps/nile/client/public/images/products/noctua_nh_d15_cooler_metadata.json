@@ -1,0 +1,31 @@
+{
+  "id": "noctua_nh_d15_cooler",
+  "name": "Noctua NH-D15 CPU Cooler",
+  "image_prompt": "Noctua NH-D15 CPU cooler, dual tower design, two brown and beige 140mm fans, copper heatpipes visible",
+  "description": "Premium dual-tower CPU cooler with six heatpipes and two NF-A15 140mm fans. Delivers exceptional cooling performance while maintaining near-silent operation. Includes NT-H1 thermal paste.",
+  "price": 109.99,
+  "category": "Cooling",
+  "brand": "Noctua",
+  "rating": 4.9,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Keeps my 13900K cool and quiet. Air cooling king.",
+      "rating": 5,
+      "reviewer_name": "SilentPCFan",
+      "review_date": "2024-11-11"
+    },
+    {
+      "review_text": "Ugly color but who cares when it performs this well.",
+      "rating": 5,
+      "reviewer_name": "PerformanceFirst",
+      "review_date": "2024-10-19"
+    },
+    {
+      "review_text": "Massive cooler. Check RAM clearance before buying.",
+      "rating": 4,
+      "reviewer_name": "CompactBuilder",
+      "review_date": "2024-09-24"
+    }
+  ]
+}

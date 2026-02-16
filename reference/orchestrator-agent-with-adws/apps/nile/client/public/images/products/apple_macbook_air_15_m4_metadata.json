@@ -1,0 +1,30 @@
+{
+  "id": "apple_macbook_air_15_m4",
+  "name": "Apple MacBook Air 15\" M4",
+  "description": "Thin and light 15-inch laptop with M4 chip, 16GB unified memory, and all-day battery life. Perfect balance of screen size and portability for developers on the go.",
+  "price": 1499.0,
+  "category": "Laptops",
+  "brand": "Apple",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "15-inch screen in an impossibly thin package. Love it.",
+      "rating": 5,
+      "reviewer_name": "PortabilityFan",
+      "review_date": "2025-01-15"
+    },
+    {
+      "review_text": "M4 handles my dev workflow perfectly. Silent too.",
+      "rating": 5,
+      "reviewer_name": "MobileDev",
+      "review_date": "2025-01-10"
+    },
+    {
+      "review_text": "Miss the extra ports but USB-C hub solves it.",
+      "rating": 4,
+      "reviewer_name": "DongleLife",
+      "review_date": "2025-01-05"
+    }
+  ]
+}

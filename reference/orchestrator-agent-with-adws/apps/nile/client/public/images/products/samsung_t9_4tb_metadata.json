@@ -1,0 +1,30 @@
+{
+  "id": "samsung_t9_4tb",
+  "name": "Samsung T9 4TB Portable SSD",
+  "description": "Professional portable SSD with 2000MB/s USB 3.2 Gen2x2 speeds. Features 4TB capacity, rubber bumper, and Samsung's SSD reliability. Built for pros.",
+  "price": 399.99,
+  "category": "Storage",
+  "brand": "Samsung",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Samsung SSD reliability in portable form.",
+      "rating": 5,
+      "reviewer_name": "SamsungTrust",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "USB 3.2 Gen2x2 hits full speed.",
+      "rating": 5,
+      "reviewer_name": "SpeedTester",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price but premium performance.",
+      "rating": 4,
+      "reviewer_name": "ValueWeigher",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

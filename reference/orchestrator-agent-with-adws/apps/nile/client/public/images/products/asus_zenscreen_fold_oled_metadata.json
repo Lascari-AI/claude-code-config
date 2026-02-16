@@ -1,0 +1,30 @@
+{
+  "id": "asus_zenscreen_fold_oled",
+  "name": "ASUS ZenScreen Fold OLED",
+  "description": "17-inch foldable OLED portable monitor that folds to half size. Features touch input, stylus support, and USB-C power delivery. The most portable large display.",
+  "price": 599.99,
+  "category": "Monitors",
+  "brand": "ASUS",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Folds in half and fits in my bag. Incredible.",
+      "rating": 5,
+      "reviewer_name": "PortabilityKing",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Touch input is responsive and useful.",
+      "rating": 5,
+      "reviewer_name": "TouchUser",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Fold crease visible in some content.",
+      "rating": 4,
+      "reviewer_name": "CreaseAware",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "logitech_g_pro_x_superlight_2",
+  "name": "Logitech G PRO X Superlight 2",
+  "description": "The esports standard at just 60g. Features HERO 2 sensor with 44K DPI, LIGHTSPEED wireless, and 95-hour battery life. No holes needed for extreme lightness.",
+  "price": 159.99,
+  "category": "Mice",
+  "brand": "Logitech",
+  "rating": 4.9,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Used by more pros than any other mouse. Enough said.",
+      "rating": 5,
+      "reviewer_name": "ProFollower",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "60g feels like nothing. Aim has improved noticeably.",
+      "rating": 5,
+      "reviewer_name": "AimTrainer",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Perfect shape for claw grip.",
+      "rating": 5,
+      "reviewer_name": "ClawGripper",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

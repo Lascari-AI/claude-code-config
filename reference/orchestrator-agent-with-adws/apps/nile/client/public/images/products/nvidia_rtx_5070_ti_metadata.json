@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_5070_ti",
+  "name": "NVIDIA GeForce RTX 5070 Ti",
+  "description": "Sweet spot Blackwell GPU with 12GB GDDR7 memory. Delivers RTX 4090-class performance at a fraction of the price with full ray tracing and DLSS 4.0 support.",
+  "price": 749.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "4090 performance for under 800 bucks. Incredible value.",
+      "rating": 5,
+      "reviewer_name": "ValueHunter",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Perfect for 1440p 240Hz gaming. Buttery smooth.",
+      "rating": 5,
+      "reviewer_name": "HighRefresh",
+      "review_date": "2025-01-09"
+    },
+    {
+      "review_text": "Wish it had 16GB but 12GB handles everything I play.",
+      "rating": 4,
+      "reviewer_name": "VRAMWatcher",
+      "review_date": "2025-01-04"
+    }
+  ]
+}

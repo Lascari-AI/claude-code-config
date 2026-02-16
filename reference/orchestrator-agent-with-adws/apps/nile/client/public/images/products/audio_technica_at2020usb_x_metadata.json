@@ -1,0 +1,30 @@
+{
+  "id": "audio_technica_at2020usb_x",
+  "name": "Audio-Technica AT2020USB-X",
+  "description": "Legendary AT2020 sound in USB form. Features 24-bit/96kHz recording, built-in headphone jack with mix control, and the warm AT sound loved by creators.",
+  "price": 149.00,
+  "category": "Microphones",
+  "brand": "Audio-Technica",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "AT2020 sound without an interface. Perfect entry point.",
+      "rating": 5,
+      "reviewer_name": "USBConvert",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Warm Audio-Technica sound. Flattering for voice.",
+      "rating": 5,
+      "reviewer_name": "VoiceArtist",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Picks up room noise. Needs treatment.",
+      "rating": 4,
+      "reviewer_name": "RoomAcoustics",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

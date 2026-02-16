@@ -1,0 +1,30 @@
+{
+  "id": "elgato_facecam_pro",
+  "name": "Elgato Facecam Pro",
+  "description": "Professional 4K60 webcam with Sony sensor and adjustable field of view. Features uncompressed video output, professional color science, and XLR-level control.",
+  "price": 299.99,
+  "category": "Webcams",
+  "brand": "Elgato",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "4K60 is overkill but downscales beautifully to 1080p.",
+      "rating": 5,
+      "reviewer_name": "QualityStreamer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Sony sensor makes low light usable finally.",
+      "rating": 5,
+      "reviewer_name": "LowLightStream",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Software is powerful but steep learning curve.",
+      "rating": 4,
+      "reviewer_name": "SoftwareLearner",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

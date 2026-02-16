@@ -1,0 +1,29 @@
+{
+  "name": "Apple MacBook Pro 14\"",
+  "description": "Professional laptop powered by M3 Pro chip with 18GB unified memory. Features stunning Liquid Retina XDR display, up to 18 hours battery life, MagSafe charging, and studio-quality 6-speaker system.",
+  "price": 1999.0,
+  "category": "Laptops",
+  "brand": "Apple",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "The M3 Pro handles everything I throw at it. Compiling is a breeze.",
+      "rating": 5,
+      "reviewer_name": "iOSDev",
+      "review_date": "2024-11-18"
+    },
+    {
+      "review_text": "Best laptop for software development. Period.",
+      "rating": 5,
+      "reviewer_name": "FullStackDev",
+      "review_date": "2024-10-25"
+    },
+    {
+      "review_text": "Expensive but worth it. Display is gorgeous for design work.",
+      "rating": 4,
+      "reviewer_name": "UIDesigner",
+      "review_date": "2024-09-28"
+    }
+  ]
+}

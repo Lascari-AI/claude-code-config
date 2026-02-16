@@ -1,0 +1,30 @@
+{
+  "id": "gravitas_summit_chair",
+  "name": "Gravitas Summit Ergonomic Chair",
+  "description": "Luxury ergonomic chair combining leather and mesh. Features AI-powered posture monitoring, heating and cooling zones, and executive aesthetics with full adjustability.",
+  "price": 1899.00,
+  "category": "Chairs",
+  "brand": "Gravitas",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Heating and cooling in a chair. Why did this take so long?",
+      "rating": 5,
+      "reviewer_name": "ThermalComfort",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "AI posture monitoring actually helps me sit better.",
+      "rating": 5,
+      "reviewer_name": "PostureImprover",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Premium price for premium features.",
+      "rating": 5,
+      "reviewer_name": "FeatureBuyer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

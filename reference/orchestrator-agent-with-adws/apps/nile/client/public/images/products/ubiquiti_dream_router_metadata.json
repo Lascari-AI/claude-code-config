@@ -1,0 +1,31 @@
+{
+  "id": "ubiquiti_dream_router",
+  "name": "Ubiquiti Dream Router",
+  "image_prompt": "Ubiquiti Dream Router, white cylindrical design, minimalist aesthetic, LED status indicator",
+  "description": "All-in-one WiFi 6 router with built-in UniFi OS Console. Features dual-band AX3000, advanced network management, IDS/IPS, and support for up to 60 devices. Perfect for prosumer setups.",
+  "price": 199.99,
+  "category": "Networking",
+  "brand": "Ubiquiti",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Enterprise-grade features at consumer price. UniFi dashboard is amazing.",
+      "rating": 5,
+      "reviewer_name": "NetworkAdmin",
+      "review_date": "2024-11-18"
+    },
+    {
+      "review_text": "Finally replaced my mesh setup. Much more reliable.",
+      "rating": 5,
+      "reviewer_name": "HomeLabber",
+      "review_date": "2024-10-26"
+    },
+    {
+      "review_text": "Learning curve for UniFi but worth it.",
+      "rating": 4,
+      "reviewer_name": "DIYNetworker",
+      "review_date": "2024-09-30"
+    }
+  ]
+}

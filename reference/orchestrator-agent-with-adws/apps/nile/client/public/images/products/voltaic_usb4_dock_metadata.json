@@ -1,0 +1,30 @@
+{
+  "id": "voltaic_usb4_dock",
+  "name": "Voltaic USB4 Universal Dock",
+  "description": "USB4 dock compatible with Thunderbolt 3/4. Features triple 4K display support, 100W charging, and universal compatibility. The future-proof docking choice.",
+  "price": 279.99,
+  "category": "Docking Stations",
+  "brand": "Voltaic",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "USB4 means works with everything.",
+      "rating": 5,
+      "reviewer_name": "UniversalUser",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Triple 4K is impressive at this price.",
+      "rating": 5,
+      "reviewer_name": "MultiMonitor",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "New brand but solid product.",
+      "rating": 4,
+      "reviewer_name": "EarlyAdopter",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

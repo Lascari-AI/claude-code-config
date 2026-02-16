@@ -1,0 +1,30 @@
+{
+  "id": "logitech_desk_mat_studio",
+  "name": "Logitech Desk Mat Studio Series",
+  "description": "Large desk mat with spill-resistant cloth surface. Features anti-fray stitched edges, stable rubber base, and professional Studio Series aesthetic.",
+  "price": 39.99,
+  "category": "Mouse Pads",
+  "brand": "Logitech",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Spill resistant saved my desk multiple times.",
+      "rating": 5,
+      "reviewer_name": "CoffeeSpiller",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Studio Series looks professional.",
+      "rating": 5,
+      "reviewer_name": "ProfessionalSetup",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Good value for the size.",
+      "rating": 4,
+      "reviewer_name": "ValueBuyer",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

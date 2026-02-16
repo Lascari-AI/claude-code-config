@@ -1,0 +1,30 @@
+{
+  "id": "helios_arc_360",
+  "name": "Helios Arc 360 AIO Cooler",
+  "description": "Premium 360mm AIO with next-gen pump design. Features addressable RGB, low-noise fans, and copper cold plate. The enthusiast's liquid cooling choice.",
+  "price": 229.99,
+  "category": "Cooling",
+  "brand": "Helios",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "New pump design runs quieter than competitors.",
+      "rating": 5,
+      "reviewer_name": "SilentEnthusiast",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "RGB implementation is tasteful.",
+      "rating": 5,
+      "reviewer_name": "RGBAppreciator",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "New brand but impressive first product.",
+      "rating": 4,
+      "reviewer_name": "BrandExplorer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

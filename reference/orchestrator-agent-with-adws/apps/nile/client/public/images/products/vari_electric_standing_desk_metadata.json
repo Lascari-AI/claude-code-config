@@ -1,0 +1,30 @@
+{
+  "id": "vari_electric_standing_desk",
+  "name": "Vari Electric Standing Desk",
+  "description": "Commercial-grade standing desk built for office environments. Features 200lb capacity, sturdy T-style legs, and simple two-button controller. Ready for business.",
+  "price": 695.00,
+  "category": "Desks",
+  "brand": "Vari",
+  "rating": 4.5,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Our whole office uses Vari. Reliable and consistent.",
+      "rating": 5,
+      "reviewer_name": "OfficeManager",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Commercial build quality. Will last for years.",
+      "rating": 5,
+      "reviewer_name": "Durability",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Basic controller but gets the job done.",
+      "rating": 4,
+      "reviewer_name": "FunctionFirst",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

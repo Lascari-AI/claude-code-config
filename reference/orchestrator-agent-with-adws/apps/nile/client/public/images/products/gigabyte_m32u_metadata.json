@@ -1,0 +1,30 @@
+{
+  "id": "gigabyte_m32u",
+  "name": "Gigabyte M32U",
+  "description": "32-inch 4K gaming monitor with 144Hz refresh rate and 1ms response time. Features SS IPS for wide viewing angles, HDMI 2.1 for console gaming, and KVM switch.",
+  "price": 699.99,
+  "category": "Monitors",
+  "brand": "Gigabyte",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best value 4K 144Hz monitor. Excellent for the price.",
+      "rating": 5,
+      "reviewer_name": "ValueGamer",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "HDMI 2.1 makes this perfect for PS5 too.",
+      "rating": 5,
+      "reviewer_name": "ConsolePC",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "IPS glow in corners but overall great.",
+      "rating": 4,
+      "reviewer_name": "IPSAware",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

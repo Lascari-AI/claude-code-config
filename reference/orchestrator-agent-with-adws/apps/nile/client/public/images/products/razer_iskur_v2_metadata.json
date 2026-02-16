@@ -1,0 +1,30 @@
+{
+  "id": "razer_iskur_v2",
+  "name": "Razer Iskur V2",
+  "description": "Gaming chair with Razer's adaptive lumbar support system. Features 6D armrests, memory foam cushions, and EPU synthetic leather for durability.",
+  "price": 599.00,
+  "category": "Chairs",
+  "brand": "Razer",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Adaptive lumbar is the best in gaming chairs.",
+      "rating": 5,
+      "reviewer_name": "GamingChairConvert",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "6D armrests provide perfect positioning.",
+      "rating": 5,
+      "reviewer_name": "ArmrestPrecision",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Gaming aesthetic is not for everyone.",
+      "rating": 4,
+      "reviewer_name": "OfficeAesthetic",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

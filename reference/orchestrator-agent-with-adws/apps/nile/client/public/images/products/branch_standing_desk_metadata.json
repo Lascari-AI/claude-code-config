@@ -1,0 +1,30 @@
+{
+  "id": "branch_standing_desk",
+  "name": "Branch Standing Desk",
+  "description": "Design-forward standing desk with 275lb capacity. Features clean aesthetic, three programmable heights, and excellent value from the office furniture disruptor.",
+  "price": 549.00,
+  "category": "Desks",
+  "brand": "Branch",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Best looking standing desk at this price.",
+      "rating": 5,
+      "reviewer_name": "DesignFocused",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Branch disrupted the industry. Great value.",
+      "rating": 5,
+      "reviewer_name": "ValueBuyer",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Slightly wobbly at max height but acceptable.",
+      "rating": 4,
+      "reviewer_name": "StabilityChecker",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

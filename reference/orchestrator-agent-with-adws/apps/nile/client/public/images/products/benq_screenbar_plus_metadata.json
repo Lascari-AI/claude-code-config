@@ -1,0 +1,31 @@
+{
+  "id": "benq_screenbar_plus",
+  "name": "BenQ ScreenBar Plus",
+  "image_prompt": "BenQ ScreenBar Plus monitor light, black aluminum bar mounted on monitor, desktop dial controller",
+  "description": "Asymmetric monitor light bar with desktop dial controller. Features auto-dimming, adjustable color temperature 2700K-6500K, and zero screen glare design for eye comfort.",
+  "price": 129.0,
+  "category": "Desk Lighting",
+  "brand": "BenQ",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "No more eye strain during late night coding sessions.",
+      "rating": 5,
+      "reviewer_name": "NightOwlDev",
+      "review_date": "2024-11-07"
+    },
+    {
+      "review_text": "Desktop controller is so convenient. Auto-dim works great.",
+      "rating": 5,
+      "reviewer_name": "SmartHomeEnthusiast",
+      "review_date": "2024-10-11"
+    },
+    {
+      "review_text": "Great light but wish it was a bit brighter.",
+      "rating": 4,
+      "reviewer_name": "BrightnessMax",
+      "review_date": "2024-09-16"
+    }
+  ]
+}

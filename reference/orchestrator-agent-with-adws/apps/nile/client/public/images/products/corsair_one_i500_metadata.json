@@ -1,0 +1,30 @@
+{
+  "id": "corsair_one_i500",
+  "name": "Corsair ONE i500",
+  "description": "Premium compact gaming PC with Intel Core Ultra 9, RTX 5080, and liquid cooling in a stunning small form factor. Whisper quiet under load.",
+  "price": 3999.00,
+  "category": "Desktops",
+  "brand": "Corsair",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Living room gaming PC perfected. Dead silent.",
+      "rating": 5,
+      "reviewer_name": "LivingRoomGamer",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Incredible engineering. RTX 5080 in this size.",
+      "rating": 5,
+      "reviewer_name": "SFFEnthusiast",
+      "review_date": "2025-01-13"
+    },
+    {
+      "review_text": "Expensive but nothing else comes close in this size.",
+      "rating": 4,
+      "reviewer_name": "PremiumBuyer",
+      "review_date": "2025-01-08"
+    }
+  ]
+}

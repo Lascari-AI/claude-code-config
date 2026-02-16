@@ -1,0 +1,30 @@
+{
+  "id": "wooting_80he",
+  "name": "Wooting 80HE",
+  "description": "Revolutionary analog keyboard with adjustable actuation from 0.1mm to 4mm. Features Rapid Trigger for competitive gaming and Lekker hall-effect switches. The esports choice.",
+  "price": 199.00,
+  "category": "Keyboards",
+  "brand": "Wooting",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Rapid Trigger changed my game. Literally unfair advantage.",
+      "rating": 5,
+      "reviewer_name": "CompetitiveFPS",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "0.1mm actuation for gaming, 2mm for typing. Best of both.",
+      "rating": 5,
+      "reviewer_name": "HybridGamer",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Worth the wait. Nothing else comes close for gaming.",
+      "rating": 5,
+      "reviewer_name": "ProPlayer",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "ubiquiti_switch_lite_16",
+  "name": "Ubiquiti UniFi Switch Lite 16 PoE",
+  "description": "16-port managed switch with 8 PoE+ ports at 45W budget. Features UniFi integration, Layer 2 management, and compact fanless design. Perfect for UniFi networks.",
+  "price": 129.00,
+  "category": "Networking",
+  "brand": "Ubiquiti",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Powers my access points perfectly.",
+      "rating": 5,
+      "reviewer_name": "PoEUser",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "UniFi management makes networking easy.",
+      "rating": 5,
+      "reviewer_name": "UniFiFan",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "45W PoE budget limits use cases.",
+      "rating": 4,
+      "reviewer_name": "PoECalculator",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

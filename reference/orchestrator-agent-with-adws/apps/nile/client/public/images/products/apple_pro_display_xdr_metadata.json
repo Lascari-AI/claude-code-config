@@ -1,0 +1,30 @@
+{
+  "id": "apple_pro_display_xdr",
+  "name": "Apple Pro Display XDR",
+  "description": "32-inch 6K reference monitor with 1600 nits peak HDR brightness. Features nano-texture glass option, P3 wide color, and XDR (Extreme Dynamic Range) for professional workflows.",
+  "price": 4999.0,
+  "category": "Monitors",
+  "brand": "Apple",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Reference grade display at fraction of reference monitor cost.",
+      "rating": 5,
+      "reviewer_name": "ColorProfessional",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "XDR brightness for HDR mastering is essential.",
+      "rating": 5,
+      "reviewer_name": "HDRColorist",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Stand sold separately is annoying but display is incredible.",
+      "rating": 4,
+      "reviewer_name": "StandCritic",
+      "review_date": "2024-12-12"
+    }
+  ]
+}

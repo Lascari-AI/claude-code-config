@@ -1,0 +1,31 @@
+{
+  "id": "logitech_brio_4k_webcam",
+  "name": "Logitech Brio 4K Webcam",
+  "image_prompt": "Logitech Brio 4K webcam, black cylindrical design, glass lens, clip mount for monitor, premium build",
+  "description": "Professional 4K Ultra HD webcam with HDR and Windows Hello support. Features 5x digital zoom, auto light correction, and dual omnidirectional mics for crystal-clear video calls.",
+  "price": 199.99,
+  "category": "Webcams",
+  "brand": "Logitech",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Finally look professional on Zoom calls. 4K is overkill but downscales beautifully.",
+      "rating": 5,
+      "reviewer_name": "RemoteManager",
+      "review_date": "2024-11-10"
+    },
+    {
+      "review_text": "Windows Hello login is super convenient.",
+      "rating": 5,
+      "reviewer_name": "SecurityFirst",
+      "review_date": "2024-10-15"
+    },
+    {
+      "review_text": "Great camera but needs good lighting to shine.",
+      "rating": 4,
+      "reviewer_name": "ContentCreator",
+      "review_date": "2024-09-20"
+    }
+  ]
+}

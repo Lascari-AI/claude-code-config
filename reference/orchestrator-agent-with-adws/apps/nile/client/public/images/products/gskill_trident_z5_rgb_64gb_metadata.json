@@ -1,0 +1,30 @@
+{
+  "id": "gskill_trident_z5_rgb_64gb",
+  "name": "G.Skill Trident Z5 RGB 64GB DDR5",
+  "description": "Premium DDR5 kit (2x32GB) at 6400MHz CL32. Features stunning RGB lighting, Samsung ICs for overclocking headroom, and Intel XMP 3.0 certification.",
+  "price": 249.99,
+  "category": "Memory",
+  "brand": "G.Skill",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "64GB is perfect for development VMs. Fast and stable.",
+      "rating": 5,
+      "reviewer_name": "VMPowerUser",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "RGB syncs perfectly with other G.Skill components.",
+      "rating": 5,
+      "reviewer_name": "RGBEnthusiast",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Overclocks to 7000MHz with good cooling.",
+      "rating": 5,
+      "reviewer_name": "Overclocker",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

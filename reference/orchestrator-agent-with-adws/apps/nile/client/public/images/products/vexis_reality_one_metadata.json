@@ -1,0 +1,30 @@
+{
+  "id": "vexis_reality_one",
+  "name": "Vexis Reality One",
+  "description": "Revolutionary mixed reality headset with transparent holographic display. Features gesture recognition, voice AI assistant, and seamless real-world overlay for next-gen productivity.",
+  "price": 1799.00,
+  "category": "VR/AR Headsets",
+  "brand": "Vexis",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Transparent display is the future. Can actually work in it.",
+      "rating": 5,
+      "reviewer_name": "FutureWorker",
+      "review_date": "2025-01-26"
+    },
+    {
+      "review_text": "Voice AI integration is surprisingly natural.",
+      "rating": 5,
+      "reviewer_name": "AIAdopter",
+      "review_date": "2025-01-22"
+    },
+    {
+      "review_text": "Software ecosystem still developing but hardware is ready.",
+      "rating": 4,
+      "reviewer_name": "EarlyAdopter",
+      "review_date": "2025-01-18"
+    }
+  ]
+}

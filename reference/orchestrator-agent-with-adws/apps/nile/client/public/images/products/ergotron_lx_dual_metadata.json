@@ -1,0 +1,30 @@
+{
+  "id": "ergotron_lx_dual",
+  "name": "Ergotron LX Dual Monitor Arm",
+  "description": "Premium dual monitor arm supporting two displays up to 27 inches each. Features independent arm movement, cable management, and Ergotron's signature smooth motion.",
+  "price": 379.99,
+  "category": "Monitor Arms",
+  "brand": "Ergotron",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Both monitors perfectly positioned independently.",
+      "rating": 5,
+      "reviewer_name": "DualMonitorUser",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Frees up desk space for both monitors.",
+      "rating": 5,
+      "reviewer_name": "SpaceSaver",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price but 10-year warranty.",
+      "rating": 5,
+      "reviewer_name": "WarrantyBuyer",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

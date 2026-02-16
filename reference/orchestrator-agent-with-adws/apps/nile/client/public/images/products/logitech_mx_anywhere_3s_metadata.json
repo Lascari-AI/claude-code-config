@@ -1,0 +1,30 @@
+{
+  "id": "logitech_mx_anywhere_3s",
+  "name": "Logitech MX Anywhere 3S",
+  "description": "Compact productivity mouse that works on any surface including glass. Features quiet clicks, MagSpeed scrolling, and connects to 3 devices. Perfect travel companion.",
+  "price": 79.99,
+  "category": "Mice",
+  "brand": "Logitech",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Lives in my laptop bag. Works everywhere.",
+      "rating": 5,
+      "reviewer_name": "RoadWarrior",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "MagSpeed in compact form. Brilliant.",
+      "rating": 5,
+      "reviewer_name": "ScrollLover",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Bit small for all-day desktop use.",
+      "rating": 4,
+      "reviewer_name": "BigHandUser",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

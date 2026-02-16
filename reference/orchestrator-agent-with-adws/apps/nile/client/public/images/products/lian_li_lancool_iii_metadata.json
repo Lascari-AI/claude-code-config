@@ -1,0 +1,30 @@
+{
+  "id": "lian_li_lancool_iii",
+  "name": "Lian Li Lancool III",
+  "description": "Airflow-optimized mid-tower with modular interior. Features mesh front/top, reversible motherboard tray option, and exceptional build quality. The builder's dream case.",
+  "price": 169.99,
+  "category": "PC Cases",
+  "brand": "Lian Li",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Best airflow case I have built in.",
+      "rating": 5,
+      "reviewer_name": "AirflowChaser",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Modular design makes building easy.",
+      "rating": 5,
+      "reviewer_name": "EasyBuilder",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Large case needs large desk space.",
+      "rating": 4,
+      "reviewer_name": "SpaceAware",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

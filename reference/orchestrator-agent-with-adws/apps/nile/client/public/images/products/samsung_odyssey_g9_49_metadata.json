@@ -1,0 +1,30 @@
+{
+  "id": "samsung_odyssey_g9_49",
+  "name": "Samsung Odyssey G9 49\"",
+  "description": "Massive 49-inch ultrawide with 5120x1440 resolution and 240Hz refresh rate. Features 1000R curve, Quantum Mini-LED, and 1ms response time for ultimate immersion.",
+  "price": 1299.99,
+  "category": "Monitors",
+  "brand": "Samsung",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Replaced dual monitors. Never going back.",
+      "rating": 5,
+      "reviewer_name": "UltrawideConvert",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "1000R curve wraps around you perfectly.",
+      "rating": 5,
+      "reviewer_name": "CurveLover",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Some games struggle with 32:9 aspect ratio.",
+      "rating": 4,
+      "reviewer_name": "GameCompatibility",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

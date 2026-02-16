@@ -1,9 +1,10 @@
-# Backend Dockerfile - FastAPI with uv and hot reload
+# Backend Dockerfile - FastAPI with uv
 #
-# Development image optimized for:
-# - Fast rebuilds with uv
-# - Hot reload via uvicorn --reload
-# - Source mounted as volume
+# Builds from apps/core context (for access to session_db).
+# session_db is installed as a pip package from sibling directory.
+#
+# Build context: apps/core
+# Dockerfile location: apps/core/backend/Dockerfile
 
 FROM python:3.12-slim
 
@@ -21,23 +22,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Add uv to PATH
 ENV PATH="/root/.local/bin:$PATH"
 
-# Copy pyproject.toml and session_db package for dependency resolution
-# Note: session_db uses flat layout (files directly in session_db/)
-COPY pyproject.toml .
-COPY session_db session_db
+# Copy session_db package (with src layout)
+COPY session_db /app/session_db
+
+# Copy backend package
+COPY backend/pyproject.toml /app/backend/
+WORKDIR /app/backend
 
 # Install dependencies with uv
-# Falls back to non-frozen if lock file doesn't exist
 RUN uv sync --frozen --no-dev 2>/dev/null || uv sync --no-dev
 
-# Copy backend code
-COPY backend backend
+# Copy backend source code
+COPY backend /app/backend
 
-# Set Python path to include app directory
-ENV PYTHONPATH=/app
+# Set Python path to include session_db src
+ENV PYTHONPATH=/app/backend:/app/session_db/src
 
 # Expose port
 EXPOSE 8000
 
-# Default command (can be overridden in docker-compose)
-CMD ["uv", "run", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Default command
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

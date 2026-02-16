@@ -1,0 +1,31 @@
+{
+  "id": "steelseries_arctis_nova_pro",
+  "name": "SteelSeries Arctis Nova Pro Wireless",
+  "image_prompt": "SteelSeries Arctis Nova Pro wireless gaming headset, black, premium design with retractable microphone, comfortable cushions, base station",
+  "description": "Premium wireless gaming headset with active noise cancellation and hot-swappable batteries. Features 360\u00b0 Spatial Audio, dual wireless connectivity, and hi-fi audio drivers for competitive gaming.",
+  "price": 349.99,
+  "category": "Headphones",
+  "brand": "SteelSeries",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best gaming headset I have ever owned. ANC is incredible.",
+      "rating": 5,
+      "reviewer_name": "CompetitiveGamer",
+      "review_date": "2024-11-20"
+    },
+    {
+      "review_text": "Hot-swap batteries mean never running out mid-game.",
+      "rating": 5,
+      "reviewer_name": "MarathonGamer",
+      "review_date": "2024-10-28"
+    },
+    {
+      "review_text": "Pricey but audio quality justifies it for audiophiles.",
+      "rating": 4,
+      "reviewer_name": "AudioSnob",
+      "review_date": "2024-09-30"
+    }
+  ]
+}

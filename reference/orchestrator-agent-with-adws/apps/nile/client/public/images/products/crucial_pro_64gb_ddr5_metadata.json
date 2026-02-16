@@ -1,0 +1,30 @@
+{
+  "id": "crucial_pro_64gb_ddr5",
+  "name": "Crucial Pro 64GB DDR5",
+  "description": "Professional DDR5 kit (2x32GB) at 5600MHz with tight timings. Micron ICs ensure stability for workstation builds requiring maximum reliability.",
+  "price": 189.99,
+  "category": "Memory",
+  "brand": "Crucial",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Rock solid for my workstation. Zero issues in months.",
+      "rating": 5,
+      "reviewer_name": "WorkstationUser",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Micron quality at a reasonable price.",
+      "rating": 5,
+      "reviewer_name": "ReliabilityFirst",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Good kit but limited overclocking headroom.",
+      "rating": 4,
+      "reviewer_name": "MildOCer",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

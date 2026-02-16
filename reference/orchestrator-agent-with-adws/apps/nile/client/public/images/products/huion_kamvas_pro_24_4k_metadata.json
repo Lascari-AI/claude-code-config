@@ -1,0 +1,30 @@
+{
+  "id": "huion_kamvas_pro_24_4k",
+  "name": "Huion Kamvas Pro 24 4K",
+  "description": "Large 24-inch 4K pen display with PW600 stylus. Features 16K pressure levels, AG glass, and adjustable stand. Premium features at mid-range price.",
+  "price": 899.99,
+  "category": "Drawing Tablets",
+  "brand": "Huion",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "24-inch 4K at this price is incredible.",
+      "rating": 5,
+      "reviewer_name": "ValueHunter",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Large workspace improves my illustration flow.",
+      "rating": 5,
+      "reviewer_name": "LargeCanvasFan",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Pen needs occasional re-calibration.",
+      "rating": 4,
+      "reviewer_name": "CalibrationAware",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

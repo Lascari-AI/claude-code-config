@@ -1,0 +1,30 @@
+{
+  "id": "gravitas_ergo_desk_pro",
+  "name": "Gravitas ErgoPro Desk",
+  "description": "Premium curved standing desk with integrated wireless charging zones. Features AI-powered posture reminders, motorized cable channels, and premium walnut or oak tops.",
+  "price": 1299.00,
+  "category": "Desks",
+  "brand": "Gravitas",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Wireless charging built into desk is genius.",
+      "rating": 5,
+      "reviewer_name": "WirelessLife",
+      "review_date": "2025-01-20"
+    },
+    {
+      "review_text": "Curved desktop is more ergonomic than I expected.",
+      "rating": 5,
+      "reviewer_name": "ErgoDiscovery",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "Premium price but premium everything.",
+      "rating": 5,
+      "reviewer_name": "PremiumWorkspace",
+      "review_date": "2025-01-12"
+    }
+  ]
+}

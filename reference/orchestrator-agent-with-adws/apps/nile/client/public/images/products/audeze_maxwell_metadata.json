@@ -1,0 +1,30 @@
+{
+  "id": "audeze_maxwell",
+  "name": "Audeze Maxwell Wireless",
+  "description": "Premium planar magnetic gaming headset with 90mm drivers. Features Dolby Atmos, lossless 2.4GHz wireless, and audiophile-grade sound in a gaming package.",
+  "price": 299.99,
+  "category": "Headphones",
+  "brand": "Audeze",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Planar magnetic for gaming. Sound is unmatched.",
+      "rating": 5,
+      "reviewer_name": "AudioGamer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Heavy but sound quality makes you forget the weight.",
+      "rating": 5,
+      "reviewer_name": "SoundOverWeight",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Needs EQ for some games but incredible potential.",
+      "rating": 4,
+      "reviewer_name": "EQTweaker",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

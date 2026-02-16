@@ -1,0 +1,30 @@
+{
+  "id": "shure_mv7_plus",
+  "name": "Shure MV7+ Podcast Microphone",
+  "description": "Professional podcast microphone with USB-C and XLR. Features new LED touch panel, Auto Level Mode, and legendary Shure sound. The podcaster's choice upgraded.",
+  "price": 279.00,
+  "category": "Microphones",
+  "brand": "Shure",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "LED touch panel is so convenient. Game changer.",
+      "rating": 5,
+      "reviewer_name": "PodcastPro",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "Shure quality speaks for itself. Sounds professional.",
+      "rating": 5,
+      "reviewer_name": "AudioQuality",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "USB quality improved over original. XLR still better.",
+      "rating": 4,
+      "reviewer_name": "XLRPurist",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

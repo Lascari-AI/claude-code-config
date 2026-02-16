@@ -1,0 +1,30 @@
+{
+  "id": "apple_m4_max_chip",
+  "name": "Apple M4 Max Chip (Mac Studio)",
+  "description": "Apple's professional-grade silicon with 16-core CPU and 40-core GPU. Features 128GB unified memory support and 546GB/s bandwidth for demanding creative workflows.",
+  "price": 3499.0,
+  "category": "Desktops",
+  "brand": "Apple",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Final Cut renders are instantaneous. Incredible chip.",
+      "rating": 5,
+      "reviewer_name": "VideoEditor",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Unified memory architecture is brilliant for ML.",
+      "rating": 5,
+      "reviewer_name": "MLonMac",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Best creative workstation money can buy.",
+      "rating": 5,
+      "reviewer_name": "CreativePro",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "caldigit_ts4_dock",
+  "name": "CalDigit TS4 Thunderbolt 4 Dock",
+  "image_prompt": "CalDigit TS4 Thunderbolt 4 dock, silver aluminum enclosure, multiple ports visible, compact vertical design",
+  "description": "Ultimate Thunderbolt 4 docking station with 18 ports including 2.5GbE, SD 4.0, and 98W charging. Supports dual 6K displays or single 8K, perfect for the most demanding setups.",
+  "price": 399.99,
+  "category": "Docking Stations",
+  "brand": "CalDigit",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "The only dock that handles my triple monitor setup flawlessly.",
+      "rating": 5,
+      "reviewer_name": "MultiMonitorDev",
+      "review_date": "2024-11-15"
+    },
+    {
+      "review_text": "98W charging means my MacBook Pro stays topped up all day.",
+      "rating": 5,
+      "reviewer_name": "PowerUser",
+      "review_date": "2024-10-20"
+    },
+    {
+      "review_text": "Expensive but worth every penny. Zero issues in 6 months.",
+      "rating": 5,
+      "reviewer_name": "ReliabilityMatters",
+      "review_date": "2024-09-25"
+    }
+  ]
+}

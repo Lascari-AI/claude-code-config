@@ -1,0 +1,192 @@
+# === Bun / Node ===
+node_modules/
+dist/
+build/
+*.bun
+.pnp
+.pnp.js
+bun.lockb
+
+# === TypeScript ===
+*.js
+!*.config.js
+!*.mjs
+tsconfig.json
+.tsbuildinfo
+
+# === UV / Python Virtual Environments ===
+.uv/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.env.local
+.env.*.local
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# === IDE / Editors ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.vim/
+.netrwhist
+*.vscode-settings
+.vim.session
+
+# === Environment Variables ===
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+.secrets/
+
+# === OS Files ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# === Testing & Coverage ===
+coverage/
+.nyc_output/
+.coverage
+htmlcov/
+
+# === Build & Artifacts ===
+out/
+bin/
+obj/
+.next/
+.turbo/
+.vercel/
+
+# === Package Managers ===
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# === Temporary Files ===
+*.tmp
+*.bak
+*.swp
+*.orig
+tmp/
+temp/
+
+# === IDE Workspace ===
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/*.code-snippets
+
+# === Documentation Builds ===
+site/
+docs/_build/
+.jekyll-cache/
+
+# === Misc ===
+*.DS_Store
+.history/
+.cache/
+.turbo
+dist-ssr/
+*.local
+.mcp.json
+
+# === AI Docs (cached documentation) ===
+ai_docs/*
+!ai_docs/README.md
+
+# === Claude Code Data ===
+.claude/data/
+
+# === App Documentation XML Files ===
+app_docs/*.xml
+
+
+apps/mock_app/
+
+log/
+
+logs/
+
+agents/
+!.claude/agents
+!apps/orchestrator_3_stream/.claude/agents/
+
+
+.claude/data
+
+data/
+!apps/nile/server/data/nile.db
+
+videos/
+
+.playwright-mcp/
+
+tmp_scripts/
+
+legacy_docs/
+
+legacy
+
+.claude/data/
+
+.claude/settings.status-lined.json
+
+deep_docs/
+
+tmp_specs/

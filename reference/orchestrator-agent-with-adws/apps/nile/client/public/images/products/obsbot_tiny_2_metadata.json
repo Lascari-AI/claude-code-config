@@ -1,0 +1,30 @@
+{
+  "id": "obsbot_tiny_2",
+  "name": "OBSBOT Tiny 2",
+  "description": "Compact AI webcam with 4K resolution and voice control. Features gesture recognition, auto-tracking, and beauty mode. Perfect for video calls and streaming.",
+  "price": 199.99,
+  "category": "Webcams",
+  "brand": "OBSBOT",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Voice control is surprisingly responsive and useful.",
+      "rating": 5,
+      "reviewer_name": "VoiceControlFan",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Great value for AI features included.",
+      "rating": 5,
+      "reviewer_name": "ValueSeeker",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Image quality good but not Facecam Pro level.",
+      "rating": 4,
+      "reviewer_name": "ImageQualityCritic",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

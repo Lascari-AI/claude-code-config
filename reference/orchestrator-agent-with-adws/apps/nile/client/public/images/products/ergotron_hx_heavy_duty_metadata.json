@@ -1,0 +1,30 @@
+{
+  "id": "ergotron_hx_heavy_duty",
+  "name": "Ergotron HX Heavy Duty Monitor Arm",
+  "description": "Heavy-duty arm for ultrawides and large displays up to 49 inches and 42lbs. Features patented constant force technology and full articulation for massive monitors.",
+  "price": 349.99,
+  "category": "Monitor Arms",
+  "brand": "Ergotron",
+  "rating": 4.9,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Holds my 49-inch ultrawide perfectly. No sag.",
+      "rating": 5,
+      "reviewer_name": "UltrawidOwner",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Finally an arm that handles heavy monitors.",
+      "rating": 5,
+      "reviewer_name": "HeavyMonitorUser",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Expensive but only option for big displays.",
+      "rating": 5,
+      "reviewer_name": "BigDisplayOwner",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

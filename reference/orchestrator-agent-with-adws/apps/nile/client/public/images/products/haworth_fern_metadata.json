@@ -1,0 +1,30 @@
+{
+  "id": "haworth_fern",
+  "name": "Haworth Fern Chair",
+  "description": "Innovative mesh chair with wave suspension for edge-to-edge comfort. Features Haworth's organic aesthetic, intuitive adjustments, and all-day support.",
+  "price": 1025.00,
+  "category": "Chairs",
+  "brand": "Haworth",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Wave mesh is more comfortable than traditional mesh.",
+      "rating": 5,
+      "reviewer_name": "MeshExplorer",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Organic design looks beautiful in my office.",
+      "rating": 5,
+      "reviewer_name": "DesignLover",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Less famous than HM but equally good.",
+      "rating": 4,
+      "reviewer_name": "BrandAgnostic",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

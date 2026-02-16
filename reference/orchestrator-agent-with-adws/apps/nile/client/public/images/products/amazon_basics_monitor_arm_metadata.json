@@ -1,0 +1,30 @@
+{
+  "id": "amazon_basics_monitor_arm",
+  "name": "Amazon Basics Monitor Arm",
+  "description": "Affordable single monitor arm supporting displays up to 32 inches. Features height, tilt, and swivel adjustment, cable management, and solid basic functionality.",
+  "price": 109.99,
+  "category": "Monitor Arms",
+  "brand": "Amazon Basics",
+  "rating": 4.4,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best value monitor arm. Does the job well.",
+      "rating": 5,
+      "reviewer_name": "BudgetBuyer",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "80% of Ergotron at 30% of the price.",
+      "rating": 5,
+      "reviewer_name": "ValueComparer",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Not as smooth as premium options.",
+      "rating": 4,
+      "reviewer_name": "SmoothnessCritic",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

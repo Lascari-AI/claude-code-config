@@ -1,0 +1,30 @@
+{
+  "id": "samsung_galaxy_tab_s10_ultra",
+  "name": "Samsung Galaxy Tab S10 Ultra",
+  "description": "Massive 14.6-inch AMOLED tablet with Snapdragon 8 Gen 3 and S Pen included. Features DeX desktop mode, 120Hz display, and premium productivity features.",
+  "price": 1199.99,
+  "category": "Tablets",
+  "brand": "Samsung",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "14.6 inches of Android tablet goodness.",
+      "rating": 5,
+      "reviewer_name": "BigTabletFan",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "DeX mode makes it a laptop replacement.",
+      "rating": 5,
+      "reviewer_name": "DeXUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Android tablet apps still lag behind iPad.",
+      "rating": 4,
+      "reviewer_name": "AppEcosystem",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

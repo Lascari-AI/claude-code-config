@@ -1,0 +1,30 @@
+{
+  "id": "artisan_fx_hayate_otsu",
+  "name": "Artisan FX Hayate Otsu",
+  "description": "Japanese-crafted cloth mouse pad with balanced speed and control. Features unique weave pattern, consistent surface, and the quality Artisan is famous for.",
+  "price": 49.99,
+  "category": "Mouse Pads",
+  "brand": "Artisan",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "The endgame mouse pad. Nothing compares.",
+      "rating": 5,
+      "reviewer_name": "ArtisanConvert",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Japanese quality in every detail.",
+      "rating": 5,
+      "reviewer_name": "QualityAppreciator",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Hard to get but worth the wait.",
+      "rating": 5,
+      "reviewer_name": "PatientBuyer",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Apple Mac Studio M2 Ultra",
+  "description": "Ultimate creative workstation powered by M2 Ultra chip with 24-core CPU and 76-core GPU. Features 64GB unified memory, 1TB SSD, Thunderbolt 4 ports, and whisper-quiet thermal design.",
+  "price": 3999.0,
+  "category": "Desktops",
+  "brand": "Apple",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Renders 4K video like it's nothing. Absolute beast.",
+      "rating": 5,
+      "reviewer_name": "VideoEditor",
+      "review_date": "2024-11-16"
+    },
+    {
+      "review_text": "Silent operation even under heavy ML training loads.",
+      "rating": 5,
+      "reviewer_name": "MLEngineer",
+      "review_date": "2024-10-28"
+    },
+    {
+      "review_text": "Expensive but pays for itself in productivity gains.",
+      "rating": 5,
+      "reviewer_name": "ProCreator",
+      "review_date": "2024-09-30"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "nexar_quantum_router",
+  "name": "Nexar Quantum Router Pro",
+  "description": "AI-powered WiFi 7 router with automatic network optimization. Features machine learning for device prioritization, predictive interference avoidance, and enterprise-grade security.",
+  "price": 449.99,
+  "category": "Networking",
+  "brand": "Nexar",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "AI optimization actually works. Network self-manages.",
+      "rating": 5,
+      "reviewer_name": "AINetworker",
+      "review_date": "2025-01-20"
+    },
+    {
+      "review_text": "Set it and forget it networking.",
+      "rating": 5,
+      "reviewer_name": "HandsOffAdmin",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "New brand but impressive technology.",
+      "rating": 4,
+      "reviewer_name": "TechExplorer",
+      "review_date": "2025-01-12"
+    }
+  ]
+}

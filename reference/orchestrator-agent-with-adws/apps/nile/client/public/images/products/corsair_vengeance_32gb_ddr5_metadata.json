@@ -1,0 +1,31 @@
+{
+  "id": "corsair_vengeance_32gb_ddr5",
+  "name": "Corsair Vengeance 32GB DDR5",
+  "image_prompt": "Corsair Vengeance DDR5 RAM kit, two black memory modules with aluminum heatspreaders, RGB lighting strip on top",
+  "description": "High-performance DDR5 memory kit (2x16GB) running at 5600MHz with tight CL36 timings. Features aluminum heatspreader and Intel XMP 3.0 support for easy overclocking.",
+  "price": 124.99,
+  "category": "Memory",
+  "brand": "Corsair",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "XMP profile worked first try. Solid 5600MHz performance.",
+      "rating": 5,
+      "reviewer_name": "PCBuilder",
+      "review_date": "2024-11-14"
+    },
+    {
+      "review_text": "Big upgrade from DDR4. Compiles are noticeably faster.",
+      "rating": 5,
+      "reviewer_name": "CppDev",
+      "review_date": "2024-10-22"
+    },
+    {
+      "review_text": "Good kit but RGB software is bloated.",
+      "rating": 4,
+      "reviewer_name": "NoRGBPlease",
+      "review_date": "2024-09-28"
+    }
+  ]
+}

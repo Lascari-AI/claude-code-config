@@ -1,0 +1,30 @@
+{
+  "id": "loupedeck_ct",
+  "name": "Loupedeck CT",
+  "description": "Premium creative console with touch buttons, dials, and LED feedback. Designed for Lightroom, Premiere, and creative workflows. The professional's editing surface.",
+  "price": 549.00,
+  "category": "Stream Decks",
+  "brand": "Loupedeck",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Lightroom editing speed doubled. Dials for exposure is natural.",
+      "rating": 5,
+      "reviewer_name": "LightroomPro",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Build quality is exceptional. Feels like pro equipment.",
+      "rating": 5,
+      "reviewer_name": "ProEquipment",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Software integration varies by app.",
+      "rating": 4,
+      "reviewer_name": "AppCompatibility",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Samsung 990 Pro 2TB",
+  "description": "Next-gen PCIe 4.0 NVMe SSD with read speeds up to 7,450 MB/s. Features advanced thermal control, Samsung Magician software, and 5-year warranty. Perfect for gaming and heavy workloads.",
+  "price": 179.99,
+  "category": "Storage",
+  "brand": "Samsung",
+  "rating": 4.9,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Blazing fast! Boot times are under 10 seconds now.",
+      "rating": 5,
+      "reviewer_name": "PCBuilder99",
+      "review_date": "2024-11-20"
+    },
+    {
+      "review_text": "The heatsink keeps temps low even under heavy load.",
+      "rating": 5,
+      "reviewer_name": "DataHoarder",
+      "review_date": "2024-10-15"
+    },
+    {
+      "review_text": "Best SSD I have owned. Samsung quality as always.",
+      "rating": 5,
+      "reviewer_name": "TechReviewer",
+      "review_date": "2024-09-10"
+    }
+  ]
+}

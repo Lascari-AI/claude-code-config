@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_dgx_spark",
+  "name": "NVIDIA DGX Spark",
+  "description": "Entry-level desktop AI supercomputer bringing DGX power to developers. Features Grace Blackwell architecture, 128GB unified memory, and 1TB NVMe. Perfect for AI development and inference.",
+  "price": 4999.00,
+  "category": "AI Workstations",
+  "brand": "NVIDIA",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Finally affordable DGX power on my desk. Game changer for AI dev.",
+      "rating": 5,
+      "reviewer_name": "AIStartup",
+      "review_date": "2025-01-20"
+    },
+    {
+      "review_text": "Runs Llama 70B locally. Mind blown.",
+      "rating": 5,
+      "reviewer_name": "LLMDev",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Worth every penny for serious ML work.",
+      "rating": 5,
+      "reviewer_name": "DeepLearner",
+      "review_date": "2025-01-15"
+    }
+  ]
+}

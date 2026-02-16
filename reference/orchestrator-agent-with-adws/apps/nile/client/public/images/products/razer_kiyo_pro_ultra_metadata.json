@@ -1,0 +1,30 @@
+{
+  "id": "razer_kiyo_pro_ultra",
+  "name": "Razer Kiyo Pro Ultra",
+  "description": "Largest sensor webcam with 1/1.2-inch Sony STARVIS 2. Features exceptional low-light performance, HDR, and uncompressed 4K output. Streams look like cinema.",
+  "price": 299.99,
+  "category": "Webcams",
+  "brand": "Razer",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Largest sensor means best low light. No contest.",
+      "rating": 5,
+      "reviewer_name": "LowLightKing",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Streams look professional without extra lighting.",
+      "rating": 5,
+      "reviewer_name": "NaturalLightStreamer",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Huge camera but performance justifies size.",
+      "rating": 4,
+      "reviewer_name": "SizeConscious",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "meta_quest_3",
+  "name": "Meta Quest 3",
+  "description": "Next-gen standalone VR/MR headset with Snapdragon XR2 Gen 2. Features full-color mixed reality passthrough, pancake lenses, and the largest VR game library.",
+  "price": 499.99,
+  "category": "VR/AR Headsets",
+  "brand": "Meta",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best value in VR. Mixed reality is genuinely useful.",
+      "rating": 5,
+      "reviewer_name": "VRGamer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Standalone convenience cannot be overstated.",
+      "rating": 5,
+      "reviewer_name": "WirelessFreedom",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Good headset but Meta account requirement is annoying.",
+      "rating": 4,
+      "reviewer_name": "PrivacyConscious",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

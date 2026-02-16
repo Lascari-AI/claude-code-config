@@ -1,0 +1,31 @@
+{
+  "id": "ergotron_lx_monitor_arm",
+  "name": "Ergotron LX Monitor Arm",
+  "image_prompt": "Ergotron LX single monitor arm, matte black, articulating arm extended, desk clamp mount",
+  "description": "Premium single monitor arm supporting displays up to 34 inches and 25lbs. Features smooth motion, 13 inches of height adjustment, and rock-solid build quality with 10-year warranty.",
+  "price": 179.99,
+  "category": "Monitor Arms",
+  "brand": "Ergotron",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Rock solid. Monitor stays exactly where I put it.",
+      "rating": 5,
+      "reviewer_name": "PrecisionMatters",
+      "review_date": "2024-11-09"
+    },
+    {
+      "review_text": "Freed up so much desk space. Should have bought sooner.",
+      "rating": 5,
+      "reviewer_name": "DeskMinimalist",
+      "review_date": "2024-10-14"
+    },
+    {
+      "review_text": "Pricey but the build quality justifies it.",
+      "rating": 4,
+      "reviewer_name": "QualityOverPrice",
+      "review_date": "2024-09-19"
+    }
+  ]
+}

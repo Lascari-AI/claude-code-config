@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_4060_ti_16gb",
+  "name": "NVIDIA GeForce RTX 4060 Ti 16GB",
+  "description": "Mainstream Ada GPU with 16GB GDDR6 for future-proofing. Great 1080p and solid 1440p gaming with full DLSS 3 support and efficient power consumption.",
+  "price": 449.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "16GB version is the one to get. No VRAM worries.",
+      "rating": 5,
+      "reviewer_name": "SmartBuyer",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Perfect for 1080p 144Hz gaming. Smooth experience.",
+      "rating": 5,
+      "reviewer_name": "1080pMaster",
+      "review_date": "2024-12-10"
+    },
+    {
+      "review_text": "Good card but wish it was faster.",
+      "rating": 4,
+      "reviewer_name": "WantsMore",
+      "review_date": "2024-12-05"
+    }
+  ]
+}

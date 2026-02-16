@@ -1,0 +1,30 @@
+{
+  "id": "tp_link_tl_sg3210xhp",
+  "name": "TP-Link TL-SG3210XHP-M2 10G Switch",
+  "description": "8-port 2.5G switch with 2x 10G SFP+ uplinks and PoE++. Features 240W PoE budget, L2+ management, and excellent value for multi-gig networking.",
+  "price": 329.99,
+  "category": "Networking",
+  "brand": "TP-Link",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "2.5G ports at great price point.",
+      "rating": 5,
+      "reviewer_name": "MultiGigBuilder",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "240W PoE handles everything.",
+      "rating": 5,
+      "reviewer_name": "PoEPowerUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Fan noise noticeable in quiet room.",
+      "rating": 4,
+      "reviewer_name": "NoiseListener",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

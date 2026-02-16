@@ -1,0 +1,30 @@
+{
+  "id": "flexispot_e7_pro",
+  "name": "FlexiSpot E7 Pro Plus",
+  "description": "Triple-motor standing desk for ultimate stability. Features 440lb capacity, embedded cable management, and smooth silent operation. Best-in-class motor system.",
+  "price": 799.00,
+  "category": "Desks",
+  "brand": "FlexiSpot",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Triple motor handles my 6-monitor setup easily.",
+      "rating": 5,
+      "reviewer_name": "MonitorHoarder",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Quietest standing desk I have owned.",
+      "rating": 5,
+      "reviewer_name": "SilenceSeeker",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Premium price but premium performance.",
+      "rating": 4,
+      "reviewer_name": "ValueAnalyst",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "steelcase_gesture",
+  "name": "Steelcase Gesture Chair",
+  "description": "Designed for the way we work today with 360-degree arms for device use. Features synchronized seat and back movement, core equalizer, and premium comfort.",
+  "price": 1310.00,
+  "category": "Chairs",
+  "brand": "Steelcase",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "360 arms are perfect for tablet and phone use.",
+      "rating": 5,
+      "reviewer_name": "MultiDeviceUser",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Modern work patterns considered in the design.",
+      "rating": 5,
+      "reviewer_name": "ModernWorker",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Arms have too many adjustment points for some.",
+      "rating": 4,
+      "reviewer_name": "SimplicityWanter",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

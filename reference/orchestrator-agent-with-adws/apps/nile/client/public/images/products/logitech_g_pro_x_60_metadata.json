@@ -1,0 +1,30 @@
+{
+  "id": "logitech_g_pro_x_60",
+  "name": "Logitech G PRO X 60",
+  "description": "Compact 60% wireless gaming keyboard designed with esports pros. Features LIGHTSPEED wireless, GX optical switches, and removable pro-grade keycaps.",
+  "price": 179.99,
+  "category": "Keyboards",
+  "brand": "Logitech",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "60% layout forces me to learn shortcuts. Actually better.",
+      "rating": 5,
+      "reviewer_name": "KeyboardMinimalist",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "LIGHTSPEED wireless is flawless for competitive play.",
+      "rating": 5,
+      "reviewer_name": "WirelessGamer",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Miss the function row sometimes.",
+      "rating": 4,
+      "reviewer_name": "FKeyUser",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

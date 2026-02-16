@@ -1,0 +1,30 @@
+{
+  "id": "seagate_one_touch_5tb",
+  "name": "Seagate One Touch 5TB HDD",
+  "description": "5TB portable hard drive with fabric-textured design. Features USB 3.0, Rescue Data Recovery, and password protection. Maximum capacity for the money.",
+  "price": 109.99,
+  "category": "Storage",
+  "brand": "Seagate",
+  "rating": 4.4,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "5TB of backup storage at great price.",
+      "rating": 5,
+      "reviewer_name": "BackupComplete",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Fabric design looks nice on desk.",
+      "rating": 5,
+      "reviewer_name": "DesignAppreciator",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "HDD speeds feel slow after SSD.",
+      "rating": 4,
+      "reviewer_name": "SpeedConscious",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

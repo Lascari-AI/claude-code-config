@@ -1,0 +1,31 @@
+{
+  "id": "fractal_north_case",
+  "name": "Fractal Design North Case",
+  "image_prompt": "Fractal Design North PC case, charcoal black with walnut wood front panel, mesh ventilation, minimalist Scandinavian design",
+  "description": "Stunning mid-tower ATX case with real walnut wood front panel and excellent airflow. Features tool-free installation, integrated PWM fan hub, and supports up to 360mm radiators.",
+  "price": 139.99,
+  "category": "PC Cases",
+  "brand": "Fractal Design",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Finally a case that looks good in my home office. Wood panel is gorgeous.",
+      "rating": 5,
+      "reviewer_name": "AestheticBuilder",
+      "review_date": "2024-11-13"
+    },
+    {
+      "review_text": "Airflow is exceptional. GPU stays cool even under load.",
+      "rating": 5,
+      "reviewer_name": "ThermalEngineer",
+      "review_date": "2024-10-21"
+    },
+    {
+      "review_text": "Great case but cable management could be better.",
+      "rating": 4,
+      "reviewer_name": "CleanBuildFan",
+      "review_date": "2024-09-26"
+    }
+  ]
+}

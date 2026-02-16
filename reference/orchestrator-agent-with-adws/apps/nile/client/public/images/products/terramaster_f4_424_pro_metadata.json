@@ -1,0 +1,30 @@
+{
+  "id": "terramaster_f4_424_pro",
+  "name": "TerraMaster F4-424 Pro NAS",
+  "description": "4-bay NAS with Intel Core i3 and 32GB RAM. Features 10GbE built-in, Thunderbolt 4, and TOS operating system. High-performance creative storage solution.",
+  "price": 799.99,
+  "category": "Storage",
+  "brand": "TerraMaster",
+  "rating": 4.4,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Built-in 10GbE is rare at this price.",
+      "rating": 5,
+      "reviewer_name": "10GNative",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Thunderbolt 4 perfect for video editing.",
+      "rating": 5,
+      "reviewer_name": "VideoEditor",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "TOS not as polished as DSM.",
+      "rating": 4,
+      "reviewer_name": "OSCritic",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

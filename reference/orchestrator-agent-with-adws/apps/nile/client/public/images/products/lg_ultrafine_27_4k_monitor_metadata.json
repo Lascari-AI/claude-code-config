@@ -1,0 +1,29 @@
+{
+  "name": "LG UltraFine 27\" 4K Monitor",
+  "description": "Professional 27-inch 4K UHD IPS display with USB-C connectivity and 96W power delivery. Features DCI-P3 98% color accuracy, HDR10, and height-adjustable ergonomic stand.",
+  "price": 699.99,
+  "category": "Monitors",
+  "brand": "LG",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Perfect companion for my MacBook. One cable for everything!",
+      "rating": 5,
+      "reviewer_name": "MacUser2024",
+      "review_date": "2024-11-12"
+    },
+    {
+      "review_text": "Color accuracy is spot-on for my design work.",
+      "rating": 5,
+      "reviewer_name": "GraphicArtist",
+      "review_date": "2024-10-20"
+    },
+    {
+      "review_text": "Good monitor but speakers are mediocre.",
+      "rating": 4,
+      "reviewer_name": "RemoteWorker",
+      "review_date": "2024-09-15"
+    }
+  ]
+}

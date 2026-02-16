@@ -1,0 +1,30 @@
+{
+  "id": "dell_ultrasharp_32_6k",
+  "name": "Dell UltraSharp 32\" 6K",
+  "description": "Professional 32-inch 6K monitor with IPS Black technology. Features factory color calibration, Thunderbolt 4 hub, and 2000:1 contrast ratio for creative professionals.",
+  "price": 2499.99,
+  "category": "Monitors",
+  "brand": "Dell",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "IPS Black technology is impressive. Rivals OLED contrast.",
+      "rating": 5,
+      "reviewer_name": "IPSBlackFan",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "6K resolution makes 4K look low-res.",
+      "rating": 5,
+      "reviewer_name": "ResolutionSnob",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price but premium everything.",
+      "rating": 4,
+      "reviewer_name": "PremiumPayer",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "asus_rog_zephyrus_g16_2025",
+  "name": "ASUS ROG Zephyrus G16 (2025)",
+  "description": "Ultra-thin gaming laptop with 16-inch 240Hz OLED, RTX 5070 Ti, and AMD Ryzen 9. Gorgeous design that does not scream gamer.",
+  "price": 2199.00,
+  "category": "Laptops",
+  "brand": "ASUS",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Gaming laptop I am not embarrassed to use at coffee shops.",
+      "rating": 5,
+      "reviewer_name": "StealthGamer",
+      "review_date": "2025-01-15"
+    },
+    {
+      "review_text": "OLED gaming on the go. Colors pop like crazy.",
+      "rating": 5,
+      "reviewer_name": "VisualGamer",
+      "review_date": "2025-01-10"
+    },
+    {
+      "review_text": "Fans get loud under load but performance is great.",
+      "rating": 4,
+      "reviewer_name": "NoiseSensitive",
+      "review_date": "2025-01-05"
+    }
+  ]
+}

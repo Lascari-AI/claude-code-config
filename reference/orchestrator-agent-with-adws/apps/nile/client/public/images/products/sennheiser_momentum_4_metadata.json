@@ -1,0 +1,30 @@
+{
+  "id": "sennheiser_momentum_4",
+  "name": "Sennheiser Momentum 4",
+  "description": "Audiophile-grade wireless headphones with 42mm transducers and 60-hour battery. Features adaptive ANC, exceptional sound quality, and premium materials throughout.",
+  "price": 349.99,
+  "category": "Headphones",
+  "brand": "Sennheiser",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Sound quality is in a different league. Audiophile approved.",
+      "rating": 5,
+      "reviewer_name": "AudiophileFirst",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "60-hour battery is insane. Charge once a week.",
+      "rating": 5,
+      "reviewer_name": "LongBatteryLover",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "ANC is good but not Sony/Bose level.",
+      "rating": 4,
+      "reviewer_name": "ANCCompare",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

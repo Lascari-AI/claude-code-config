@@ -1,0 +1,30 @@
+{
+  "id": "owc_thunderbolt_dock",
+  "name": "OWC Thunderbolt 4 Dock",
+  "description": "Full-featured Thunderbolt 4 dock with 11 ports including SD 4.0 and 1GbE. Features 96W charging, dual display support, and OWC's Mac-first design philosophy.",
+  "price": 329.00,
+  "category": "Docking Stations",
+  "brand": "OWC",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Mac-focused dock from Mac experts.",
+      "rating": 5,
+      "reviewer_name": "MacPro",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "All essential ports in one reliable dock.",
+      "rating": 5,
+      "reviewer_name": "ReliabilitySeeker",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "No 2.5GbE but 1GbE sufficient for most.",
+      "rating": 4,
+      "reviewer_name": "NetworkAware",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

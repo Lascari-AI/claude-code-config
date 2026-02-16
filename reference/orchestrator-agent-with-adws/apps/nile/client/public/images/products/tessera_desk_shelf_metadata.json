@@ -1,0 +1,30 @@
+{
+  "id": "tessera_desk_shelf",
+  "name": "Tessera Modular Desk Shelf",
+  "description": "Premium modular desk shelf with monitor riser function. Features magnetic accessories, wireless charging pad, and expandable design. The organized desk solution.",
+  "price": 199.99,
+  "category": "Desk Accessories",
+  "brand": "Tessera",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Magnetic accessories are so convenient.",
+      "rating": 5,
+      "reviewer_name": "MagnetFan",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Raises monitor to perfect height.",
+      "rating": 5,
+      "reviewer_name": "ErgonomicUser",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Premium price but premium system.",
+      "rating": 4,
+      "reviewer_name": "SystemBuyer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

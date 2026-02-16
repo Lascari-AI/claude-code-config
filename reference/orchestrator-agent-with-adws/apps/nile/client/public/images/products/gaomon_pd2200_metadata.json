@@ -1,0 +1,30 @@
+{
+  "id": "gaomon_pd2200",
+  "name": "GAOMON PD2200",
+  "description": "22-inch pen display at an accessible price point. Features laminated display, 8192 pressure levels, and tilt support. Perfect for artists starting their digital journey.",
+  "price": 299.99,
+  "category": "Drawing Tablets",
+  "brand": "GAOMON",
+  "rating": 4.3,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Cannot believe this quality at this price.",
+      "rating": 5,
+      "reviewer_name": "BudgetArtist",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Great starter pen display. Learning without big investment.",
+      "rating": 5,
+      "reviewer_name": "BeginnerArtist",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Color accuracy needs calibration.",
+      "rating": 4,
+      "reviewer_name": "ColorCalibrator",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

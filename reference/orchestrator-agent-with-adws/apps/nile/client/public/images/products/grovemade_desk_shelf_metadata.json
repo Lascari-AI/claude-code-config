@@ -1,0 +1,30 @@
+{
+  "id": "grovemade_desk_shelf",
+  "name": "Grovemade Desk Shelf",
+  "description": "Handcrafted desk shelf with solid walnut or maple construction. Features cork-lined surface, cable routing, and Grovemade's legendary build quality.",
+  "price": 180.00,
+  "category": "Desk Accessories",
+  "brand": "Grovemade",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Solid wood quality is unmatched.",
+      "rating": 5,
+      "reviewer_name": "WoodLover",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Cork surface is practical and beautiful.",
+      "rating": 5,
+      "reviewer_name": "MaterialAppreciator",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Expensive but will last forever.",
+      "rating": 5,
+      "reviewer_name": "LifetimeBuyer",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

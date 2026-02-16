@@ -1,0 +1,30 @@
+{
+  "id": "benq_pd3225u",
+  "name": "BenQ DesignVue PD3225U",
+  "description": "32-inch 4K professional monitor with factory-calibrated accuracy. Features Thunderbolt 3 daisy-chaining, KVM switch, and M-book mode for Mac color matching.",
+  "price": 1199.99,
+  "category": "Monitors",
+  "brand": "BenQ",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Factory calibration is spot-on. Ready out of the box.",
+      "rating": 5,
+      "reviewer_name": "CalibrationAware",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "KVM switch between Mac and PC is super convenient.",
+      "rating": 5,
+      "reviewer_name": "DualSetupUser",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Good monitor but not quite Apple Studio Display quality.",
+      "rating": 4,
+      "reviewer_name": "ComparisonShopper",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

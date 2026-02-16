@@ -1,0 +1,30 @@
+{
+  "id": "benq_screenbar_halo",
+  "name": "BenQ ScreenBar Halo",
+  "description": "Premium monitor light with front and back illumination. Features wireless controller with dimming wheel, auto-dimming, and ambient backlighting for immersive setups.",
+  "price": 179.00,
+  "category": "Desk Lighting",
+  "brand": "BenQ",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Back light adds amazing ambient lighting.",
+      "rating": 5,
+      "reviewer_name": "AmbientLover",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Wireless controller is elegant and convenient.",
+      "rating": 5,
+      "reviewer_name": "WirelessFan",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price for back light but worth it.",
+      "rating": 5,
+      "reviewer_name": "PremiumLighter",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

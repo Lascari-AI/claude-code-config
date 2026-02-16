@@ -1,0 +1,676 @@
+# WebSocket Implementation Expertise
+# Multi-Agent Orchestration System - Real-Time Communication Architecture
+
+overview:
+  description: "FastAPI WebSocket-based event bus for real-time communication between backend services and frontend clients"
+  primary_endpoint: "/ws"
+  default_url: "ws://127.0.0.1:9403/ws"
+  architecture_pattern: "Centralized WebSocketManager with one-to-many broadcast"
+  integration_depth: "Deep integration with Claude SDK hooks for real-time agent execution events"
+
+core_implementation:
+  websocket_manager:
+    file: "apps/orchestrator_3_stream/backend/modules/websocket_manager.py"
+    lines: 260
+    purpose: "Centralized connection manager and event broadcaster"
+
+    state_management:
+      active_connections:
+        type: "List[WebSocket]"
+        description: "All active WebSocket connections"
+      connection_metadata:
+        type: "Dict[WebSocket, dict]"
+        description: "Metadata per connection (client_id, connected_at)"
+
+    lifecycle_methods:
+      connect:
+        lines: "25-53"
+        flow:
+          - "Accept WebSocket handshake"
+          - "Add to active_connections list"
+          - "Create metadata with client_id and connected_at timestamp"
+          - "Send connection_established message with client ID"
+
+      disconnect:
+        lines: "55-69"
+        flow:
+          - "Remove from active_connections list"
+          - "Delete metadata entry"
+          - "Log disconnection with connection count"
+        triggered_by:
+          - "WebSocketDisconnect exception"
+          - "Failed send operation"
+          - "Explicit disconnect call"
+
+      send_to_client:
+        lines: "71-80"
+        behavior: "Send JSON to single client, auto-disconnect on failure"
+        error_handling: "Catches all exceptions, calls disconnect on failure"
+
+      broadcast:
+        lines: "82-111"
+        behavior: "Send JSON to all connected clients (with optional exclude)"
+        error_handling: "Tracks disconnected clients, cleans up after broadcast"
+        concurrency: "Safe for concurrent calls"
+
+  fastapi_endpoint:
+    file: "apps/orchestrator_3_stream/backend/main.py"
+    lines: "664-698"
+    route: "@app.websocket('/ws')"
+
+    handler_flow:
+      - "await ws_manager.connect(websocket)"
+      - "Enter infinite receive loop"
+      - "Parse incoming JSON by 'type' field"
+      - "Handle keep-alive pings"
+      - "Catch WebSocketDisconnect and cleanup"
+
+    incoming_message_types:
+      - "ping"
+      - "heartbeat"
+      - "client_message (future use)"
+
+    error_handling:
+      - "WebSocketDisconnect: Graceful cleanup"
+      - "Exception: Log and disconnect"
+      - "JSON parse errors: Log and continue"
+
+event_types:
+  connection:
+    - name: "connection_established"
+      source: "websocket_manager.py"
+      fields:
+        type: "connection_established"
+        client_id: "UUID string"
+        timestamp: "ISO8601"
+
+  chat:
+    - name: "chat_stream"
+      source: "orchestrator_service.py"
+      purpose: "Stream chat messages in chunks"
+      fields:
+        type: "chat_stream"
+        orchestrator_agent_id: "string"
+        chunk: "string"
+        is_complete: "boolean"
+        timestamp: "ISO8601"
+
+    - name: "chat_typing"
+      source: "websocket_manager.py"
+      purpose: "Typing indicator for chat"
+      fields:
+        type: "chat_typing"
+        orchestrator_agent_id: "string"
+        is_typing: "boolean"
+        timestamp: "ISO8601"
+
+    - name: "orchestrator_chat"
+      source: "orchestrator_service.py"
+      purpose: "Complete orchestrator messages"
+      fields:
+        type: "orchestrator_chat"
+        chat: "object (alternative wrapper key)"
+        message: "object (contains id, orchestrator_agent_id, sender_type, receiver_type, message, agent_id, metadata, timestamp)"
+
+  agent_management:
+    - name: "agent_created"
+      source: "agent_manager.py"
+      fields:
+        type: "agent_created"
+        agent: "object"
+        timestamp: "ISO8601"
+
+    - name: "agent_updated"
+      source: "agent_manager.py"
+      fields:
+        type: "agent_updated"
+        agent_id: "string"
+        agent: "object"
+        timestamp: "ISO8601"
+
+    - name: "agent_deleted"
+      source: "agent_manager.py"
+      fields:
+        type: "agent_deleted"
+        agent_id: "string"
+        timestamp: "ISO8601"
+
+    - name: "agent_status_changed"
+      source: "agent_manager.py"
+      fields:
+        type: "agent_status_changed"
+        agent_id: "string"
+        old_status: "string"
+        new_status: "string"
+        timestamp: "ISO8601"
+
+  agent_activity:
+    - name: "agent_log"
+      source: "command_agent_hooks.py"
+      purpose: "Real-time agent execution logs from hooks"
+      fields:
+        type: "agent_log"
+        log: "object (from agent_logs table)"
+        timestamp: "ISO8601"
+      hook_sources:
+        - "PreToolUse"
+        - "PostToolUse"
+        - "UserPromptSubmit"
+        - "Stop"
+        - "Compact"
+        - "PostToolFile"
+
+    - name: "agent_summary_update"
+      source: "command_agent_hooks.py"
+      purpose: "AI-generated summaries of agent activity"
+      fields:
+        type: "agent_summary_update"
+        agent_id: "string"
+        summary: "string"
+        timestamp: "ISO8601"
+
+  analysis_blocks:
+    - name: "thinking_block"
+      source: "orchestrator_service.py"
+      purpose: "Stream orchestrator thinking process"
+      fields:
+        type: "thinking_block"
+        data: "object (contains id, orchestrator_agent_id, thinking, timestamp)"
+      persistence: "Saved to system_logs table"
+
+    - name: "tool_use_block"
+      source: "orchestrator_service.py"
+      purpose: "Stream tool usage during execution"
+      fields:
+        type: "tool_use_block"
+        data: "object (contains id, orchestrator_agent_id, tool_name, tool_input, tool_use_id, timestamp)"
+      persistence: "Saved to system_logs table"
+
+  orchestrator:
+    - name: "orchestrator_updated"
+      source: "orchestrator_service.py"
+      purpose: "Broadcast orchestrator state changes"
+      fields:
+        type: "orchestrator_updated"
+        orchestrator: "object (contains id, input_tokens, output_tokens, total_cost, updated_at)"
+        timestamp: "ISO8601"
+
+  system:
+    - name: "system_log"
+      source: "Various"
+      purpose: "General system logging"
+      fields:
+        type: "system_log"
+        log: "object"
+        data: "object (alternative key name)"
+        timestamp: "ISO8601"
+
+    - name: "error"
+      source: "Various"
+      purpose: "Error notifications"
+      fields:
+        type: "error"
+        message: "string"
+        details: "object (optional)"
+        timestamp: "ISO8601"
+
+    - name: "heartbeat"
+      source: "websocket_manager.py"
+      purpose: "Keep-alive signal"
+      status: "Method exists but not scheduled"
+      fields:
+        type: "heartbeat"
+        timestamp: "ISO8601"
+
+  autocomplete:
+    - name: "autocomplete_started"
+      source: "autocomplete_agent.py"
+      purpose: "Signal autocomplete generation started"
+      fields:
+        type: "autocomplete_started"
+        orchestrator_agent_id: "string"
+        timestamp: "ISO8601"
+
+    - name: "autocomplete_completed"
+      source: "autocomplete_agent.py"
+      purpose: "Deliver autocomplete suggestions"
+      fields:
+        type: "autocomplete_completed"
+        orchestrator_agent_id: "string"
+        suggestions: "array"
+        timestamp: "ISO8601"
+
+streaming_architecture:
+  message_processing_flow:
+    description: "Three-phase logging pattern for orchestrator messages"
+
+    phase_1_pre_execution:
+      file: "orchestrator_service.py"
+      lines: "462-496"
+      steps:
+        - "Insert user message to orchestrator_chat table"
+        - "Broadcast user message event via WebSocket"
+        - "Spawn async AI summarization task (background)"
+
+    phase_2_execution:
+      file: "orchestrator_service.py"
+      lines: "528-814"
+      steps:
+        - "Iterate through Claude SDK AsyncIterable[Message] blocks"
+        - "For TextBlock: Save to DB � Broadcast � Spawn summarization"
+        - "For ThinkingBlock: Save to system_logs � Broadcast as thinking_block"
+        - "For ToolUseBlock: Save to system_logs � Broadcast as tool_use_block"
+        - "Set typing indicator at start, clear at end"
+        - "Handle system messages (capture session info once)"
+
+    phase_3_post_execution:
+      file: "orchestrator_service.py"
+      lines: "816-930"
+      steps:
+        - "Update session ID in database (if new orchestrator)"
+        - "Extract cost/tokens from ResultMessage"
+        - "Update orchestrator costs in database"
+        - "Broadcast orchestrator_updated event"
+        - "Return final response"
+
+  claude_sdk_integration:
+    description: "Deep integration with Claude SDK hooks for real-time event capture"
+
+    orchestrator_hooks:
+      file: "backend/modules/orchestrator_hooks.py"
+      lines: 168
+      hook_types:
+        PreToolUse:
+          purpose: "Logs when orchestrator uses management tools"
+          tools_monitored:
+            - "create_agent"
+            - "command_agent"
+            - "list_agents"
+            - "delete_agent"
+          flow: "Log � Broadcast � Database"
+
+        PostToolUse:
+          purpose: "Logs tool completion"
+          status: "Currently minimal implementation"
+
+        Stop:
+          purpose: "Logs when orchestrator session ends"
+          flow: "Log � Broadcast � Database"
+
+    command_agent_hooks:
+      file: "backend/modules/command_agent_hooks.py"
+      lines: 629
+      hook_types:
+        PreToolUse:
+          purpose: "Tool execution start"
+          captures: "Tool name, parameters, timestamp"
+
+        PostToolUse:
+          purpose: "Tool result reception"
+          captures: "Tool name, result, duration"
+
+        UserPromptSubmit:
+          purpose: "User input logging"
+          captures: "Prompt text, timestamp"
+
+        Stop:
+          purpose: "Agent session completion"
+          captures: "Final state, session duration"
+
+        Compact:
+          purpose: "Memory compaction events"
+          captures: "Compaction trigger, size before/after"
+
+        PostToolFile:
+          purpose: "File changes tracking"
+          captures: "File path, change type, diff"
+
+    hook_execution_flow:
+      - "Hook fires during Claude SDK execution"
+      - "Insert event to agent_logs table with event_category='hook'"
+      - "Immediately broadcast via ws_manager.broadcast_agent_log()"
+      - "Spawn async summarization in background (non-blocking)"
+      - "Frontend receives event in real-time"
+
+concurrency_patterns:
+  async_execution:
+    http_endpoint: "/send_chat"
+    file: "main.py"
+    line: 433
+    pattern: "Fire and forget with asyncio.create_task()"
+    flow:
+      - "HTTP /send_chat returns immediately"
+      - "Message processing in background via asyncio.create_task()"
+      - "All WebSocket broadcasts happen during processing"
+      - "Clients receive updates concurrently without blocking HTTP"
+
+  execution_locking:
+    mechanism: "_execution_lock: AsyncIO Lock"
+    purpose: "Prevent concurrent orchestrator execution"
+    behavior:
+      - "Lock acquired before processing message"
+      - "If new message arrives during execution, previous task interrupted"
+      - "Lock released on completion (success or failure)"
+
+  background_tasks:
+    summarization:
+      trigger: "After each agent log or chat message"
+      method: "asyncio.create_task()"
+      model: "Claude Haiku (cost efficiency)"
+      blocking: false
+      flow:
+        - "Save event to database"
+        - "Broadcast event to clients"
+        - "Spawn summarization task (doesn't block)"
+        - "Update summary when complete"
+
+database_persistence:
+  pattern: "Write-through: Database first, then broadcast"
+
+  tables:
+    orchestrator_chat:
+      purpose: "Chat messages and orchestrator actions"
+      broadcast_timing: "After INSERT"
+      fields_key:
+        - "id (UUID)"
+        - "orchestrator_id"
+        - "message_type"
+        - "content"
+        - "timestamp"
+
+    agent_logs:
+      purpose: "Agent activity and hook events"
+      broadcast_timing: "After INSERT"
+      fields_key:
+        - "id (UUID)"
+        - "agent_id"
+        - "event_category (hook, tool, chat, etc.)"
+        - "event_data (JSONB)"
+        - "timestamp"
+
+    system_logs:
+      purpose: "Thinking blocks and tool usage"
+      broadcast_timing: "After INSERT"
+      fields_key:
+        - "id (UUID)"
+        - "log_type (thinking_block, tool_use_block)"
+        - "log_data (JSONB)"
+        - "timestamp"
+
+  benefits:
+    - "Enables event replay"
+    - "Provides audit trail"
+    - "Survives WebSocket disconnections"
+    - "Supports historical queries"
+
+frontend_integration:
+  connection_service:
+    file: "frontend/src/services/chatService.ts"
+    lines: "76-179 (file total: 194 lines)"
+
+    connection_function: "connectWebSocket(url, callbacks)"
+
+    callbacks:
+      onMessageReceived: "Called for EVERY WebSocket message before routing (used for session event counter)"
+      onConnected: "Called on successful connection"
+      onChatStream: "Receives streaming chat chunks"
+      onTyping: "Typing indicator updates"
+      onThinkingBlock: "Receives thinking block data"
+      onToolUseBlock: "Receives tool usage data"
+      onAgentLog: "Receives agent activity logs"
+      onAgentCreated: "New agent created"
+      onAgentUpdated: "Agent updated"
+      onAgentDeleted: "Agent deleted"
+      onAgentStatusChange: "Agent status changed"
+      onAgentSummaryUpdate: "Agent summary updated"
+      onOrchestratorUpdated: "Orchestrator state updated"
+      onAutocompleteStarted: "Autocomplete generation started"
+      onAutocompleteCompleted: "Autocomplete suggestions received"
+      onError: "Handles connection errors"
+      onDisconnected: "Handles disconnection"
+
+    message_routing:
+      pattern: "Switch statement on message.type"
+      counter_pattern: "onMessageReceived callback fires BEFORE JSON parsing (line 91)"
+      example: |
+        ws.onmessage = (event) => {
+          callbacks.onMessageReceived?.()  // Count ALL messages first
+          const message = JSON.parse(event.data)
+          switch (message.type) {
+            case 'chat_stream': callbacks.onChatStream(...); break;
+            // ... more cases
+          }
+        }
+
+  state_management:
+    store: "orchestratorStore.ts (Pinia)"
+    file: "frontend/src/stores/orchestratorStore.ts"
+    lines: 1132
+    pattern: "Unidirectional data flow"
+
+    session_state:
+      websocketEventCount:
+        type: "ref<number>"
+        lines: "78"
+        purpose: "Session-based counter for ALL WebSocket messages"
+        reset_on: "connect (line 388), disconnect (line 409)"
+
+    flow:
+      - "WebSocket callbacks update Pinia store"
+      - "Store is single source of truth"
+      - "Components subscribe and react to changes"
+      - "Components send commands via HTTP (not WebSocket)"
+
+    websocket_actions:
+      incrementWebSocketEventCount:
+        lines: "316-318"
+        purpose: "Increments session event counter by 1"
+        called_from: "onMessageReceived callback (line 337-339)"
+
+      connectWebSocket:
+        lines: "320-399"
+        counter_behavior: "Resets websocketEventCount to 0 on connection (line 388)"
+
+      disconnectWebSocket:
+        lines: "401-419"
+        counter_behavior: "Resets websocketEventCount to 0 on disconnect (line 409)"
+
+    components:
+      AgentList:
+        purpose: "Display and manage agents"
+        subscriptions:
+          - "agent_created"
+          - "agent_updated"
+          - "agent_deleted"
+          - "agent_status_changed"
+
+      EventStream:
+        purpose: "Real-time event feed"
+        subscriptions:
+          - "agent_log"
+          - "thinking_block"
+          - "tool_use_block"
+          - "system_log"
+
+      OrchestratorChat:
+        purpose: "Chat interface"
+        subscriptions:
+          - "chat_stream"
+          - "chat_typing"
+          - "orchestrator_chat"
+
+      AppHeader:
+        purpose: "Header stats and controls"
+        file: "frontend/src/components/AppHeader.vue"
+        websocket_display: "Shows WS Events counter (line 30-32)"
+        data_source: "headerBar.websocketEventCount from useHeaderBar composable"
+
+  composables:
+    useHeaderBar:
+      file: "frontend/src/composables/useHeaderBar.ts"
+      purpose: "Aggregates header statistics including WebSocket event count"
+      websocket_counter:
+        lines: "106-108"
+        implementation: "computed(() => store.websocketEventCount)"
+        purpose: "Exposes session WebSocket event count to header component"
+        exported: "line 201"
+
+monitoring:
+  session_event_counter:
+    purpose: "Track total WebSocket messages received during current session"
+    implementation:
+      callback: "onMessageReceived in WebSocketCallbacks interface"
+      trigger_point: "chatService.ts line 91 (before JSON parsing)"
+      state: "orchestratorStore.websocketEventCount (ref<number>)"
+      increment: "orchestratorStore.incrementWebSocketEventCount()"
+      reset: "On connect and disconnect"
+      display: "AppHeader component 'WS Events' stat pill"
+
+    characteristics:
+      - "Counts ALL messages regardless of type"
+      - "Increments before message parsing (captures malformed messages)"
+      - "Session-scoped (not persisted to database)"
+      - "Resets to 0 on new connection"
+      - "Displayed in real-time in header"
+
+    use_cases:
+      - "Monitor WebSocket activity volume"
+      - "Debug connection issues"
+      - "Validate message delivery"
+      - "Compare against event stream entries (WS Events > Logs)"
+
+configuration:
+  environment_variables:
+    BACKEND_HOST:
+      default: "127.0.0.1"
+      description: "Host address for backend"
+
+    BACKEND_PORT:
+      default: "9403"
+      description: "Port number for backend"
+
+    WEBSOCKET_URL:
+      default: "ws://127.0.0.1:9403/ws"
+      description: "Full WebSocket URL"
+      computed_from: "BACKEND_HOST and BACKEND_PORT"
+
+  config_file: "backend/modules/config.py"
+  config_lines: "54-55"
+  env_file_location: ".env at project root"
+
+testing:
+  manual_testing_utility:
+    file: "backend/tests/test_websocket_raw.py"
+    purpose: "Manual WebSocket testing and message inspection"
+    usage: "Run directly to connect and inspect real-time messages"
+
+  recommended_tests:
+    unit_tests:
+      - "Test broadcast with multiple connections"
+      - "Test disconnection cleanup"
+      - "Test message serialization"
+      - "Test metadata management"
+
+    integration_tests:
+      - "Test hook firing sequence"
+      - "Test streaming of large responses"
+      - "Test concurrent message processing"
+      - "Test database persistence + broadcast"
+
+    load_tests:
+      - "Test with 100+ concurrent connections"
+      - "Test broadcast throughput"
+      - "Monitor memory under sustained load"
+      - "Test connection churn (rapid connect/disconnect)"
+
+    manual_tests:
+      - "Use test_websocket_raw.py to inspect message flow"
+      - "Monitor for stale connections"
+      - "Test network interruption recovery"
+      - "Verify typing indicators"
+
+best_practices:
+  - "Error transparency: Errors logged loudly, no silent failures"
+  - "Type safety: Full TypeScript on frontend, Pydantic models on backend"
+  - "Async/await: Proper async patterns, no blocking in event loop"
+  - "Resource cleanup: Disconnection removes all metadata, prevents memory leaks"
+  - "Multi-level logging: Console, file rotation, structured event logging"
+  - "Separation of concerns: Manager, hooks, service have clear responsibilities"
+  - "Timestamp standardization: ISO8601 format throughout"
+  - "Database persistence: Every event saved before broadcast ensures durability"
+  - "Background summarization: AI summarization doesn't block streaming"
+  - "Unidirectional data flow: Frontend receives updates, sends commands via HTTP"
+
+known_issues:
+  no_heartbeat_scheduling:
+    severity: "Medium"
+    description: "send_heartbeat() method exists but isn't scheduled"
+    impact: "Can't detect stale connections proactively"
+    solution: "Schedule heartbeat in app lifespan event"
+
+  no_authentication:
+    severity: "Medium (Security)"
+    description: "/ws endpoint has no auth check"
+    impact: "Anyone can connect and receive all events"
+    solution: "Add session token validation on connection"
+
+  no_connection_metrics:
+    severity: "Low"
+    description: "Session event counter exists but metrics not persisted over time"
+    impact: "Can monitor current session but no historical tracking"
+    solution: "Add time-series metrics tracking and export"
+    note: "Session counter (websocketEventCount) implemented for real-time monitoring"
+
+potential_enhancements:
+  - "Implement heartbeat scheduling (Recommended)"
+  - "Add connection metrics tracking (Nice-to-have)"
+  - "Add WebSocket authentication (Recommended for production)"
+  - "Retry logic for failed broadcasts (Nice-to-have)"
+  - "Connection rate limiting (Security)"
+  - "Per-connection message buffer (Performance)"
+  - "Selective event subscriptions (Scalability)"
+
+key_file_locations:
+  core:
+    websocket_manager: "apps/orchestrator_3_stream/backend/modules/websocket_manager.py"
+    main_endpoint: "apps/orchestrator_3_stream/backend/main.py (lines 664-698)"
+
+  hooks:
+    orchestrator_hooks: "apps/orchestrator_3_stream/backend/modules/orchestrator_hooks.py"
+    command_agent_hooks: "apps/orchestrator_3_stream/backend/modules/command_agent_hooks.py"
+    base_hooks: "apps/orchestrator_3_stream/backend/modules/hooks.py"
+
+  services:
+    orchestrator_service: "apps/orchestrator_3_stream/backend/modules/orchestrator_service.py (1009 lines total, process_user_message: 435-930)"
+    agent_manager: "apps/orchestrator_3_stream/backend/modules/agent_manager.py"
+
+  frontend:
+    chat_service: "apps/orchestrator_3_stream/frontend/src/services/chatService.ts (194 lines total, connectWebSocket: 78-184)"
+    orchestrator_store: "apps/orchestrator_3_stream/frontend/src/stores/orchestratorStore.ts (1132 lines)"
+    header_composable: "apps/orchestrator_3_stream/frontend/src/composables/useHeaderBar.ts (websocketEventCount: 106-108)"
+    header_component: "apps/orchestrator_3_stream/frontend/src/components/AppHeader.vue (WS Events display: line 30-32)"
+
+  config:
+    backend_config: "apps/orchestrator_3_stream/backend/modules/config.py (lines 54-55)"
+
+  testing:
+    manual_test: "apps/orchestrator_3_stream/backend/tests/test_websocket_raw.py"
+
+architecture_summary: |
+  The WebSocket implementation serves as a centralized event bus enabling real-time
+  communication in the multi-agent orchestration system. A single WebSocketManager
+  coordinates all connections and broadcasts events from multiple sources including
+  orchestrator execution, agent activity, and Claude SDK hooks.
+
+  The architecture follows a write-through pattern where events are persisted to
+  PostgreSQL before broadcast, ensuring durability and enabling replay. Deep
+  integration with Claude SDK hooks captures execution events in real-time,
+  providing visibility into agent thinking, tool usage, and activity.
+
+  Frontend components connect via a single WebSocket endpoint and receive updates
+  through Pinia store, maintaining unidirectional data flow. The system handles
+  concurrent operations gracefully with AsyncIO locks and background task spawning.
+
+  Overall, this is a production-ready implementation with clean separation of
+  concerns, proper error handling, and extensible event types. Heartbeat scheduling
+  would improve connection reliability for production use.

@@ -1,0 +1,30 @@
+{
+  "id": "wd_black_sn850x_2tb",
+  "name": "WD Black SN850X 2TB",
+  "description": "Gaming-optimized PCIe 4.0 SSD with 7,300MB/s reads and optional heatsink. Features Game Mode 2.0 for predictive loading and low latency gaming.",
+  "price": 149.99,
+  "category": "Storage",
+  "brand": "Western Digital",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Game Mode actually makes a difference. Fast loads.",
+      "rating": 5,
+      "reviewer_name": "PCGamer",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Great PS5 upgrade. DirectStorage ready.",
+      "rating": 5,
+      "reviewer_name": "ConsolePCGamer",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Solid drive but runs warm without heatsink.",
+      "rating": 4,
+      "reviewer_name": "ThermalAware",
+      "review_date": "2024-12-06"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "wacom_cintiq_22",
+  "name": "Wacom Cintiq 22",
+  "image_prompt": "Wacom Cintiq 22 pen display, large screen tablet with adjustable stand, Pro Pen 2 stylus, black bezel",
+  "description": "Professional 21.5-inch pen display with 1920x1080 resolution and Pro Pen 2 with 8192 pressure levels. Features anti-glare film, adjustable stand, and industry-standard color accuracy.",
+  "price": 1199.99,
+  "category": "Drawing Tablets",
+  "brand": "Wacom",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Industry standard for a reason. Pro Pen 2 is unmatched.",
+      "rating": 5,
+      "reviewer_name": "ConceptArtist",
+      "review_date": "2024-11-10"
+    },
+    {
+      "review_text": "Big upgrade from Intuos. Drawing on screen is natural.",
+      "rating": 5,
+      "reviewer_name": "TabletUpgrader",
+      "review_date": "2024-10-16"
+    },
+    {
+      "review_text": "Wish it was 4K at this price point.",
+      "rating": 4,
+      "reviewer_name": "ResolutionMatters",
+      "review_date": "2024-09-21"
+    }
+  ]
+}

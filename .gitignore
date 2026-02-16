@@ -15,4 +15,3 @@ __pycache__/
 .env
 
 # Reference submodules
-reference/orchestrator-agent-with-adws

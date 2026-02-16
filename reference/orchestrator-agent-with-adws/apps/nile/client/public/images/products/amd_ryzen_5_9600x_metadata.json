@@ -1,0 +1,30 @@
+{
+  "id": "amd_ryzen_5_9600x",
+  "name": "AMD Ryzen 5 9600X",
+  "description": "Budget Zen 5 CPU with 6 cores/12 threads. Punches way above its price class in gaming with excellent single-thread performance and minimal power draw.",
+  "price": 249.99,
+  "category": "Processors",
+  "brand": "AMD",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Budget king is back. Gaming performance is incredible for the price.",
+      "rating": 5,
+      "reviewer_name": "BudgetBuilder",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Perfect for a no-compromises 1080p build.",
+      "rating": 5,
+      "reviewer_name": "SmartBuilder",
+      "review_date": "2024-12-09"
+    },
+    {
+      "review_text": "6 cores getting tight for some workloads.",
+      "rating": 4,
+      "reviewer_name": "HeavyMultitasker",
+      "review_date": "2024-12-04"
+    }
+  ]
+}

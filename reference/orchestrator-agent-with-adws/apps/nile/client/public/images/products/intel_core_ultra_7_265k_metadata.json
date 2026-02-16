@@ -1,0 +1,30 @@
+{
+  "id": "intel_core_ultra_7_265k",
+  "name": "Intel Core Ultra 7 265K",
+  "description": "High-performance Arrow Lake CPU with 20 cores (8P+12E). Excellent balance of gaming and productivity performance with integrated NPU for AI workloads.",
+  "price": 399.99,
+  "category": "Processors",
+  "brand": "Intel",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Sweet spot for gaming builds. Great value.",
+      "rating": 5,
+      "reviewer_name": "GamingBuilder",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Compiles fast and games faster. Perfect combo.",
+      "rating": 5,
+      "reviewer_name": "DevGamer",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Good chip but motherboards are expensive.",
+      "rating": 4,
+      "reviewer_name": "BudgetMinded",
+      "review_date": "2024-12-06"
+    }
+  ]
+}

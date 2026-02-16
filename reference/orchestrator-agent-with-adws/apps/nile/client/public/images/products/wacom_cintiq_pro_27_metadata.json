@@ -1,0 +1,30 @@
+{
+  "id": "wacom_cintiq_pro_27",
+  "name": "Wacom Cintiq Pro 27",
+  "description": "Professional 27-inch 4K pen display with Pro Pen 3 and Ergo Stand. Features 8192 pressure levels, tilt support, and industry-leading color accuracy for digital artists.",
+  "price": 3499.99,
+  "category": "Drawing Tablets",
+  "brand": "Wacom",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "The professional standard. Nothing else compares.",
+      "rating": 5,
+      "reviewer_name": "ProIllustrator",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "4K display quality is incredible for detailed work.",
+      "rating": 5,
+      "reviewer_name": "DetailArtist",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Expensive but industry standard for a reason.",
+      "rating": 5,
+      "reviewer_name": "ProInvestor",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

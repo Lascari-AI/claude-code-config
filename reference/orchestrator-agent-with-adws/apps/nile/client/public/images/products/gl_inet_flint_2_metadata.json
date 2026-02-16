@@ -1,0 +1,30 @@
+{
+  "id": "gl_inet_flint_2",
+  "name": "GL.iNet Flint 2 (GL-MT6000)",
+  "description": "Enthusiast WiFi 6 router with open-source OpenWrt support. Features 2.5G WAN/LAN ports, WireGuard VPN, and AdGuard Home. The tinkerer's dream router.",
+  "price": 159.00,
+  "category": "Networking",
+  "brand": "GL.iNet",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "OpenWrt with great hardware. Perfect combo.",
+      "rating": 5,
+      "reviewer_name": "OpenSourceFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Built-in VPN and AdGuard is brilliant.",
+      "rating": 5,
+      "reviewer_name": "PrivacyFirst",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Advanced features need technical knowledge.",
+      "rating": 4,
+      "reviewer_name": "TechLearner",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

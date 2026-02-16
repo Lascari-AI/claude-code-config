@@ -1,0 +1,31 @@
+{
+  "id": "rode_podmic_usb",
+  "name": "Rode PodMic USB",
+  "image_prompt": "Rode PodMic USB dynamic microphone, matte black, broadcast style design with internal pop filter, integrated mount",
+  "description": "Broadcast-quality dynamic USB/XLR microphone with built-in DSP. Features internal pop filter, headphone output with zero latency monitoring, and APHEX audio processing.",
+  "price": 229.0,
+  "category": "Microphones",
+  "brand": "Rode",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Perfect for podcasting. APHEX processing sounds professional.",
+      "rating": 5,
+      "reviewer_name": "PodcastPro",
+      "review_date": "2024-11-08"
+    },
+    {
+      "review_text": "USB and XLR flexibility is perfect for my setup.",
+      "rating": 5,
+      "reviewer_name": "HybridRecorder",
+      "review_date": "2024-10-14"
+    },
+    {
+      "review_text": "Great mic but needs a good arm to position properly.",
+      "rating": 4,
+      "reviewer_name": "DeskSetupPro",
+      "review_date": "2024-09-19"
+    }
+  ]
+}

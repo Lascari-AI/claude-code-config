@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_dgx_spark_max",
+  "name": "NVIDIA DGX Spark Max",
+  "description": "Maximum configuration DGX Spark with 8x Grace Blackwell chips, 1TB unified memory, and 8TB NVMe storage. Datacenter-class AI compute in a workstation form factor.",
+  "price": 19999.00,
+  "category": "AI Workstations",
+  "brand": "NVIDIA",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Replaced a rack of servers. Absolute beast.",
+      "rating": 5,
+      "reviewer_name": "EnterpriseAI",
+      "review_date": "2025-01-28"
+    },
+    {
+      "review_text": "Training from scratch is now desktop-viable.",
+      "rating": 5,
+      "reviewer_name": "AIResearcher",
+      "review_date": "2025-01-24"
+    },
+    {
+      "review_text": "The future of AI development is here.",
+      "rating": 5,
+      "reviewer_name": "TechVisionary",
+      "review_date": "2025-01-20"
+    }
+  ]
+}

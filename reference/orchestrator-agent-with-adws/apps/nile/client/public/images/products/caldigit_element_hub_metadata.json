@@ -1,0 +1,30 @@
+{
+  "id": "caldigit_element_hub",
+  "name": "CalDigit Element Hub",
+  "description": "Compact Thunderbolt 4 hub with 4x USB-C/Thunderbolt 4 and 4x USB-A ports. Features 60W device charging and daisy-chain support. Essential hub for MacBook users.",
+  "price": 249.99,
+  "category": "Docking Stations",
+  "brand": "CalDigit",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Compact but mighty. All the ports I need.",
+      "rating": 5,
+      "reviewer_name": "PortExpander",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "CalDigit reliability in smaller form.",
+      "rating": 5,
+      "reviewer_name": "CalDigitFan",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "No video out but that is not the point.",
+      "rating": 4,
+      "reviewer_name": "FocusedBuyer",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

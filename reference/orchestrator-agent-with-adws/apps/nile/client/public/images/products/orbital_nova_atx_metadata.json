@@ -1,0 +1,30 @@
+{
+  "id": "orbital_nova_atx",
+  "name": "Orbital Nova ATX Case",
+  "description": "Space-inspired PC case with curved tempered glass and cosmic design elements. Features excellent airflow, premium build, and unique aesthetic for showcase builds.",
+  "price": 249.99,
+  "category": "PC Cases",
+  "brand": "Orbital",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Most unique case I have ever built in.",
+      "rating": 5,
+      "reviewer_name": "UniqueBuilder",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Space theme is actually tasteful.",
+      "rating": 5,
+      "reviewer_name": "ThemeAppreciator",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Premium price for premium unique design.",
+      "rating": 4,
+      "reviewer_name": "UniqueBuyer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

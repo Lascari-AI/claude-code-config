@@ -1,0 +1,30 @@
+{
+  "id": "seagate_firecuda_540_2tb",
+  "name": "Seagate FireCuda 540 2TB",
+  "description": "PCIe 5.0 SSD with extreme 10,000MB/s sequential speeds. Built for enthusiasts and professionals who need the fastest storage available.",
+  "price": 199.99,
+  "category": "Storage",
+  "brand": "Seagate",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "PCIe 5.0 speeds are real. Benchmarks are wild.",
+      "rating": 5,
+      "reviewer_name": "BenchmarkFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Perfect for video scratch disk. Instant scrubbing.",
+      "rating": 5,
+      "reviewer_name": "VideoEditor",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Needs good airflow to maintain speeds.",
+      "rating": 4,
+      "reviewer_name": "AirflowPlanner",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

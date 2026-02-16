@@ -1,0 +1,30 @@
+{
+  "id": "xiaomi_mi_led_desk_lamp_1s",
+  "name": "Xiaomi Mi Smart LED Desk Lamp 1S",
+  "description": "Smart desk lamp with HomeKit, Alexa, and Google Home support. Features adjustable color temperature, brightness control, and minimalist Xiaomi design.",
+  "price": 49.99,
+  "category": "Desk Lighting",
+  "brand": "Xiaomi",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "HomeKit integration is flawless.",
+      "rating": 5,
+      "reviewer_name": "SmartHomeUser",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Minimalist design fits any desk.",
+      "rating": 5,
+      "reviewer_name": "MinimalistDesigner",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Needs Xiaomi hub for some features.",
+      "rating": 4,
+      "reviewer_name": "HubAware",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

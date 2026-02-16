@@ -1,0 +1,30 @@
+{
+  "id": "kingston_fury_beast_32gb",
+  "name": "Kingston Fury Beast 32GB DDR5",
+  "description": "Value DDR5 kit (2x16GB) at 5600MHz. No-frills performance with reliable Kingston quality and broad compatibility. Perfect for budget builds.",
+  "price": 99.99,
+  "category": "Memory",
+  "brand": "Kingston",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best budget DDR5. Works perfectly with XMP.",
+      "rating": 5,
+      "reviewer_name": "BudgetBuilder",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Reliable and affordable. What more do you need?",
+      "rating": 5,
+      "reviewer_name": "PracticalBuilder",
+      "review_date": "2024-12-10"
+    },
+    {
+      "review_text": "No RGB but who cares at this price.",
+      "rating": 4,
+      "reviewer_name": "FunctionFirst",
+      "review_date": "2024-12-05"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "wacom_intuos_pro_large",
+  "name": "Wacom Intuos Pro Large",
+  "description": "Professional pen tablet with large active area and Pro Pen 2. Features 8192 pressure levels, tilt, and multi-touch. For artists who prefer looking at their monitor.",
+  "price": 499.99,
+  "category": "Drawing Tablets",
+  "brand": "Wacom",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "No screen means no neck strain. Perfect for long sessions.",
+      "rating": 5,
+      "reviewer_name": "ScreenlessArtist",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Pro Pen 2 pressure curve is natural.",
+      "rating": 5,
+      "reviewer_name": "PressureSensitive",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Takes time to master but worth the effort.",
+      "rating": 4,
+      "reviewer_name": "LearningArtist",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

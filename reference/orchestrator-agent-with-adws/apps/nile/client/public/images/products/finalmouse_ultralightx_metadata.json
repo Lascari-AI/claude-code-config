@@ -1,0 +1,30 @@
+{
+  "id": "finalmouse_ultralightx",
+  "name": "Finalmouse UltralightX",
+  "description": "The lightest gaming mouse at just 29g with magnesium shell. Features groundbreaking sensor technology and limited edition artistic designs. Collector's item and performance tool.",
+  "price": 189.99,
+  "category": "Mice",
+  "brand": "Finalmouse",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "29g is unbelievable. Changes how you think about aim.",
+      "rating": 5,
+      "reviewer_name": "WeightChaser",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Limited drops are annoying but product delivers.",
+      "rating": 5,
+      "reviewer_name": "DropHunter",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Price is steep for what you get feature-wise.",
+      "rating": 4,
+      "reviewer_name": "ValueAnalyst",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

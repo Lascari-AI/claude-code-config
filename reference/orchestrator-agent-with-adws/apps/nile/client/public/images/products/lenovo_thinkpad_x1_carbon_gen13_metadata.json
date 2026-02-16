@@ -1,0 +1,30 @@
+{
+  "id": "lenovo_thinkpad_x1_carbon_gen13",
+  "name": "Lenovo ThinkPad X1 Carbon Gen 13",
+  "description": "Legendary business ultrabook with Intel Core Ultra 7, 32GB RAM, and 2.8K OLED display. Sub-2.5lb weight with ThinkPad reliability and security features.",
+  "price": 1899.00,
+  "category": "Laptops",
+  "brand": "Lenovo",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best keyboard on any laptop. ThinkPad legacy lives on.",
+      "rating": 5,
+      "reviewer_name": "KeyboardEnthusiast",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "TrackPoint forever. No touchpad needed.",
+      "rating": 5,
+      "reviewer_name": "TrackPointLoyalist",
+      "review_date": "2025-01-11"
+    },
+    {
+      "review_text": "OLED option is a must. Colors are incredible.",
+      "rating": 5,
+      "reviewer_name": "OLEDConvert",
+      "review_date": "2025-01-06"
+    }
+  ]
+}

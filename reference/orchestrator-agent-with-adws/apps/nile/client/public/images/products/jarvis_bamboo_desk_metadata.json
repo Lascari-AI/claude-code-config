@@ -1,0 +1,30 @@
+{
+  "id": "jarvis_bamboo_desk",
+  "name": "Fully Jarvis Bamboo Standing Desk",
+  "description": "Sustainable bamboo standing desk with programmable presets. Features 350lb capacity, whisper-quiet motor, and Fully's commitment to environmentally conscious manufacturing.",
+  "price": 629.00,
+  "category": "Desks",
+  "brand": "Fully",
+  "rating": 4.6,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Sustainable and beautiful. Bamboo ages gracefully.",
+      "rating": 5,
+      "reviewer_name": "EcoBuilder",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Simple but effective. Does exactly what it should.",
+      "rating": 5,
+      "reviewer_name": "Minimalist",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Motor is slightly louder than competitors.",
+      "rating": 4,
+      "reviewer_name": "NoiseSensitive",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "asus_rt_be88u",
+  "name": "ASUS RT-BE88U WiFi 7 Router",
+  "description": "Next-gen WiFi 7 router with 7200Mbps speeds and dual 10G ports. Features AiMesh support, advanced security, and ASUS router expertise in the newest standard.",
+  "price": 599.99,
+  "category": "Networking",
+  "brand": "ASUS",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "WiFi 7 speeds are real. Massive improvement.",
+      "rating": 5,
+      "reviewer_name": "WiFi7EarlyAdopter",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Dual 10G ports are perfect for my setup.",
+      "rating": 5,
+      "reviewer_name": "MultiGigUser",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Expensive but best WiFi 7 router available.",
+      "rating": 4,
+      "reviewer_name": "CuttingEdge",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

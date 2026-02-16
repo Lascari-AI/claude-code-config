@@ -1,0 +1,30 @@
+{
+  "id": "bose_quietcomfort_ultra",
+  "name": "Bose QuietComfort Ultra",
+  "description": "World-class noise cancellation with Immersive Audio. Features CustomTune sound calibration, 24-hour battery, and legendary Bose comfort for all-day wear.",
+  "price": 429.00,
+  "category": "Headphones",
+  "brand": "Bose",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "ANC is still the best in the business. Bose knows audio.",
+      "rating": 5,
+      "reviewer_name": "ANCExpert",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Most comfortable headphones I have worn all day.",
+      "rating": 5,
+      "reviewer_name": "AllDayListener",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Immersive Audio is impressive but limited content.",
+      "rating": 4,
+      "reviewer_name": "ContentSeeker",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

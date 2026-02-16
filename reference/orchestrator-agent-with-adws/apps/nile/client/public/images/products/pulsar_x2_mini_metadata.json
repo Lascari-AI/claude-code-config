@@ -1,0 +1,30 @@
+{
+  "id": "pulsar_x2_mini",
+  "name": "Pulsar X2 Mini Wireless",
+  "description": "Tournament-grade wireless mouse at just 52g. Features PAW3395 sensor, custom Kailh switches, and exceptional build quality. Designed by pro players for pro players.",
+  "price": 109.99,
+  "category": "Mice",
+  "brand": "Pulsar",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "52g is insane. Feels like wireless levitation.",
+      "rating": 5,
+      "reviewer_name": "UltraLightFan",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "Mini size perfect for small to medium hands.",
+      "rating": 5,
+      "reviewer_name": "SmallHandGamer",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Clicks are bit stiff out of box but break in.",
+      "rating": 4,
+      "reviewer_name": "ClickFeel",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

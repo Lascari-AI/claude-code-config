@@ -1,0 +1,31 @@
+{
+  "id": "elgato_stream_deck_xl",
+  "name": "Elgato Stream Deck XL",
+  "image_prompt": "Elgato Stream Deck XL, 32 LCD keys in grid layout, black frame, customizable button icons visible",
+  "description": "Ultimate macro controller with 32 customizable LCD keys. Features one-touch actions for streaming, productivity, and smart home. Supports folders, multi-actions, and thousands of integrations.",
+  "price": 249.99,
+  "category": "Stream Decks",
+  "brand": "Elgato",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Not just for streaming. Automates my entire dev workflow.",
+      "rating": 5,
+      "reviewer_name": "AutomationDev",
+      "review_date": "2024-11-15"
+    },
+    {
+      "review_text": "32 keys means I never run out of macros.",
+      "rating": 5,
+      "reviewer_name": "MacroPowerUser",
+      "review_date": "2024-10-22"
+    },
+    {
+      "review_text": "Software could be more intuitive but keys are great.",
+      "rating": 4,
+      "reviewer_name": "UXCritic",
+      "review_date": "2024-09-27"
+    }
+  ]
+}

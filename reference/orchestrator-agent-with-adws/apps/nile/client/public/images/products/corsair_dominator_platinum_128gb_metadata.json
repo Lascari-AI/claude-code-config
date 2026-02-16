@@ -1,0 +1,30 @@
+{
+  "id": "corsair_dominator_platinum_128gb",
+  "name": "Corsair Dominator Platinum RGB 128GB DDR5",
+  "description": "Ultimate DDR5 kit (4x32GB) at 6000MHz. Features premium Capellix RGB, hand-sorted ICs, and DHX cooling technology for extreme builds.",
+  "price": 549.99,
+  "category": "Memory",
+  "brand": "Corsair",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "128GB for ML and VMs. Never running out of RAM again.",
+      "rating": 5,
+      "reviewer_name": "RAMHoarder",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "The RGB is absolutely stunning. Build centerpiece.",
+      "rating": 5,
+      "reviewer_name": "ShowcaseBuilder",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Premium price but premium quality.",
+      "rating": 5,
+      "reviewer_name": "NoCompromise",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

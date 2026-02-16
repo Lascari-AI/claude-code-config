@@ -1,0 +1,30 @@
+{
+  "id": "amd_radeon_rx_9700_xt",
+  "name": "AMD Radeon RX 9700 XT",
+  "description": "High-performance RDNA 5 GPU with 16GB GDDR7. Excellent value for 4K gaming with FSR 4.0 support and strong compute performance for content creation.",
+  "price": 649.99,
+  "category": "Graphics Cards",
+  "brand": "AMD",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best bang for buck in the high-end segment.",
+      "rating": 5,
+      "reviewer_name": "ValueGamer",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "16GB VRAM future-proofs this card nicely.",
+      "rating": 5,
+      "reviewer_name": "LongTermBuilder",
+      "review_date": "2025-01-08"
+    },
+    {
+      "review_text": "Runs cool and quiet. Great engineering.",
+      "rating": 4,
+      "reviewer_name": "ThermalFocused",
+      "review_date": "2025-01-03"
+    }
+  ]
+}

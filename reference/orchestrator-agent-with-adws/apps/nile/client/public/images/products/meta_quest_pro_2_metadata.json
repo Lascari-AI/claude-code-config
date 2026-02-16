@@ -1,0 +1,30 @@
+{
+  "id": "meta_quest_pro_2",
+  "name": "Meta Quest Pro 2",
+  "description": "Professional mixed reality headset with eye and face tracking. Features OLED displays, best-in-class passthrough, and enterprise features for business applications.",
+  "price": 999.99,
+  "category": "VR/AR Headsets",
+  "brand": "Meta",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Eye tracking enables next-level VR interaction.",
+      "rating": 5,
+      "reviewer_name": "EnterpriseVR",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Passthrough quality makes MR actually useful for work.",
+      "rating": 5,
+      "reviewer_name": "MRDeveloper",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Expensive but justified for professional use.",
+      "rating": 4,
+      "reviewer_name": "BusinessUser",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

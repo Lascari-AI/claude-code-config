@@ -1,0 +1,30 @@
+{
+  "id": "qnap_ts_464",
+  "name": "QNAP TS-464 NAS",
+  "description": "4-bay NAS with Intel Celeron N5095 and PCIe expansion. Features HDMI out for direct playback, dual 2.5GbE, and QNAP's QTS with virtualization support.",
+  "price": 549.99,
+  "category": "Storage",
+  "brand": "QNAP",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "x86 platform enables VMs and containers.",
+      "rating": 5,
+      "reviewer_name": "VMRunner",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "HDMI output great for media center.",
+      "rating": 5,
+      "reviewer_name": "MediaServer",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "QTS takes getting used to after DSM.",
+      "rating": 4,
+      "reviewer_name": "SynologyConvert",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

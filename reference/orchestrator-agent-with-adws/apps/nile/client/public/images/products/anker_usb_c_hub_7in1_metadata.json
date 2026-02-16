@@ -1,0 +1,31 @@
+{
+  "id": "anker_usb_c_hub_7in1",
+  "name": "Anker 7-in-1 USB-C Hub",
+  "image_prompt": "Anker 7-in-1 USB-C hub, space gray aluminum, slim rectangular design, HDMI and USB ports visible",
+  "description": "Compact USB-C hub with 4K HDMI, 100W Power Delivery pass-through, 2 USB-A ports, USB-C data port, and SD/microSD card readers. Perfect travel companion for laptops.",
+  "price": 34.99,
+  "category": "USB Hubs",
+  "brand": "Anker",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Essential for my MacBook Air. All the ports I need in one tiny package.",
+      "rating": 5,
+      "reviewer_name": "MinimalistDev",
+      "review_date": "2024-11-12"
+    },
+    {
+      "review_text": "Pass-through charging works great. No dongles needed.",
+      "rating": 5,
+      "reviewer_name": "TravelCoder",
+      "review_date": "2024-10-18"
+    },
+    {
+      "review_text": "Gets a bit warm under heavy use but works fine.",
+      "rating": 4,
+      "reviewer_name": "DailyDriver",
+      "review_date": "2024-09-22"
+    }
+  ]
+}

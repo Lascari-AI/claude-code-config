@@ -1,0 +1,30 @@
+{
+  "id": "asustor_lockerstor_4_gen2",
+  "name": "ASUSTOR Lockerstor 4 Gen2",
+  "description": "4-bay NAS with Intel Celeron N5105 and 4GB DDR4. Features 2.5GbE, M.2 NVMe slots, and ADM OS with excellent app ecosystem. Great Synology alternative.",
+  "price": 499.99,
+  "category": "Storage",
+  "brand": "ASUSTOR",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Great Synology alternative at lower price.",
+      "rating": 5,
+      "reviewer_name": "BudgetNAS",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "ADM is intuitive and powerful.",
+      "rating": 5,
+      "reviewer_name": "ADMFan",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Fewer apps than Synology but covers basics.",
+      "rating": 4,
+      "reviewer_name": "AppUser",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

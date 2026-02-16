@@ -66,7 +66,7 @@ dev-backend: ## Run backend locally with hot reload - run in Terminal 2
 	@echo "Starting FastAPI backend on http://localhost:8765"
 	@echo "API docs at http://localhost:8765/docs"
 	@echo ""
-	uv run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8765
+	cd backend && uv run uvicorn main:app --reload --reload-dir . --reload-dir ../session_db --host 0.0.0.0 --port 8765
 
 dev-frontend: ## Run frontend locally with hot reload - run in Terminal 3
 	@echo "Starting Next.js frontend on http://localhost:3456"
@@ -75,7 +75,7 @@ dev-frontend: ## Run frontend locally with hot reload - run in Terminal 3
 
 install: ## Install all dependencies (backend + frontend)
 	@echo "Installing backend dependencies..."
-	uv sync
+	cd backend && uv sync
 	@echo ""
 	@echo "Installing frontend dependencies..."
 	cd frontend && npm install
@@ -179,7 +179,7 @@ prune: ## Remove unused Docker resources
 # ═══════════════════════════════════════════════════════════════════════════════
 
 test-backend: ## Run backend tests
-	uv run pytest
+	cd backend && uv run pytest
 
 lint-frontend: ## Run frontend linter
 	cd frontend && npm run lint

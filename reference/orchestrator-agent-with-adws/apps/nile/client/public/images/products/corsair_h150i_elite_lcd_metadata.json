@@ -1,0 +1,30 @@
+{
+  "id": "corsair_h150i_elite_lcd",
+  "name": "Corsair iCUE H150i Elite LCD",
+  "description": "360mm AIO with 2.1-inch LCD display on pump head. Features iCUE integration, ML RGB fans, and customizable LCD showing temps, GIFs, or images.",
+  "price": 289.99,
+  "category": "Cooling",
+  "brand": "Corsair",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "LCD on pump is actually useful for temps.",
+      "rating": 5,
+      "reviewer_name": "LCDConvert",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "iCUE makes RGB sync easy.",
+      "rating": 5,
+      "reviewer_name": "CorsairEcosystem",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "LCD adds complexity and cost.",
+      "rating": 4,
+      "reviewer_name": "SimplicityFan",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

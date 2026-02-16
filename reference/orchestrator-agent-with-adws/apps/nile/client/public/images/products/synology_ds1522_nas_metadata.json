@@ -1,0 +1,30 @@
+{
+  "id": "synology_ds1522_nas",
+  "name": "Synology DS1522+ NAS",
+  "description": "5-bay NAS with AMD Ryzen R1600 and 8GB ECC RAM. Features 10GbE expandability, dual M.2 cache, and Synology DSM for home and small business storage needs.",
+  "price": 749.99,
+  "category": "Storage",
+  "brand": "Synology",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "5 bays with expansion option is perfect.",
+      "rating": 5,
+      "reviewer_name": "DataHoarder",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "10GbE option unlocks full potential.",
+      "rating": 5,
+      "reviewer_name": "10GUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Great NAS but pricey for home users.",
+      "rating": 4,
+      "reviewer_name": "HomeBudget",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

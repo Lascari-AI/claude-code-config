@@ -1,0 +1,30 @@
+{
+  "id": "razer_blade_18_2025",
+  "name": "Razer Blade 18 (2025)",
+  "description": "Ultimate gaming laptop with 18-inch 240Hz QHD+ display, RTX 5080, and Intel Core Ultra 9. Desktop-class performance in a portable package.",
+  "price": 3499.00,
+  "category": "Laptops",
+  "brand": "Razer",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Desktop replacement done right. 5080 mobile is insane.",
+      "rating": 5,
+      "reviewer_name": "MobileGamer",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "18 inches of gaming glory. 240Hz is butter smooth.",
+      "rating": 5,
+      "reviewer_name": "RefreshRateChaser",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Heavy and expensive but performance is unmatched.",
+      "rating": 4,
+      "reviewer_name": "NoCompromiseGamer",
+      "review_date": "2025-01-09"
+    }
+  ]
+}

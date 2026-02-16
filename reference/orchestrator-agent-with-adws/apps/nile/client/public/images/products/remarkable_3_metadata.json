@@ -1,0 +1,30 @@
+{
+  "id": "remarkable_3",
+  "name": "reMarkable 3",
+  "description": "Next-gen paper tablet with improved e-ink display and lower latency. Features handwriting to text conversion, cloud sync, and a distraction-free writing experience.",
+  "price": 449.00,
+  "category": "Tablets",
+  "brand": "reMarkable",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Writing feels exactly like paper. Amazing.",
+      "rating": 5,
+      "reviewer_name": "AnalogWriter",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Distraction-free is the point. Love it.",
+      "rating": 5,
+      "reviewer_name": "FocusFirst",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Expensive for what it does but does it perfectly.",
+      "rating": 4,
+      "reviewer_name": "ValueQuestioner",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

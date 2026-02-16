@@ -1,0 +1,30 @@
+{
+  "id": "crucial_x10_pro_2tb",
+  "name": "Crucial X10 Pro 2TB Portable SSD",
+  "description": "Compact portable SSD with 2100MB/s sequential reads. Features aluminum housing, Micron NAND, and excellent value. Professional performance, practical price.",
+  "price": 179.99,
+  "category": "Storage",
+  "brand": "Crucial",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Great speeds at reasonable price.",
+      "rating": 5,
+      "reviewer_name": "ValueSpeed",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Micron quality in small package.",
+      "rating": 5,
+      "reviewer_name": "MicronFan",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "No IP rating for ruggedness.",
+      "rating": 4,
+      "reviewer_name": "RuggedWanter",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

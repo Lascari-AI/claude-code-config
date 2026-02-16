@@ -1,0 +1,30 @@
+{
+  "id": "meta_quest_3s",
+  "name": "Meta Quest 3S",
+  "description": "Affordable entry to mixed reality with same software as Quest 3. Features LCD display, excellent passthrough, and full access to Quest game library.",
+  "price": 299.99,
+  "category": "VR/AR Headsets",
+  "brand": "Meta",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best entry point to VR. Cannot beat this value.",
+      "rating": 5,
+      "reviewer_name": "FirstTimeVR",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "LCD is fine for most users. Great starter headset.",
+      "rating": 5,
+      "reviewer_name": "PracticalBuyer",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Wish it had the better lenses but price is right.",
+      "rating": 4,
+      "reviewer_name": "BudgetVR",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

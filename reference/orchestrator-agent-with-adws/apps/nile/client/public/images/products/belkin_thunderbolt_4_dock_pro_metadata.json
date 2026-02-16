@@ -1,0 +1,30 @@
+{
+  "id": "belkin_thunderbolt_4_dock_pro",
+  "name": "Belkin Thunderbolt 4 Dock Pro",
+  "description": "Professional Thunderbolt 4 dock with 12 ports and 90W charging. Features SD 4.0, 2.5GbE, and dual display support. Belkin's premium docking solution.",
+  "price": 399.99,
+  "category": "Docking Stations",
+  "brand": "Belkin",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Belkin quality in Thunderbolt dock.",
+      "rating": 5,
+      "reviewer_name": "BelkinTrust",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "2.5GbE is great for future-proofing.",
+      "rating": 5,
+      "reviewer_name": "FutureProofer",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Competitive with CalDigit at similar price.",
+      "rating": 4,
+      "reviewer_name": "DockComparer",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

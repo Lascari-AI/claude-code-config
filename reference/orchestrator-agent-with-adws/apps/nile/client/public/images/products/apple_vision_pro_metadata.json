@@ -1,0 +1,30 @@
+{
+  "id": "apple_vision_pro",
+  "name": "Apple Vision Pro",
+  "description": "Revolutionary spatial computer with micro-OLED displays at 23 million pixels. Features eye tracking, hand gestures, and seamless Apple ecosystem integration. The future of computing.",
+  "price": 3499.00,
+  "category": "VR/AR Headsets",
+  "brand": "Apple",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "The display clarity is mind-blowing. Text is actually readable.",
+      "rating": 5,
+      "reviewer_name": "TechVisioneer",
+      "review_date": "2025-01-20"
+    },
+    {
+      "review_text": "Spatial computing changes how I think about work.",
+      "rating": 5,
+      "reviewer_name": "FutureWorker",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "Heavy for long sessions but technology is incredible.",
+      "rating": 4,
+      "reviewer_name": "ComfortSeeker",
+      "review_date": "2025-01-12"
+    }
+  ]
+}

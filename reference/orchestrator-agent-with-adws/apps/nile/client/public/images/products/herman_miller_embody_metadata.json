@@ -1,0 +1,30 @@
+{
+  "id": "herman_miller_embody",
+  "name": "Herman Miller Embody Chair",
+  "description": "Revolutionary ergonomic chair with pixelated support system. Features BackFit adjustment, narrow seat back for arm movement, and health-positive design for all-day sitting.",
+  "price": 1795.00,
+  "category": "Chairs",
+  "brand": "Herman Miller",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "The back design is uniquely comfortable. Nothing like it.",
+      "rating": 5,
+      "reviewer_name": "UniqueComfort",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "BackFit adjustment is intuitive and effective.",
+      "rating": 5,
+      "reviewer_name": "AdjustmentFan",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Looks unusual but feels incredible.",
+      "rating": 5,
+      "reviewer_name": "FunctionOverForm",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

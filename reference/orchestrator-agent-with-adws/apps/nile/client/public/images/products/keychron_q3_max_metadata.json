@@ -1,0 +1,30 @@
+{
+  "id": "keychron_q3_max",
+  "name": "Keychron Q3 Max",
+  "description": "Wireless TKL mechanical keyboard with 2.4GHz, Bluetooth 5.1, and wired modes. Features full aluminum body, QMK/VIA support, and programmable knob for ultimate customization.",
+  "price": 219.00,
+  "category": "Keyboards",
+  "brand": "Keychron",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "TKL layout is perfect. Knob is surprisingly useful.",
+      "rating": 5,
+      "reviewer_name": "TKLFan",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Triple connectivity means I use it everywhere.",
+      "rating": 5,
+      "reviewer_name": "MultiDeviceUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Great keyboard but wish 2.4GHz dongle was smaller.",
+      "rating": 4,
+      "reviewer_name": "DongleCritic",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

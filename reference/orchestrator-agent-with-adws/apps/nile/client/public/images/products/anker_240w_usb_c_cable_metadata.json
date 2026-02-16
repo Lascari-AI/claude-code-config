@@ -1,0 +1,30 @@
+{
+  "id": "anker_240w_usb_c_cable",
+  "name": "Anker 240W USB-C Cable",
+  "description": "USB-C cable supporting 240W USB PD 3.1 charging. Features 480Mbps data, braided nylon, and 10,000+ bend lifespan. Future-proof charging cable.",
+  "price": 19.99,
+  "category": "Cables",
+  "brand": "Anker",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "240W ready for future laptops.",
+      "rating": 5,
+      "reviewer_name": "FutureReady",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Anker quality at fair price.",
+      "rating": 5,
+      "reviewer_name": "AnkerLoyal",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Data speed only 480Mbps.",
+      "rating": 4,
+      "reviewer_name": "SpeedChecker",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

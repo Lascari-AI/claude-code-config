@@ -1,0 +1,30 @@
+{
+  "id": "elgato_key_light",
+  "name": "Elgato Key Light",
+  "description": "Professional LED panel for streaming and video calls. Features 2800 lumens, adjustable color temperature, and Stream Deck integration for easy control.",
+  "price": 199.99,
+  "category": "Desk Lighting",
+  "brand": "Elgato",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Stream quality improved dramatically.",
+      "rating": 5,
+      "reviewer_name": "QualityStreamer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Stream Deck integration is seamless.",
+      "rating": 5,
+      "reviewer_name": "StreamDeckUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Large panel but produces great light.",
+      "rating": 4,
+      "reviewer_name": "SpaceConscious",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

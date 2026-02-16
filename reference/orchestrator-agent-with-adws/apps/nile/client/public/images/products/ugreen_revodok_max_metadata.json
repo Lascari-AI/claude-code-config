@@ -1,0 +1,30 @@
+{
+  "id": "ugreen_revodok_max",
+  "name": "UGREEN Revodok Max 213 USB-C Hub",
+  "description": "13-port USB-C docking station with dual HDMI 4K60 and 100W PD. Features 10Gbps USB-C, audio ports, and full-size SD slots. Maximum ports, minimum footprint.",
+  "price": 129.99,
+  "category": "USB Hubs",
+  "brand": "UGREEN",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "13 ports packed in small hub.",
+      "rating": 5,
+      "reviewer_name": "PortMaximizer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "UGREEN quality getting better.",
+      "rating": 5,
+      "reviewer_name": "BrandWatcher",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Many ports but some compromises.",
+      "rating": 4,
+      "reviewer_name": "SpecAnalyst",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

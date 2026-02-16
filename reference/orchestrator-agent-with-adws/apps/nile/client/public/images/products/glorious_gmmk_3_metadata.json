@@ -1,0 +1,30 @@
+{
+  "id": "glorious_gmmk_3",
+  "name": "Glorious GMMK 3",
+  "description": "Modular full-size keyboard with pre-lubed GOAT stabilizers and hot-swap support. Features per-key RGB, USB-C, and compatibility with most MX-style switches.",
+  "price": 169.99,
+  "category": "Keyboards",
+  "brand": "Glorious",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Full-size with numpad. Finally a premium option.",
+      "rating": 5,
+      "reviewer_name": "NumpadLover",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "GOAT stabs really live up to the name.",
+      "rating": 5,
+      "reviewer_name": "StabSnob",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Software is better but still needs work.",
+      "rating": 4,
+      "reviewer_name": "SoftwareCritic",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

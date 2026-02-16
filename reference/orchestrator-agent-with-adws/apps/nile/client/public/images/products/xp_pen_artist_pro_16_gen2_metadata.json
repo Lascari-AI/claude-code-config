@@ -1,0 +1,30 @@
+{
+  "id": "xp_pen_artist_pro_16_gen2",
+  "name": "XP-Pen Artist Pro 16 Gen 2",
+  "description": "16-inch pen display with X3 Pro smart chip stylus for ultra-low latency. Features fully laminated display, 16K pressure levels, and excellent value for aspiring artists.",
+  "price": 399.99,
+  "category": "Drawing Tablets",
+  "brand": "XP-Pen",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best value pen display. Quality rivals Wacom.",
+      "rating": 5,
+      "reviewer_name": "ValueArtist",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "X3 stylus latency is impressively low.",
+      "rating": 5,
+      "reviewer_name": "LatencySensitive",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Software not as polished as Wacom.",
+      "rating": 4,
+      "reviewer_name": "SoftwareUser",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

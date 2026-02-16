@@ -1,0 +1,31 @@
+{
+  "id": "synology_ds923_nas",
+  "name": "Synology DS923+ NAS",
+  "image_prompt": "Synology DS923+ NAS, black 4-bay enclosure, front drive trays visible, compact server design",
+  "description": "Powerful 4-bay NAS with AMD Ryzen R1600 CPU and 4GB ECC RAM. Features Synology DSM, Docker support, hardware transcoding, and dual M.2 NVMe cache slots. Expandable to 9 bays.",
+  "price": 599.99,
+  "category": "Storage",
+  "brand": "Synology",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "DSM is the best NAS OS. Docker containers run flawlessly.",
+      "rating": 5,
+      "reviewer_name": "SelfHoster",
+      "review_date": "2024-11-14"
+    },
+    {
+      "review_text": "Perfect for my home lab and Time Machine backups.",
+      "rating": 5,
+      "reviewer_name": "MacBackupPro",
+      "review_date": "2024-10-20"
+    },
+    {
+      "review_text": "Wish it came with more RAM but easy to upgrade.",
+      "rating": 4,
+      "reviewer_name": "RAMUpgrader",
+      "review_date": "2024-09-25"
+    }
+  ]
+}

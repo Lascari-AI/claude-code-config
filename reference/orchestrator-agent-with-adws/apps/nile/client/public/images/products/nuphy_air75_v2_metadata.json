@@ -1,0 +1,30 @@
+{
+  "id": "nuphy_air75_v2",
+  "name": "NuPhy Air75 V2",
+  "description": "Ultra-slim 75% mechanical keyboard with low-profile Gateron switches. Features RGB backlighting, triple connectivity, and unique colorful aesthetic. Perfect for Mac and Windows.",
+  "price": 139.00,
+  "category": "Keyboards",
+  "brand": "NuPhy",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Low profile done right. Feels like typing on a MacBook but better.",
+      "rating": 5,
+      "reviewer_name": "LowProfileFan",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "The colorful keycaps are surprisingly nice.",
+      "rating": 5,
+      "reviewer_name": "ColorfulDesk",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Good board but switches are not as tactile as full-height.",
+      "rating": 4,
+      "reviewer_name": "TactileLover",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

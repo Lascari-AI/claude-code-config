@@ -1,0 +1,30 @@
+{
+  "id": "satechi_usb4_multiport",
+  "name": "Satechi USB4 Multiport Adapter",
+  "description": "Slim USB4 adapter with HDMI 8K, USB-C, USB-A, and SD card slot. Features 85W pass-through charging and ultra-portable design. The travel dock evolved.",
+  "price": 149.99,
+  "category": "USB Hubs",
+  "brand": "Satechi",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "USB4 speeds in portable form.",
+      "rating": 5,
+      "reviewer_name": "RoadWarrior",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Satechi design matches Apple perfectly.",
+      "rating": 5,
+      "reviewer_name": "AppleMatched",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Premium price for travel adapter.",
+      "rating": 4,
+      "reviewer_name": "TravelBudget",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

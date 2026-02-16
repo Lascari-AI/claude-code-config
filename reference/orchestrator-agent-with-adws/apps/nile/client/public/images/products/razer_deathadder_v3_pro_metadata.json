@@ -1,0 +1,30 @@
+{
+  "id": "razer_deathadder_v3_pro",
+  "name": "Razer DeathAdder V3 Pro",
+  "description": "Legendary ergonomic shape refined to 63g wireless. Features Focus Pro 30K sensor, HyperSpeed wireless, and 90-hour battery. The most comfortable FPS mouse.",
+  "price": 149.99,
+  "category": "Mice",
+  "brand": "Razer",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "DA shape perfected. Best ergo mouse ever made.",
+      "rating": 5,
+      "reviewer_name": "ErgoFan",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Palm grip paradise. No hand fatigue in long sessions.",
+      "rating": 5,
+      "reviewer_name": "PalmGripper",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Wish it was a bit lighter but shape trumps weight.",
+      "rating": 4,
+      "reviewer_name": "WeightWatcher",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

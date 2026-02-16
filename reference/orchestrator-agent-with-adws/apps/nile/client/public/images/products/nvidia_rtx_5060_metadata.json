@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_5060",
+  "name": "NVIDIA GeForce RTX 5060",
+  "description": "Budget-friendly Blackwell GPU with 8GB GDDR7. Brings ray tracing and DLSS 4.0 to mainstream gamers with excellent 1080p and solid 1440p performance.",
+  "price": 299.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Finally a budget card with proper ray tracing. Amazing value.",
+      "rating": 5,
+      "reviewer_name": "Budget1080p",
+      "review_date": "2025-01-11"
+    },
+    {
+      "review_text": "Perfect for my first gaming PC build. Handles everything.",
+      "rating": 5,
+      "reviewer_name": "FirstBuilder",
+      "review_date": "2025-01-06"
+    },
+    {
+      "review_text": "8GB is tight for some newer games but DLSS helps.",
+      "rating": 4,
+      "reviewer_name": "VRAMConscious",
+      "review_date": "2025-01-01"
+    }
+  ]
+}

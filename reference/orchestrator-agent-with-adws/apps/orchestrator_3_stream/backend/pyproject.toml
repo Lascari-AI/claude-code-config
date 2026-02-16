@@ -1,0 +1,24 @@
+[project]
+name = "orchestrator_3_stream_backend"
+version = "1.0.0"
+description = "Orchestrator 3 Stream - PostgreSQL-backed multi-agent orchestration"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "websockets",
+    "python-multipart",
+    "asyncpg",
+    "claude-agent-sdk",
+    "rich",
+    "pydantic",
+    "python-dotenv",
+]
+
+[tool.uv]
+dev-dependencies = []
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]

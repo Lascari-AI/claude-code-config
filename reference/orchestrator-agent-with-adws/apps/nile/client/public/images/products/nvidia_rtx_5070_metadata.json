@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_5070",
+  "name": "NVIDIA GeForce RTX 5070",
+  "description": "Mainstream Blackwell GPU delivering exceptional 1440p performance with 12GB GDDR7. Features full DLSS 4.0 support and improved ray tracing cores for next-gen gaming.",
+  "price": 549.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best price-to-performance GPU on the market right now.",
+      "rating": 5,
+      "reviewer_name": "BudgetBuilder",
+      "review_date": "2025-01-13"
+    },
+    {
+      "review_text": "Handles 1440p like a champ. DLSS makes it even better.",
+      "rating": 5,
+      "reviewer_name": "MidRangeKing",
+      "review_date": "2025-01-07"
+    },
+    {
+      "review_text": "Great card for the price. Runs cool and quiet.",
+      "rating": 4,
+      "reviewer_name": "SilentGamer",
+      "review_date": "2025-01-02"
+    }
+  ]
+}

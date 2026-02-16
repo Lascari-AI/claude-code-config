@@ -1,0 +1,30 @@
+{
+  "id": "onyx_boox_tab_ultra_c_pro",
+  "name": "ONYX BOOX Tab Ultra C Pro",
+  "description": "10.3-inch color e-ink tablet with Kaleido 3 display. Features Android apps, note-taking with stylus, and eye-friendly reading experience. Perfect for documents and reading.",
+  "price": 599.99,
+  "category": "Tablets",
+  "brand": "ONYX BOOX",
+  "rating": 4.5,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Color e-ink is finally good. Great for reading.",
+      "rating": 5,
+      "reviewer_name": "EInkReader",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Perfect for PDF documents. No eye strain.",
+      "rating": 5,
+      "reviewer_name": "DocumentReader",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Refresh rate limits video but that is expected.",
+      "rating": 4,
+      "reviewer_name": "RefreshRateRealist",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "nvidia_rtx_4070_super",
+  "name": "NVIDIA RTX 4070 Super",
+  "image_prompt": "NVIDIA GeForce RTX 4070 Super graphics card, Founders Edition, dual fan design, titanium and black shroud",
+  "description": "Next-gen gaming GPU with 16GB GDDR6X memory and DLSS 3.5 support. Features ray tracing, AI-powered features, and excellent 1440p gaming performance with low power consumption.",
+  "price": 599.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "DLSS 3.5 is magic. Smooth 4K gaming on demanding titles.",
+      "rating": 5,
+      "reviewer_name": "PCGamer",
+      "review_date": "2024-11-16"
+    },
+    {
+      "review_text": "Perfect for ML dev work. CUDA cores handle training well.",
+      "rating": 5,
+      "reviewer_name": "MLResearcher",
+      "review_date": "2024-10-25"
+    },
+    {
+      "review_text": "Great card but wish it had more VRAM for future proofing.",
+      "rating": 4,
+      "reviewer_name": "FutureProofer",
+      "review_date": "2024-09-30"
+    }
+  ]
+}

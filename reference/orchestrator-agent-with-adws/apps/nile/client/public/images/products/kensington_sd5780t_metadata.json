@@ -1,0 +1,30 @@
+{
+  "id": "kensington_sd5780t",
+  "name": "Kensington SD5780T Thunderbolt 4 Dock",
+  "description": "Enterprise-grade Thunderbolt 4 dock with dual 4K support and 96W charging. Features USB-A/C mix, SD card reader, and Kensington's enterprise security focus.",
+  "price": 349.99,
+  "category": "Docking Stations",
+  "brand": "Kensington",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Enterprise-ready dock that just works.",
+      "rating": 5,
+      "reviewer_name": "ITManager",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Kensington build quality is excellent.",
+      "rating": 5,
+      "reviewer_name": "QualityBuyer",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Less ports than competitors at price.",
+      "rating": 4,
+      "reviewer_name": "PortCounter",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

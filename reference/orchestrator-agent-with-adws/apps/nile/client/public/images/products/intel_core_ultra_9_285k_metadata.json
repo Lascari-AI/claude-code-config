@@ -1,0 +1,30 @@
+{
+  "id": "intel_core_ultra_9_285k",
+  "name": "Intel Core Ultra 9 285K",
+  "description": "Intel flagship Arrow Lake CPU with 24 cores (8P+16E) and 5.7GHz boost. Features neural processing unit for AI acceleration and best-in-class single-threaded performance.",
+  "price": 599.99,
+  "category": "Processors",
+  "brand": "Intel",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Single-thread king. Best for gaming and dev work.",
+      "rating": 5,
+      "reviewer_name": "IntelFanboy",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "NPU acceleration in dev tools is the future.",
+      "rating": 5,
+      "reviewer_name": "AIDevloper",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Runs hot but performance is undeniable.",
+      "rating": 4,
+      "reviewer_name": "ThermalWorrier",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

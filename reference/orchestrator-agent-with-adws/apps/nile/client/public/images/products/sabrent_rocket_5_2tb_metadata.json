@@ -1,0 +1,30 @@
+{
+  "id": "sabrent_rocket_5_2tb",
+  "name": "Sabrent Rocket 5 2TB",
+  "description": "Enthusiast PCIe 5.0 SSD with 14,000MB/s reads at competitive pricing. Great value for early adopters of Gen5 storage technology.",
+  "price": 229.99,
+  "category": "Storage",
+  "brand": "Sabrent",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Gen5 speeds at Gen4 flagship prices. Great deal.",
+      "rating": 5,
+      "reviewer_name": "ValueHunter",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Sabrent delivers again. Reliable and fast.",
+      "rating": 5,
+      "reviewer_name": "SabrentFan",
+      "review_date": "2024-12-10"
+    },
+    {
+      "review_text": "Good drive but included heatsink is basic.",
+      "rating": 4,
+      "reviewer_name": "HeatsinkSnob",
+      "review_date": "2024-12-05"
+    }
+  ]
+}

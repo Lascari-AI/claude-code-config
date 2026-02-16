@@ -1,0 +1,30 @@
+{
+  "id": "viewsonic_vp16_oled",
+  "name": "ViewSonic VP16 OLED Portable",
+  "description": "16-inch portable OLED monitor with 4K resolution and factory calibration. Features USB-C connectivity, built-in kickstand, and protective carrying case for mobile professionals.",
+  "price": 399.99,
+  "category": "Monitors",
+  "brand": "ViewSonic",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "OLED portable monitor changes travel work setup.",
+      "rating": 5,
+      "reviewer_name": "RoadWarrior",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Color accuracy rivals desktop monitors.",
+      "rating": 5,
+      "reviewer_name": "ColorOnTheGo",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Battery would be nice but USB-C power works.",
+      "rating": 4,
+      "reviewer_name": "PowerAware",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "luminos_ambient_bar",
+  "name": "Luminos Ambient Bar Pro",
+  "description": "RGB monitor light with customizable ambient zones. Features app control, screen content matching, and premium aluminum construction. The smart monitor light.",
+  "price": 149.99,
+  "category": "Desk Lighting",
+  "brand": "Luminos",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Screen matching ambient light is incredible.",
+      "rating": 5,
+      "reviewer_name": "AmbientTech",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "App control offers endless customization.",
+      "rating": 5,
+      "reviewer_name": "CustomizerPro",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "RGB is optional but well implemented.",
+      "rating": 4,
+      "reviewer_name": "RGBOptional",
+      "review_date": "2025-01-08"
+    }
+  ]
+}

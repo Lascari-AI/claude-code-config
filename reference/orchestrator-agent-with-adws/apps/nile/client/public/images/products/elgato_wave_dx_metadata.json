@@ -1,0 +1,30 @@
+{
+  "id": "elgato_wave_dx",
+  "name": "Elgato Wave DX",
+  "description": "Broadcast-grade dynamic XLR microphone designed for streamers and podcasters. Features tight cardioid pattern, internal shock mount, and premium condenser-killing rejection.",
+  "price": 99.99,
+  "category": "Microphones",
+  "brand": "Elgato",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Finally an affordable broadcast dynamic. Sounds expensive.",
+      "rating": 5,
+      "reviewer_name": "BudgetBroadcast",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Rejects my keyboard perfectly. Clean audio.",
+      "rating": 5,
+      "reviewer_name": "MechKeyStreamer",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Needs a good preamp to shine.",
+      "rating": 4,
+      "reviewer_name": "PreampUser",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

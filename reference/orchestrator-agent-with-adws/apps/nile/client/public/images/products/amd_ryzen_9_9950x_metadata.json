@@ -1,0 +1,30 @@
+{
+  "id": "amd_ryzen_9_9950x",
+  "name": "AMD Ryzen 9 9950X",
+  "description": "AMD flagship Zen 5 CPU with 16 cores/32 threads and 5.7GHz boost. Exceptional multi-threaded performance with industry-leading efficiency and AM5 platform longevity.",
+  "price": 649.99,
+  "category": "Processors",
+  "brand": "AMD",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Multi-threaded monster. Compiles faster than anything.",
+      "rating": 5,
+      "reviewer_name": "BuildEngineer",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "Efficiency is insane. Cool and quiet under load.",
+      "rating": 5,
+      "reviewer_name": "EfficientBuilder",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "AM5 platform gives years of upgrade path.",
+      "rating": 5,
+      "reviewer_name": "FuturePlanner",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

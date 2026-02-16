@@ -1,0 +1,30 @@
+{
+  "id": "plugable_tbt4_ud5",
+  "name": "Plugable TBT4-UD5 Thunderbolt 4 Dock",
+  "description": "Value Thunderbolt 4 dock with single display focus and essential ports. Features 96W charging, 4x USB ports, and 1GbE. Best value in Thunderbolt docking.",
+  "price": 249.00,
+  "category": "Docking Stations",
+  "brand": "Plugable",
+  "rating": 4.4,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best value TB4 dock on market.",
+      "rating": 5,
+      "reviewer_name": "BudgetTB4",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Plugable support is excellent.",
+      "rating": 5,
+      "reviewer_name": "SupportMatters",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Single display limits some setups.",
+      "rating": 4,
+      "reviewer_name": "DualMonitorUser",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

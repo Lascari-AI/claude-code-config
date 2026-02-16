@@ -1,0 +1,30 @@
+{
+  "id": "samsung_viewfinity_s9_5k",
+  "name": "Samsung ViewFinity S9 27\" 5K",
+  "description": "27-inch 5K monitor competing with Apple Studio Display. Features matte display option, SlimFit camera included, and Thunderbolt 4 with 90W charging.",
+  "price": 1299.99,
+  "category": "Monitors",
+  "brand": "Samsung",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "5K for non-Apple users finally. Looks great.",
+      "rating": 5,
+      "reviewer_name": "WindowsProUser",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Matte option is perfect for bright offices.",
+      "rating": 5,
+      "reviewer_name": "GlareHater",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Webcam quality is just okay.",
+      "rating": 4,
+      "reviewer_name": "WebcamCritic",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

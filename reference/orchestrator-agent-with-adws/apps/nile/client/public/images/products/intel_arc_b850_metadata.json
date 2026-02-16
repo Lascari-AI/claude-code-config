@@ -1,0 +1,30 @@
+{
+  "id": "intel_arc_b850",
+  "name": "Intel Arc B850",
+  "description": "Intel's flagship Battlemage GPU with 16GB GDDR7. Features XeSS 2.0 upscaling, strong ray tracing, and excellent AV1 encoding. Great for creators and gamers alike.",
+  "price": 449.99,
+  "category": "Graphics Cards",
+  "brand": "Intel",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Intel finally nailed it. Competitive performance and drivers work.",
+      "rating": 5,
+      "reviewer_name": "IntelBeliever",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Best AV1 encoder on the market. Streamers take note.",
+      "rating": 5,
+      "reviewer_name": "ContentStreamer",
+      "review_date": "2025-01-09"
+    },
+    {
+      "review_text": "Great value but some games still need driver updates.",
+      "rating": 4,
+      "reviewer_name": "PatientGamer",
+      "review_date": "2025-01-04"
+    }
+  ]
+}

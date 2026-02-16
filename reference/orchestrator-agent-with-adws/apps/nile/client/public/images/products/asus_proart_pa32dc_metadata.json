@@ -1,0 +1,30 @@
+{
+  "id": "asus_proart_pa32dc",
+  "name": "ASUS ProArt PA32DC OLED",
+  "description": "32-inch OLED reference monitor with built-in colorimeter for auto-calibration. Features 99% DCI-P3, true 10-bit color, and Delta E <1 accuracy for color-critical work.",
+  "price": 3499.99,
+  "category": "Monitors",
+  "brand": "ASUS",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Built-in colorimeter is genius. Always accurate.",
+      "rating": 5,
+      "reviewer_name": "ColorPerfectionist",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "OLED for professional color work. Finally.",
+      "rating": 5,
+      "reviewer_name": "ProColorist",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Premium price but essential for professional work.",
+      "rating": 5,
+      "reviewer_name": "ProInvestment",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

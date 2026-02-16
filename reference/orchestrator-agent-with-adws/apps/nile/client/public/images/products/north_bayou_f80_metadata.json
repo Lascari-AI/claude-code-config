@@ -1,0 +1,30 @@
+{
+  "id": "north_bayou_f80",
+  "name": "North Bayou F80 Monitor Arm",
+  "description": "Gas spring monitor arm with smooth motion. Features quick release VESA plate, 360-degree rotation, and excellent value for full-featured monitor mounting.",
+  "price": 59.99,
+  "category": "Monitor Arms",
+  "brand": "North Bayou",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Gas spring is smooth at this price point.",
+      "rating": 5,
+      "reviewer_name": "GasSpringFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Quick release makes monitor swapping easy.",
+      "rating": 5,
+      "reviewer_name": "MonitorSwapper",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Cable management could be better.",
+      "rating": 4,
+      "reviewer_name": "CableManager",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

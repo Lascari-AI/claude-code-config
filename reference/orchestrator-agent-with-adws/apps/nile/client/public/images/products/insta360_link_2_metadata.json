@@ -1,0 +1,30 @@
+{
+  "id": "insta360_link_2",
+  "name": "Insta360 Link 2",
+  "description": "AI-powered 4K webcam with 3-axis gimbal for automatic tracking. Features gesture control, whiteboard mode, and AI-powered background removal. The smartest webcam.",
+  "price": 299.99,
+  "category": "Webcams",
+  "brand": "Insta360",
+  "rating": 4.6,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "AI tracking actually works. Follows me around my office.",
+      "rating": 5,
+      "reviewer_name": "MobilePresenter",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Whiteboard mode is incredible for teaching.",
+      "rating": 5,
+      "reviewer_name": "RemoteTeacher",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Gimbal motor is slightly audible.",
+      "rating": 4,
+      "reviewer_name": "NoiseSensitive",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

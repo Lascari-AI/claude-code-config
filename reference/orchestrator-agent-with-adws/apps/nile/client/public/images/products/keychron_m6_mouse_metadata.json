@@ -1,0 +1,31 @@
+{
+  "id": "keychron_m6_mouse",
+  "name": "Keychron M6 Wireless Mouse",
+  "image_prompt": "Keychron M6 wireless gaming mouse, white, lightweight honeycomb shell, RGB underglow, ergonomic shape",
+  "description": "Ultra-lightweight wireless gaming mouse at 78g with PixArt 3395 sensor. Features 26K DPI, 1000Hz polling rate, 80-hour battery life, and hot-swappable switches.",
+  "price": 79.99,
+  "category": "Mice",
+  "brand": "Keychron",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Insane value for a wireless mouse with this sensor.",
+      "rating": 5,
+      "reviewer_name": "FPSPlayer",
+      "review_date": "2024-11-13"
+    },
+    {
+      "review_text": "Hot-swappable switches let me customize the click feel.",
+      "rating": 5,
+      "reviewer_name": "ClickCustomizer",
+      "review_date": "2024-10-19"
+    },
+    {
+      "review_text": "Great mouse but software is basic compared to competitors.",
+      "rating": 4,
+      "reviewer_name": "SoftwareCritic",
+      "review_date": "2024-09-24"
+    }
+  ]
+}

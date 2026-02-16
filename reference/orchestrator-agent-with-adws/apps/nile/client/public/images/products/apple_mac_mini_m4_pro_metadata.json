@@ -1,0 +1,30 @@
+{
+  "id": "apple_mac_mini_m4_pro",
+  "name": "Apple Mac Mini M4 Pro",
+  "description": "Compact powerhouse with M4 Pro chip, 24GB unified memory, and Thunderbolt 5. Incredible performance per cubic inch for developers and creators.",
+  "price": 1599.0,
+  "category": "Desktops",
+  "brand": "Apple",
+  "rating": 4.9,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "So much power in such a tiny box. Mind-blowing.",
+      "rating": 5,
+      "reviewer_name": "SmallFormFactor",
+      "review_date": "2025-01-20"
+    },
+    {
+      "review_text": "Perfect for my desk setup. Silent and powerful.",
+      "rating": 5,
+      "reviewer_name": "CleanDeskFan",
+      "review_date": "2025-01-15"
+    },
+    {
+      "review_text": "Thunderbolt 5 is game-changing for external storage.",
+      "rating": 5,
+      "reviewer_name": "StorageEnthusiast",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

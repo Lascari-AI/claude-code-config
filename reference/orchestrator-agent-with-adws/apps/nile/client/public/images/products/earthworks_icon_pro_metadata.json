@@ -1,0 +1,30 @@
+{
+  "id": "earthworks_icon_pro",
+  "name": "Earthworks Icon Pro",
+  "description": "Premium American-made broadcast microphone with 20Hz-30kHz response. Features aircraft-grade stainless steel, low noise preamp, and reference-grade accuracy.",
+  "price": 499.00,
+  "category": "Microphones",
+  "brand": "Earthworks",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Reference quality for broadcast. Nothing compares.",
+      "rating": 5,
+      "reviewer_name": "BroadcastPro",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "Flat response means you hear your real voice.",
+      "rating": 5,
+      "reviewer_name": "FlatResponse",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Premium price for premium quality. Worth it.",
+      "rating": 5,
+      "reviewer_name": "PremiumInvestor",
+      "review_date": "2024-12-12"
+    }
+  ]
+}

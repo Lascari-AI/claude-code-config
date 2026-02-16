@@ -1,0 +1,30 @@
+{
+  "id": "vivo_dual_arm_v002",
+  "name": "VIVO Dual Monitor Stand V002",
+  "description": "Free-standing dual monitor stand without desk clamp. Features independent height adjustment, 360-degree rotation, and easy setup without desk modification.",
+  "price": 89.99,
+  "category": "Monitor Arms",
+  "brand": "VIVO",
+  "rating": 4.3,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "No clamp needed. Perfect for glass desks.",
+      "rating": 5,
+      "reviewer_name": "GlassDeskOwner",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Free-standing means easy repositioning.",
+      "rating": 5,
+      "reviewer_name": "FlexibleSetup",
+      "review_date": "2024-12-10"
+    },
+    {
+      "review_text": "Takes up desk space but works well.",
+      "rating": 4,
+      "reviewer_name": "SpaceTrader",
+      "review_date": "2024-12-06"
+    }
+  ]
+}

@@ -1,0 +1,1122 @@
+{
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
+
+  "session_id": "2026-02-16_session-database-tracking-necessity_j3ehqn",
+  "spec_reference": "./spec.md",
+  "created_at": "2026-02-16T22:00:00Z",
+  "updated_at": "2026-02-16T22:50:00Z",
+  "status": "complete",
+
+  "checkpoints": [
+    {
+      "id": 1,
+      "title": "Add Save Callback to StateManager + Minimal Async Sync",
+      "goal": "Implement the on_save_callback mechanism in StateManager and create the minimal async sync infrastructure. This is the tracer bullet: StateManager.save() triggers callback → callback queues async task → task syncs to DB. End-to-end working with one session save.",
+      "prerequisites": [],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "1.1",
+          "title": "Add on_save_callback to SessionStateManager",
+          "objective": "Modify SessionStateManager to accept an optional callback that fires after save() completes. The callback receives the session_dir path. Callback is fire-and-forget: exceptions are logged but don't break save().",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.1.1",
+              "title": "Define SaveCallback type alias",
+              "file_path": "apps/core/backend/state_manager/state_manager.py",
+              "description": "Add a type alias for the callback signature at module level. The callback receives session_dir (Path) and returns None. This type alias will be used by __init__ and save() methods for type safety.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/state_manager/state_manager.py",
+                    "lines": "1-55",
+                    "purpose": "Understand existing imports and class structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.1.1.1",
+                  "command": "UPDATE imports: ADD Callable from typing",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.1.2",
+                  "command": "CREATE TYPE SaveCallback = Callable[[Path], None] | None AFTER imports BEFORE class",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.2",
+              "title": "Add on_save_callback parameter to __init__",
+              "file_path": "apps/core/backend/state_manager/state_manager.py",
+              "description": "Modify SessionStateManager.__init__ to accept optional on_save_callback parameter. Store as instance attribute self._on_save_callback. Default to None.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/state_manager/state_manager.py",
+                    "lines": "47-55",
+                    "purpose": "Understand current __init__ signature and attributes"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {
+                  "id": "1.1.2.1",
+                  "command": "UPDATE FUNCTION __init__: ADD param on_save_callback: SaveCallback DEFAULT None",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.2.2",
+                  "command": "UPDATE FUNCTION __init__: ADD self._on_save_callback = on_save_callback",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.2.3",
+                  "command": "UPDATE docstring __init__: ADD on_save_callback parameter description",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.3",
+              "title": "Invoke callback in save() method",
+              "file_path": "apps/core/backend/state_manager/state_manager.py",
+              "description": "Modify save() method to invoke callback in finally block after successful file write. Wrap callback invocation in try/except to log errors without re-raising. Callback should be fire-and-forget to not block save().",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/state_manager/state_manager.py",
+                    "lines": "97-123",
+                    "purpose": "Understand current save() implementation"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.2"],
+              "actions": [
+                {
+                  "id": "1.1.3.1",
+                  "command": "UPDATE imports: ADD logging",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.2",
+                  "command": "CREATE VAR logger = logging.getLogger(__name__) AFTER imports",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.3.3",
+                  "command": "UPDATE FUNCTION save: WRAP file write in try/finally, ADD callback invocation in finally with try/except logging errors",
+                  "file": "apps/core/backend/state_manager/state_manager.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.4",
+              "title": "Update __init__.py exports",
+              "file_path": "apps/core/backend/state_manager/__init__.py",
+              "description": "Export SaveCallback type alias from __init__.py for external callers who need to type-hint callbacks they pass to SessionStateManager.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/state_manager/__init__.py",
+                    "lines": "1-58",
+                    "purpose": "Understand current exports and structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {
+                  "id": "1.1.4.1",
+                  "command": "UPDATE import from .state_manager: ADD SaveCallback",
+                  "file": "apps/core/backend/state_manager/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.4.2",
+                  "command": "UPDATE __all__: ADD \"SaveCallback\" to exports list",
+                  "file": "apps/core/backend/state_manager/__init__.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "Create async sync task module",
+          "objective": "Create the async_sync.py module in session_db/ that provides a queue_sync_task() function. This wraps the existing sync_session_from_filesystem for background execution. Uses asyncio.create_task or similar pattern.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.2.1",
+              "title": "Create async_sync.py module skeleton",
+              "file_path": "apps/core/session_db/async_sync.py",
+              "description": "Create new async_sync.py module with imports, module docstring, and logger setup. This will contain the queue_sync_task function and related async infrastructure.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/sync.py",
+                    "lines": "1-50",
+                    "purpose": "Understand existing sync module structure and imports"
+                  },
+                  {
+                    "file": "apps/core/session_db/database.py",
+                    "lines": "1-50",
+                    "purpose": "Understand how to get database sessions"
+                  }
+                ],
+                "related_files": ["apps/core/session_db/__init__.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.2.1.1",
+                  "command": "CREATE FILE apps/core/session_db/async_sync.py with module docstring, imports (asyncio, logging, Path, sync functions)",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.2",
+                  "command": "CREATE VAR logger = logging.getLogger(__name__)",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.2.2",
+              "title": "Implement queue_sync_task function",
+              "file_path": "apps/core/session_db/async_sync.py",
+              "description": "Create queue_sync_task(session_dir: Path) function that creates an asyncio task to sync the session. Uses sync_session_from_filesystem wrapped in async context with database session.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/sync.py",
+                    "lines": "321-391",
+                    "purpose": "Understand sync_session_from_filesystem signature and usage"
+                  },
+                  {
+                    "file": "apps/core/session_db/database.py",
+                    "lines": "1-100",
+                    "purpose": "Understand get_async_session context manager"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.2.1"],
+              "actions": [
+                {
+                  "id": "1.2.2.1",
+                  "command": "CREATE FUNCTION _sync_session_async(session_dir: Path, working_dir: str): async wrapper that gets db session and calls sync_session_from_filesystem",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.2.2",
+                  "command": "CREATE FUNCTION queue_sync_task(session_dir: Path, working_dir: str | None = None): creates asyncio.create_task for _sync_session_async, logs errors, returns None (fire-and-forget)",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.2.3",
+              "title": "Create callback factory function",
+              "file_path": "apps/core/session_db/async_sync.py",
+              "description": "Create make_sync_callback(working_dir: str) function that returns a SaveCallback-compatible function. This is the callback to inject into StateManager.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/state_manager/state_manager.py",
+                    "lines": "1-20",
+                    "purpose": "Understand SaveCallback type signature"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.2.2"],
+              "actions": [
+                {
+                  "id": "1.2.3.1",
+                  "command": "CREATE FUNCTION make_sync_callback(working_dir: str) -> Callable[[Path], None]: returns closure that calls queue_sync_task with working_dir",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.2.4",
+              "title": "Update session_db __init__.py exports",
+              "file_path": "apps/core/session_db/__init__.py",
+              "description": "Export queue_sync_task and make_sync_callback from the session_db package for external use.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/__init__.py",
+                    "lines": "1-50",
+                    "purpose": "Understand current exports"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.2.3"],
+              "actions": [
+                {
+                  "id": "1.2.4.1",
+                  "command": "UPDATE apps/core/session_db/__init__.py: ADD imports from .async_sync (queue_sync_task, make_sync_callback)",
+                  "file": "apps/core/session_db/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.4.2",
+                  "command": "UPDATE __all__: ADD queue_sync_task, make_sync_callback",
+                  "file": "apps/core/session_db/__init__.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.3",
+          "title": "Add tests for callback and async sync",
+          "objective": "Test that the callback is invoked correctly after save(), callback exceptions don't break save(), and the async sync task correctly calls sync_session_from_filesystem.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.3.1",
+              "title": "Test StateManager callback invocation",
+              "file_path": "apps/core/backend/state_manager/tests/test_callback.py",
+              "description": "Create test file for callback functionality. Test that callback is called after save(), callback receives correct session_dir, and that callback errors are logged but don't break save().",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/state_manager/state_manager.py",
+                    "lines": "97-130",
+                    "purpose": "Understand save() method with callback"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.3.1.1",
+                  "command": "CREATE FILE apps/core/backend/state_manager/tests/test_callback.py with imports (pytest, Mock, SessionStateManager)",
+                  "file": "apps/core/backend/state_manager/tests/test_callback.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.2",
+                  "command": "TEST test_callback_invoked_after_save: MOCK callback, call save(), VERIFY callback was called once with session_dir",
+                  "file": "apps/core/backend/state_manager/tests/test_callback.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.3",
+                  "command": "TEST test_callback_exception_does_not_break_save: MOCK callback to raise, call save(), VERIFY save completes and state file exists",
+                  "file": "apps/core/backend/state_manager/tests/test_callback.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.4",
+                  "command": "TEST test_no_callback_works: create StateManager without callback, call save(), VERIFY no error",
+                  "file": "apps/core/backend/state_manager/tests/test_callback.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.3.2",
+              "title": "Test async sync queue function",
+              "file_path": "apps/core/session_db/tests/test_async_sync.py",
+              "description": "Create test file for async_sync module. Test queue_sync_task creates task, make_sync_callback returns callable, and integration with sync_session_from_filesystem.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/async_sync.py",
+                    "lines": "1-100",
+                    "purpose": "Understand async_sync module implementation"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.3.2.1",
+                  "command": "CREATE FILE apps/core/session_db/tests/test_async_sync.py with imports (pytest, asyncio, patch)",
+                  "file": "apps/core/session_db/tests/test_async_sync.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.2.2",
+                  "command": "TEST test_queue_sync_task_creates_task: MOCK sync_session_from_filesystem, call queue_sync_task, VERIFY task is created",
+                  "file": "apps/core/session_db/tests/test_async_sync.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.2.3",
+                  "command": "TEST test_make_sync_callback_returns_callable: call make_sync_callback, ASSERT returns callable that accepts Path",
+                  "file": "apps/core/session_db/tests/test_async_sync.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.2.4",
+                  "command": "TEST test_callback_calls_queue_sync_task: create callback via make_sync_callback, call with session_dir, VERIFY queue_sync_task invoked",
+                  "file": "apps/core/session_db/tests/test_async_sync.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Unit tests for callback mechanism, integration test for async sync",
+        "verification_steps": [
+          "pytest apps/core/backend/state_manager/tests/",
+          "pytest apps/core/session_db/tests/test_async_sync.py"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "title": "Project Open Triggers Batch Sync",
+      "goal": "When a project is opened in the UI, trigger batch sync for all sessions in that project. Uses existing sync_all_sessions_in_project function but runs it asynchronously without blocking the UI response.",
+      "prerequisites": [1],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "2.1",
+          "title": "Add batch sync API endpoint",
+          "objective": "Create a POST /api/projects/[id]/sync endpoint that triggers background batch sync for all sessions in the project. Uses async_sync infrastructure from CP1.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.1.1",
+              "title": "Create sync API route file",
+              "file_path": "apps/core/frontend/src/app/api/projects/[id]/sync/route.ts",
+              "description": "Create new API route for POST /api/projects/[id]/sync. Returns 202 Accepted immediately while triggering background sync. Calls Python backend's async sync function via server action or API.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/api/projects/[id]/route.ts",
+                    "lines": "1-75",
+                    "purpose": "Understand existing project API route pattern"
+                  }
+                ],
+                "related_files": ["apps/core/session_db/async_sync.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.1.1.1",
+                  "command": "CREATE FILE apps/core/frontend/src/app/api/projects/[id]/sync/route.ts with NextJS route handler structure",
+                  "file": "apps/core/frontend/src/app/api/projects/[id]/sync/route.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.2",
+                  "command": "CREATE FUNCTION POST: get project by id, trigger sync_all_sessions, return 202 Accepted with sync status",
+                  "file": "apps/core/frontend/src/app/api/projects/[id]/sync/route.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.1.2",
+              "title": "Add batch sync function wrapper",
+              "file_path": "apps/core/session_db/async_sync.py",
+              "description": "Add queue_batch_sync_task function that wraps sync_all_sessions_in_project for async background execution. Similar pattern to queue_sync_task but for batch operations.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/async_sync.py",
+                    "lines": "1-100",
+                    "purpose": "Understand existing async sync pattern"
+                  },
+                  {
+                    "file": "apps/core/session_db/sync.py",
+                    "lines": "442-522",
+                    "purpose": "Understand sync_all_sessions_in_project function"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.1.2.1",
+                  "command": "CREATE FUNCTION _batch_sync_async(working_dir: str, project_id: UUID | None): async wrapper for sync_all_sessions_in_project",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.2.2",
+                  "command": "CREATE FUNCTION queue_batch_sync_task(working_dir: str, project_id: UUID | None): creates asyncio task for batch sync, returns immediately",
+                  "file": "apps/core/session_db/async_sync.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Trigger sync on project detail view load",
+          "objective": "When the project detail page loads, call the sync endpoint to ensure session data is fresh. Fire-and-forget call that doesn't block UI rendering.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.2.1",
+              "title": "Add useEffect sync trigger in project detail",
+              "file_path": "apps/core/frontend/src/app/(dashboard)/projects/[id]/page.tsx",
+              "description": "Add useEffect hook that calls POST /api/projects/[id]/sync when the project detail page mounts. Fire-and-forget - don't await the response. Just ensure sessions are synced in background.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/(dashboard)/projects/[id]/page.tsx",
+                    "lines": "1-100",
+                    "purpose": "Understand project detail page structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {
+                  "id": "2.2.1.1",
+                  "command": "UPDATE project detail page: ADD useEffect hook that calls fetch('/api/projects/${id}/sync', { method: 'POST' }) on mount",
+                  "file": "apps/core/frontend/src/app/(dashboard)/projects/[id]/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Add tests for project sync",
+          "objective": "Test the sync endpoint behavior and verify it correctly triggers background sync without blocking.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.3.1",
+              "title": "Test batch sync API endpoint",
+              "file_path": "apps/core/frontend/src/app/api/projects/[id]/sync/__tests__/route.test.ts",
+              "description": "Test POST /api/projects/[id]/sync endpoint returns 202, triggers background sync, and handles errors gracefully.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/api/projects/[id]/sync/route.ts",
+                    "lines": "1-50",
+                    "purpose": "Understand the sync endpoint implementation"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {
+                  "id": "2.3.1.1",
+                  "command": "CREATE FILE with test setup, imports, MOCK background sync function",
+                  "file": "apps/core/frontend/src/app/api/projects/[id]/sync/__tests__/route.test.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.1.2",
+                  "command": "TEST test_sync_returns_202: POST to sync endpoint, ASSERT response status 202",
+                  "file": "apps/core/frontend/src/app/api/projects/[id]/sync/__tests__/route.test.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.1.3",
+                  "command": "TEST test_sync_triggers_background_task: POST to sync, VERIFY background sync was queued",
+                  "file": "apps/core/frontend/src/app/api/projects/[id]/sync/__tests__/route.test.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.1.4",
+                  "command": "TEST test_sync_returns_404_for_missing_project: POST to sync with invalid id, ASSERT 404",
+                  "file": "apps/core/frontend/src/app/api/projects/[id]/sync/__tests__/route.test.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "API endpoint test with mocked background task",
+        "verification_steps": [
+          "npm test -- --grep 'project sync'",
+          "Manual: open project detail, verify sessions appear/update"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "title": "Split models.py into Domain Modules",
+      "goal": "Refactor session_db/models.py (855 lines) into domain-organized modules while maintaining backward compatibility via re-exports. This is a pure refactoring checkpoint with no behavior change.",
+      "prerequisites": [],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "3.1",
+          "title": "Create models/ directory structure",
+          "objective": "Create the models/ subdirectory with base.py containing shared type aliases. This establishes the foundation for the split.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.1.1",
+              "title": "Create base.py with type aliases",
+              "file_path": "apps/core/session_db/models/base.py",
+              "description": "Create models/base.py with the Literal type aliases (SessionStatus, SessionType, AgentType, AgentStatus, EventCategory, ProjectStatus) extracted from models.py.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "1-80",
+                    "purpose": "Identify type aliases to extract"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.1.1.1",
+                  "command": "CREATE FILE apps/core/session_db/models/base.py with module docstring and imports",
+                  "file": "apps/core/session_db/models/base.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.2",
+                  "command": "MOVE type aliases (SessionStatus, SessionType, AgentType, AgentStatus, EventCategory, ProjectStatus) from models.py to base.py",
+                  "file": "apps/core/session_db/models/base.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Extract Project models",
+          "objective": "Move Project, ProjectCreate, ProjectUpdate, ProjectSummary to models/project.py with proper imports from base.py.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.2.1",
+              "title": "Create project.py with Project models",
+              "file_path": "apps/core/session_db/models/project.py",
+              "description": "Create models/project.py containing Project (SQLModel table), ProjectCreate, ProjectUpdate, and ProjectSummary. Import shared types from base.py.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "82-160",
+                    "purpose": "Identify Project model and related DTOs"
+                  }
+                ],
+                "related_files": ["apps/core/session_db/models/base.py"]
+              },
+              "depends_on": ["3.1.1"],
+              "actions": [
+                {
+                  "id": "3.2.1.1",
+                  "command": "CREATE FILE apps/core/session_db/models/project.py with imports (SQLModel, Field, Relationship, JSON, base types)",
+                  "file": "apps/core/session_db/models/project.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.1.2",
+                  "command": "MOVE CLASS Project from models.py to project.py",
+                  "file": "apps/core/session_db/models/project.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.1.3",
+                  "command": "MOVE CLASS ProjectCreate, ProjectUpdate, ProjectSummary from models.py to project.py",
+                  "file": "apps/core/session_db/models/project.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Extract Session models",
+          "objective": "Move Session, SessionCreate, SessionUpdate, SessionSummary to models/session.py.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.3.1",
+              "title": "Create session.py with Session models",
+              "file_path": "apps/core/session_db/models/session.py",
+              "description": "Create models/session.py containing Session (SQLModel table), SessionCreate, SessionUpdate, SessionSummary. Handle forward references for relationships.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "160-365",
+                    "purpose": "Identify Session model and relationships"
+                  }
+                ],
+                "related_files": ["apps/core/session_db/models/base.py", "apps/core/session_db/models/project.py"]
+              },
+              "depends_on": ["3.2.1"],
+              "actions": [
+                {
+                  "id": "3.3.1.1",
+                  "command": "CREATE FILE apps/core/session_db/models/session.py with imports and TYPE_CHECKING for forward refs",
+                  "file": "apps/core/session_db/models/session.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.1.2",
+                  "command": "MOVE CLASS Session from models.py to session.py, USE string annotations for Agent/AgentLog relationships",
+                  "file": "apps/core/session_db/models/session.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.1.3",
+                  "command": "MOVE CLASS SessionCreate, SessionUpdate, SessionSummary from models.py to session.py",
+                  "file": "apps/core/session_db/models/session.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "Extract Agent and AgentLog models",
+          "objective": "Move Agent, AgentLog and their DTOs to models/agent.py and models/agent_log.py.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.4.1",
+              "title": "Create agent.py with Agent models",
+              "file_path": "apps/core/session_db/models/agent.py",
+              "description": "Create models/agent.py containing Agent (SQLModel table), AgentCreate, AgentUpdate, AgentSummary.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "365-515",
+                    "purpose": "Identify Agent model"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.3.1"],
+              "actions": [
+                {
+                  "id": "3.4.1.1",
+                  "command": "CREATE FILE apps/core/session_db/models/agent.py with imports",
+                  "file": "apps/core/session_db/models/agent.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.4.1.2",
+                  "command": "MOVE CLASS Agent, AgentCreate, AgentUpdate, AgentSummary from models.py to agent.py",
+                  "file": "apps/core/session_db/models/agent.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.4.2",
+              "title": "Create agent_log.py with AgentLog models",
+              "file_path": "apps/core/session_db/models/agent_log.py",
+              "description": "Create models/agent_log.py containing AgentLog (SQLModel table), AgentLogCreate, AgentLogSummary.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "515-645",
+                    "purpose": "Identify AgentLog model"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.4.1"],
+              "actions": [
+                {
+                  "id": "3.4.2.1",
+                  "command": "CREATE FILE apps/core/session_db/models/agent_log.py with imports",
+                  "file": "apps/core/session_db/models/agent_log.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.4.2.2",
+                  "command": "MOVE CLASS AgentLog, AgentLogCreate, AgentLogSummary from models.py to agent_log.py",
+                  "file": "apps/core/session_db/models/agent_log.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.5",
+          "title": "Create __init__.py with re-exports",
+          "objective": "Create models/__init__.py that re-exports all models for backward compatibility. Existing imports from session_db.models should continue to work.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.5.1",
+              "title": "Create models/__init__.py with all exports",
+              "file_path": "apps/core/session_db/models/__init__.py",
+              "description": "Create __init__.py that imports and re-exports all models from the submodules. Use __all__ to define public API. Ensure backward compatibility.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/models.py",
+                    "lines": "1-50",
+                    "purpose": "Identify all exported names"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.4.2"],
+              "actions": [
+                {
+                  "id": "3.5.1.1",
+                  "command": "CREATE FILE apps/core/session_db/models/__init__.py with imports from all submodules",
+                  "file": "apps/core/session_db/models/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.5.1.2",
+                  "command": "CREATE __all__ list with all model names for backward compat",
+                  "file": "apps/core/session_db/models/__init__.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.5.2",
+              "title": "Delete old models.py",
+              "file_path": "apps/core/session_db/models.py",
+              "description": "Remove the old monolithic models.py file now that all content has been moved to models/ directory.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["3.5.1"],
+              "actions": [
+                {
+                  "id": "3.5.2.1",
+                  "command": "DELETE FILE apps/core/session_db/models.py",
+                  "file": "apps/core/session_db/models.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Type checking and import verification",
+        "verification_steps": [
+          "python -c \"from session_db.models import Session, Agent, AgentLog, Project\"",
+          "pytest apps/core/session_db/tests/"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "title": "Backend Integration + Task Pool Setup",
+      "goal": "Create the background task pool infrastructure and integrate callback injection where StateManager instances are created in the backend. Ensure sync tasks run in a pool that doesn't block the main event loop.",
+      "prerequisites": [1, 2],
+      "status": "pending",
+      "task_groups": [
+        {
+          "id": "4.1",
+          "title": "Create background task pool module",
+          "objective": "Create a task_pool.py module that manages a pool of background sync tasks. Uses asyncio task management with configurable concurrency limits.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.1.1",
+              "title": "Create task_pool.py with pool management",
+              "file_path": "apps/core/backend/task_pool/task_pool.py",
+              "description": "Create task_pool.py with SyncTaskPool class. Manages background asyncio tasks, limits concurrency, handles task lifecycle. Provides singleton instance for the application.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/async_sync.py",
+                    "lines": "1-100",
+                    "purpose": "Understand async sync functions that will be pooled"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.1.1.1",
+                  "command": "CREATE FILE apps/core/backend/task_pool/__init__.py with exports",
+                  "file": "apps/core/backend/task_pool/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.1.1.2",
+                  "command": "CREATE FILE apps/core/backend/task_pool/task_pool.py with SyncTaskPool class",
+                  "file": "apps/core/backend/task_pool/task_pool.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.1.1.3",
+                  "command": "CREATE CLASS SyncTaskPool with: __init__(max_concurrent), submit(coro), shutdown(), active_count property",
+                  "file": "apps/core/backend/task_pool/task_pool.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.1.1.4",
+                  "command": "CREATE VAR default_pool: SyncTaskPool singleton instance",
+                  "file": "apps/core/backend/task_pool/task_pool.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Create callback factory using task pool",
+          "objective": "Create a factory function that returns a StateManager callback. The callback submits sync tasks to the pool instead of running directly.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.2.1",
+              "title": "Create pooled callback factory",
+              "file_path": "apps/core/backend/task_pool/callbacks.py",
+              "description": "Create callbacks.py with make_pooled_sync_callback function. Returns a callback that submits sync tasks to the default pool. Fire-and-forget semantics.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/session_db/async_sync.py",
+                    "lines": "1-100",
+                    "purpose": "Understand make_sync_callback pattern"
+                  },
+                  {
+                    "file": "apps/core/backend/task_pool/task_pool.py",
+                    "lines": "1-100",
+                    "purpose": "Understand pool submit API"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1"],
+              "actions": [
+                {
+                  "id": "4.2.1.1",
+                  "command": "CREATE FILE apps/core/backend/task_pool/callbacks.py with imports",
+                  "file": "apps/core/backend/task_pool/callbacks.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.2.1.2",
+                  "command": "CREATE FUNCTION make_pooled_sync_callback(working_dir: str) -> SaveCallback: returns callback that submits to pool",
+                  "file": "apps/core/backend/task_pool/callbacks.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Integrate callback injection at StateManager creation points",
+          "objective": "Find where StateManager is instantiated in the backend and inject the pooled callback. This connects the save→sync pipeline.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.3.1",
+              "title": "Identify StateManager instantiation points",
+              "file_path": "apps/core/backend/",
+              "description": "Search the backend codebase to find all places where SessionStateManager is created. Document each location for callback injection.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.3.1.1",
+                  "command": "SEARCH codebase for SessionStateManager( instantiation patterns, document findings",
+                  "file": "apps/core/backend/",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.3.2",
+              "title": "Inject callback at MCP tool creation",
+              "file_path": "apps/core/backend/mcp_server/tools.py",
+              "description": "Update MCP tools that create StateManager instances to inject the pooled sync callback. This ensures MCP state changes trigger DB sync.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/mcp_server/tools.py",
+                    "lines": "1-100",
+                    "purpose": "Understand MCP tool structure and StateManager usage"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.2.1", "4.3.1"],
+              "actions": [
+                {
+                  "id": "4.3.2.1",
+                  "command": "UPDATE MCP tools: import make_pooled_sync_callback",
+                  "file": "apps/core/backend/mcp_server/tools.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.2.2",
+                  "command": "UPDATE SessionStateManager instantiation: ADD on_save_callback=make_pooled_sync_callback(working_dir)",
+                  "file": "apps/core/backend/mcp_server/tools.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.4",
+          "title": "Add integration tests",
+          "objective": "Test the complete pipeline: StateManager.save() -> callback -> pool -> sync. Verify non-blocking behavior.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.4.1",
+              "title": "Test task pool functionality",
+              "file_path": "apps/core/backend/task_pool/tests/test_task_pool.py",
+              "description": "Test SyncTaskPool: submit tasks, verify concurrency limits, test graceful shutdown.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/task_pool/task_pool.py",
+                    "lines": "1-100",
+                    "purpose": "Understand pool API to test"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1"],
+              "actions": [
+                {
+                  "id": "4.4.1.1",
+                  "command": "CREATE FILE with pytest fixtures and imports",
+                  "file": "apps/core/backend/task_pool/tests/test_task_pool.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.4.1.2",
+                  "command": "TEST test_pool_submits_task: submit coroutine, VERIFY task runs",
+                  "file": "apps/core/backend/task_pool/tests/test_task_pool.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.4.1.3",
+                  "command": "TEST test_pool_limits_concurrency: submit many tasks, VERIFY only max_concurrent run",
+                  "file": "apps/core/backend/task_pool/tests/test_task_pool.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.4.1.4",
+                  "command": "TEST test_pool_shutdown: submit tasks, shutdown, VERIFY clean exit",
+                  "file": "apps/core/backend/task_pool/tests/test_task_pool.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.4.2",
+              "title": "Test end-to-end sync pipeline",
+              "file_path": "apps/core/backend/task_pool/tests/test_integration.py",
+              "description": "Integration test: StateManager save triggers callback, callback submits to pool, pool runs sync. Verify DB updated.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": ["4.3.2"],
+              "actions": [
+                {
+                  "id": "4.4.2.1",
+                  "command": "CREATE FILE with integration test setup",
+                  "file": "apps/core/backend/task_pool/tests/test_integration.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.4.2.2",
+                  "command": "TEST test_save_triggers_db_sync: create StateManager with callback, save, VERIFY DB session updated",
+                  "file": "apps/core/backend/task_pool/tests/test_integration.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Integration tests with concurrent sync operations",
+        "verification_steps": [
+          "pytest apps/core/backend/task_pool/tests/",
+          "Manual: verify UI remains responsive during sync"
+        ]
+      }
+    }
+  ]
+}

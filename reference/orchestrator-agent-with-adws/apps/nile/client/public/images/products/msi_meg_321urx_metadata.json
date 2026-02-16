@@ -1,0 +1,30 @@
+{
+  "id": "msi_meg_321urx",
+  "name": "MSI MEG 321URX 32\" 4K 240Hz",
+  "description": "32-inch 4K OLED gaming monitor with 240Hz and AI Gaming Intelligence. Features built-in hardware calibrator, G-Sync Ultimate, and esports-ready performance.",
+  "price": 1499.99,
+  "category": "Monitors",
+  "brand": "MSI",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "AI features actually help optimize game settings.",
+      "rating": 5,
+      "reviewer_name": "AIGamer",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Built-in calibrator keeps colors perfect over time.",
+      "rating": 5,
+      "reviewer_name": "ColorMaintainer",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Expensive but loaded with features.",
+      "rating": 4,
+      "reviewer_name": "FeatureWanter",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

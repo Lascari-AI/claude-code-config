@@ -1,0 +1,30 @@
+{
+  "id": "apple_ipad_mini_7",
+  "name": "Apple iPad mini 7",
+  "description": "Portable powerhouse with A17 Pro chip in an 8.3-inch form factor. Features Apple Pencil Pro support, 5G connectivity, and the most portable iPad experience.",
+  "price": 599.0,
+  "category": "Tablets",
+  "brand": "Apple",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Perfect travel tablet. Fits everywhere.",
+      "rating": 5,
+      "reviewer_name": "TravelTablet",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "A17 Pro in mini form factor is impressive.",
+      "rating": 5,
+      "reviewer_name": "PowerPortable",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "Wish it had ProMotion like the Pro.",
+      "rating": 4,
+      "reviewer_name": "FeatureWanter",
+      "review_date": "2025-01-08"
+    }
+  ]
+}

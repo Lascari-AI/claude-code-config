@@ -1,0 +1,30 @@
+{
+  "id": "aethon_apex_75",
+  "name": "Aethon Apex 75",
+  "description": "Premium enthusiast keyboard featuring proprietary magnetic hall-effect switches with adjustable actuation. CNC aluminum case, hot-swap PCB, and advanced customization via Aethon Studio software.",
+  "price": 349.0,
+  "category": "Keyboards",
+  "brand": "Aethon",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Hall-effect switches are the future. Zero key chatter.",
+      "rating": 5,
+      "reviewer_name": "SwitchEnthusiast",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Adjustable actuation is game-changing for gaming and typing.",
+      "rating": 5,
+      "reviewer_name": "HybridUser",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Premium price but premium everything.",
+      "rating": 5,
+      "reviewer_name": "KeyboardCollector",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

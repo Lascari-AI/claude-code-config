@@ -1,0 +1,30 @@
+{
+  "id": "anker_555_8in1",
+  "name": "Anker 555 USB-C Hub (8-in-1)",
+  "description": "Feature-packed USB-C hub with HDMI 4K, 100W PD, 2x USB-A, USB-C data, SD/microSD, and Ethernet. Anker reliability in a versatile package.",
+  "price": 59.99,
+  "category": "USB Hubs",
+  "brand": "Anker",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "All the ports you need at great price.",
+      "rating": 5,
+      "reviewer_name": "PortComplete",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Anker quality you can trust.",
+      "rating": 5,
+      "reviewer_name": "AnkerFan",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Ethernet is 100Mbps not gigabit.",
+      "rating": 4,
+      "reviewer_name": "SpecChecker",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

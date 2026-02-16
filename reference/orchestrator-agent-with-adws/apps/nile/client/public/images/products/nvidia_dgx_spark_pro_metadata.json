@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_dgx_spark_pro",
+  "name": "NVIDIA DGX Spark Pro",
+  "description": "Professional AI workstation with dual Grace Blackwell chips, 256GB unified memory, and 2TB NVMe storage. Handles large language models and complex training workloads.",
+  "price": 7999.00,
+  "category": "AI Workstations",
+  "brand": "NVIDIA",
+  "rating": 4.9,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "Training custom models locally is now feasible. Incredible.",
+      "rating": 5,
+      "reviewer_name": "MLResearchLab",
+      "review_date": "2025-01-22"
+    },
+    {
+      "review_text": "Replaced our cloud compute bill. ROI in 6 months.",
+      "rating": 5,
+      "reviewer_name": "StartupCTO",
+      "review_date": "2025-01-19"
+    },
+    {
+      "review_text": "256GB unified memory handles anything we throw at it.",
+      "rating": 5,
+      "reviewer_name": "DataScientist",
+      "review_date": "2025-01-16"
+    }
+  ]
+}

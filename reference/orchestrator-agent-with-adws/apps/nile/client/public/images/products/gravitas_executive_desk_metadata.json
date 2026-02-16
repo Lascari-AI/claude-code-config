@@ -1,0 +1,30 @@
+{
+  "id": "gravitas_executive_desk",
+  "name": "Gravitas Executive Standing Desk",
+  "description": "L-shaped executive standing desk with dual motor zones. Features premium oak or walnut finish, integrated drawer unit, and executive-level aesthetics for home offices.",
+  "price": 2199.00,
+  "category": "Desks",
+  "brand": "Gravitas",
+  "rating": 4.8,
+  "shipping_speed": "7-day",
+  "reviews": [
+    {
+      "review_text": "Finally an executive desk that is also a standing desk.",
+      "rating": 5,
+      "reviewer_name": "ExecutiveUser",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "L-shape provides so much workspace.",
+      "rating": 5,
+      "reviewer_name": "SpaceNeeder",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Expensive but nothing else compares.",
+      "rating": 5,
+      "reviewer_name": "PremiumBuyer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

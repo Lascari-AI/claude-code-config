@@ -1,0 +1,1 @@
+ping (respond with pong)

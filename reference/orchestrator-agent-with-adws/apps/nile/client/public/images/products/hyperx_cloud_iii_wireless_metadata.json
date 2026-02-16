@@ -1,0 +1,30 @@
+{
+  "id": "hyperx_cloud_iii_wireless",
+  "name": "HyperX Cloud III Wireless",
+  "description": "Legendary HyperX comfort with 120-hour battery life. Features DTS Headphone:X spatial audio, 53mm drivers, and signature Cloud comfort for marathon sessions.",
+  "price": 169.99,
+  "category": "Headphones",
+  "brand": "HyperX",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "120 hours battery is not a typo. It actually lasts that long.",
+      "rating": 5,
+      "reviewer_name": "BatteryKing",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "HyperX comfort is still the best for long gaming.",
+      "rating": 5,
+      "reviewer_name": "ComfortFirst",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Sound is good but not audiophile level.",
+      "rating": 4,
+      "reviewer_name": "SoundCritic",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

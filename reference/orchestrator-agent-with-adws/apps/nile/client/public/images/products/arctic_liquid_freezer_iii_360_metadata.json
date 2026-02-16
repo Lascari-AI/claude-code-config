@@ -1,0 +1,30 @@
+{
+  "id": "arctic_liquid_freezer_iii_360",
+  "name": "ARCTIC Liquid Freezer III 360",
+  "description": "Value king 360mm AIO with integrated VRM cooling fan. Features thick 38mm radiator, P14 PWM fans, and excellent performance per dollar. Budget cooling champion.",
+  "price": 129.99,
+  "category": "Cooling",
+  "brand": "ARCTIC",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best value AIO period. Performance rivals 300 dollar units.",
+      "rating": 5,
+      "reviewer_name": "ValueKing",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "VRM fan is actually useful feature.",
+      "rating": 5,
+      "reviewer_name": "VRMCooler",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "No RGB if you care about that.",
+      "rating": 4,
+      "reviewer_name": "RGBWanter",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

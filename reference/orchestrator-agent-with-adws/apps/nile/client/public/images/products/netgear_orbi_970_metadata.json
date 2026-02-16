@@ -1,0 +1,30 @@
+{
+  "id": "netgear_orbi_970",
+  "name": "NETGEAR Orbi 970 WiFi 7 Mesh",
+  "description": "Premium WiFi 7 mesh with 27Gbps combined speeds. Features 10G WAN/LAN, dedicated wireless backhaul, and coverage up to 10,000 sq ft. The flagship mesh system.",
+  "price": 2299.99,
+  "category": "Networking",
+  "brand": "NETGEAR",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "WiFi 7 mesh done right. Incredible speeds.",
+      "rating": 5,
+      "reviewer_name": "WiFi7Enthusiast",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Expensive but covers massive home perfectly.",
+      "rating": 5,
+      "reviewer_name": "MansionOwner",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Premium price for premium mesh.",
+      "rating": 4,
+      "reviewer_name": "PremiumBuyer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "apple_pencil_pro",
+  "name": "Apple Pencil Pro",
+  "image_prompt": "Apple Pencil Pro, white cylindrical design, matte finish, minimal Apple logo",
+  "description": "Most advanced Apple Pencil with squeeze gesture, barrel roll detection, and haptic feedback. Features Find My support, magnetic attachment, and wireless charging. Perfect for creative pros.",
+  "price": 129.0,
+  "category": "Styluses",
+  "brand": "Apple",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Squeeze gesture is intuitive. Tool switching is instant.",
+      "rating": 5,
+      "reviewer_name": "DigitalArtist",
+      "review_date": "2024-11-12"
+    },
+    {
+      "review_text": "Barrel roll for brush angle is a game changer.",
+      "rating": 5,
+      "reviewer_name": "Illustrator",
+      "review_date": "2024-10-18"
+    },
+    {
+      "review_text": "Great pencil but expensive for an accessory.",
+      "rating": 4,
+      "reviewer_name": "BudgetArtist",
+      "review_date": "2024-09-23"
+    }
+  ]
+}

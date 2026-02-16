@@ -1,0 +1,1107 @@
+{
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
+
+  "session_id": "2026-02-14_claude-code-agent-sdk-integration",
+  "spec_reference": "./spec.md",
+  "created_at": "2026-02-16T18:00:00Z",
+  "updated_at": "2026-02-16T18:35:00Z",
+  "status": "complete",
+
+  "checkpoints": [
+    {
+      "id": 1,
+      "title": "StateManager Core + One Phase Transition",
+      "goal": "Create the Python StateManager class with one working phase transition (spec→plan), proving the full vertical slice: state.json v2 schema → StateManager → validated transition → file write",
+      "prerequisites": [],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": "apps/core/session_db/models.py", "status": "exists", "description": "SQLModel database models for Session, Agent, AgentLog"},
+            {"path": "apps/core/backend/main.py", "status": "exists", "description": "FastAPI app with health check only"}
+          ],
+          "tree": "apps/core/\n├── backend/\n│   ├── main.py\n│   └── routers/ (empty)\n└── session_db/\n    ├── models.py\n    ├── crud.py\n    └── database.py"
+        },
+        "ending": {
+          "files": [
+            {"path": "apps/core/state_manager/__init__.py", "status": "new", "description": "StateManager package init"},
+            {"path": "apps/core/state_manager/models.py", "status": "new", "description": "Pydantic models for state.json v2 schema"},
+            {"path": "apps/core/state_manager/state_manager.py", "status": "new", "description": "StateManager class with load/save/transition methods"},
+            {"path": "apps/core/state_manager/exceptions.py", "status": "new", "description": "Custom exceptions for validation errors"},
+            {"path": "apps/core/state_manager/tests/__init__.py", "status": "new", "description": "Test package init"},
+            {"path": "apps/core/state_manager/tests/test_state_manager.py", "status": "new", "description": "Unit tests for StateManager"}
+          ],
+          "tree": "apps/core/\n├── backend/\n│   ├── main.py\n│   └── routers/\n├── session_db/\n│   ├── models.py\n│   ├── crud.py\n│   └── database.py\n└── state_manager/  ← NEW\n    ├── __init__.py\n    ├── models.py\n    ├── state_manager.py\n    ├── exceptions.py\n    └── tests/\n        └── test_state_manager.py"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "1.1",
+          "title": "Define state.json v2 Pydantic Models",
+          "objective": "Create type-safe Pydantic models matching the state.json v2 schema from the spec. These models will be used by StateManager for serialization/deserialization.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.1.1",
+              "title": "Create enums and base types",
+              "file_path": "apps/core/state_manager/models.py",
+              "description": "Define Phase, Status, SessionType enums. These constrain the valid values for state transitions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "246-327", "purpose": "state.json v2 schema definition with field types and enums"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "1.1.1.1", "command": "CREATE FILE apps/core/state_manager/models.py", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.1.2", "command": "CREATE TYPE Phase(str, Enum): spec, plan, build, docs, complete", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.1.3", "command": "CREATE TYPE Status(str, Enum): active, paused, complete, failed", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.1.4", "command": "CREATE TYPE SessionType(str, Enum): full, quick, research", "file": "apps/core/state_manager/models.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "1.1.2",
+              "title": "Create nested Pydantic models",
+              "file_path": "apps/core/state_manager/models.py",
+              "description": "Define PhaseHistory, BuildProgress, GitContext, Commit, Artifacts models. These are nested objects within SessionState.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "266-307", "purpose": "Nested object schemas: phase_history, build_progress, git, commits, artifacts"}
+                ],
+                "related_files": ["apps/core/state_manager/models.py"]
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {"id": "1.1.2.1", "command": "CREATE TYPE PhaseHistory(BaseModel): spec_started_at, spec_completed_at, plan_started_at, plan_completed_at, build_started_at, build_completed_at, docs_started_at, docs_completed_at - all Optional[datetime]", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.2.2", "command": "CREATE TYPE BuildProgress(BaseModel): checkpoints_total: int, checkpoints_completed: list[int], current_checkpoint: Optional[int]", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.2.3", "command": "CREATE TYPE GitContext(BaseModel): branch: Optional[str], worktree: Optional[str], base_branch: Optional[str]", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.2.4", "command": "CREATE TYPE Commit(BaseModel): sha: str, message: str, checkpoint: Optional[int], created_at: datetime", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.2.5", "command": "CREATE TYPE Artifacts(BaseModel): spec: str DEFAULT 'spec.md', plan: str DEFAULT 'plan.json', plan_readable: str DEFAULT 'plan.md'", "file": "apps/core/state_manager/models.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "1.1.3",
+              "title": "Create SessionState root model",
+              "file_path": "apps/core/state_manager/models.py",
+              "description": "Define the root SessionState model that encompasses all fields. Includes model_config for JSON serialization with datetime handling.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "246-327", "purpose": "Complete state.json v2 schema showing all top-level fields"}
+                ],
+                "related_files": ["apps/core/state_manager/models.py"]
+              },
+              "depends_on": ["1.1.2"],
+              "actions": [
+                {"id": "1.1.3.1", "command": "CREATE TYPE SessionState(BaseModel): session_id, topic, description, session_type, created_at, updated_at, current_phase, status, phase_history, build_progress, git, commits, artifacts - using previously defined types", "file": "apps/core/state_manager/models.py", "status": "pending"},
+                {"id": "1.1.3.2", "command": "ADD model_config with json_encoders for datetime serialization to ISO format", "file": "apps/core/state_manager/models.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "Implement StateManager Core",
+          "objective": "Create the SessionStateManager class with load(), save(), and transition_to_phase() methods. Validates transitions (spec→plan allowed, spec→build not allowed).",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.2.1",
+              "title": "Create custom exceptions",
+              "file_path": "apps/core/state_manager/exceptions.py",
+              "description": "Define exceptions for invalid state transitions and session not found errors.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "1.2.1.1", "command": "CREATE FILE apps/core/state_manager/exceptions.py", "file": "apps/core/state_manager/exceptions.py", "status": "pending"},
+                {"id": "1.2.1.2", "command": "CREATE CLASS InvalidPhaseTransitionError(Exception): message includes from_phase, to_phase", "file": "apps/core/state_manager/exceptions.py", "status": "pending"},
+                {"id": "1.2.1.3", "command": "CREATE CLASS SessionNotFoundError(Exception): message includes session_id and path", "file": "apps/core/state_manager/exceptions.py", "status": "pending"},
+                {"id": "1.2.1.4", "command": "CREATE CLASS StateValidationError(Exception): for Pydantic validation failures", "file": "apps/core/state_manager/exceptions.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "1.2.2",
+              "title": "Create SessionStateManager class",
+              "file_path": "apps/core/state_manager/state_manager.py",
+              "description": "Implement the core StateManager class with load(), save(), and transition_to_phase() methods. Uses Pydantic models for type safety.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/models.py", "lines": "all", "purpose": "Pydantic models for serialization"},
+                  {"file": "apps/core/state_manager/exceptions.py", "lines": "all", "purpose": "Exception types to raise"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "364-392", "purpose": "StateManager API design from spec"}
+                ],
+                "related_files": ["apps/core/state_manager/models.py", "apps/core/state_manager/exceptions.py"]
+              },
+              "depends_on": ["1.1.3", "1.2.1"],
+              "actions": [
+                {"id": "1.2.2.1", "command": "CREATE FILE apps/core/state_manager/state_manager.py", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "1.2.2.2", "command": "CREATE CLASS SessionStateManager: __init__(self, session_dir: Path) - stores session_dir, initializes _state to None", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "1.2.2.3", "command": "CREATE FUNCTION load(self) -> SessionState: reads state.json, parses with Pydantic, caches in _state, raises SessionNotFoundError if missing", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "1.2.2.4", "command": "CREATE FUNCTION save(self) -> None: serializes _state to JSON, writes to state.json atomically, updates updated_at timestamp", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "1.2.2.5", "command": "CREATE FUNCTION _validate_transition(self, from_phase: Phase, to_phase: Phase) -> bool: returns True if transition allowed per VALID_TRANSITIONS map", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "1.2.2.6", "command": "CREATE VAR VALID_TRANSITIONS: dict mapping each phase to list of valid next phases (spec→plan, plan→build, build→docs, docs→complete)", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "1.2.2.7", "command": "CREATE FUNCTION transition_to_phase(self, new_phase: Phase) -> None: validates transition, updates current_phase, sets phase_history timestamps, calls save()", "file": "apps/core/state_manager/state_manager.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "1.2.3",
+              "title": "Create package init",
+              "file_path": "apps/core/state_manager/__init__.py",
+              "description": "Export public API: SessionStateManager, SessionState, Phase, Status, exceptions.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/core/state_manager/state_manager.py", "apps/core/state_manager/models.py", "apps/core/state_manager/exceptions.py"]
+              },
+              "depends_on": ["1.2.2"],
+              "actions": [
+                {"id": "1.2.3.1", "command": "CREATE FILE apps/core/state_manager/__init__.py", "file": "apps/core/state_manager/__init__.py", "status": "pending"},
+                {"id": "1.2.3.2", "command": "ADD imports and __all__ exporting: SessionStateManager, SessionState, Phase, Status, SessionType, InvalidPhaseTransitionError, SessionNotFoundError, StateValidationError", "file": "apps/core/state_manager/__init__.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.3",
+          "title": "Add Unit Tests",
+          "objective": "Write pytest tests verifying: load/save round-trip, valid transitions succeed, invalid transitions raise exceptions.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.3.1",
+              "title": "Create test fixtures",
+              "file_path": "apps/core/state_manager/tests/conftest.py",
+              "description": "Create pytest fixtures for temporary session directories with valid state.json files.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/models.py", "lines": "all", "purpose": "Model structure for creating valid test data"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/state.json", "lines": "all", "purpose": "Example of real state.json structure"}
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.2.3"],
+              "actions": [
+                {"id": "1.3.1.1", "command": "CREATE FILE apps/core/state_manager/tests/__init__.py", "file": "apps/core/state_manager/tests/__init__.py", "status": "pending"},
+                {"id": "1.3.1.2", "command": "CREATE FILE apps/core/state_manager/tests/conftest.py", "file": "apps/core/state_manager/tests/conftest.py", "status": "pending"},
+                {"id": "1.3.1.3", "command": "CREATE FUNCTION fixture sample_state_json() -> dict: returns valid state.json v2 structure with all required fields", "file": "apps/core/state_manager/tests/conftest.py", "status": "pending"},
+                {"id": "1.3.1.4", "command": "CREATE FUNCTION fixture temp_session_dir(tmp_path, sample_state_json) -> Path: creates temp dir with state.json, returns path", "file": "apps/core/state_manager/tests/conftest.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "1.3.2",
+              "title": "Write StateManager tests",
+              "file_path": "apps/core/state_manager/tests/test_state_manager.py",
+              "description": "Test load/save round-trip, valid phase transitions, and invalid transition rejection.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/state_manager.py", "lines": "all", "purpose": "StateManager implementation to test"},
+                  {"file": "apps/core/state_manager/tests/conftest.py", "lines": "all", "purpose": "Available fixtures"}
+                ],
+                "related_files": ["apps/core/state_manager/state_manager.py"]
+              },
+              "depends_on": ["1.3.1"],
+              "actions": [
+                {"id": "1.3.2.1", "command": "CREATE FILE apps/core/state_manager/tests/test_state_manager.py", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "1.3.2.2", "command": "TEST test_load_returns_session_state: ASSERT manager.load() returns SessionState instance with correct session_id", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "1.3.2.3", "command": "TEST test_load_missing_file_raises: ASSERT SessionNotFoundError raised when state.json doesn't exist", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "1.3.2.4", "command": "TEST test_save_updates_file: modify state, call save(), re-read file, ASSERT changes persisted", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "1.3.2.5", "command": "TEST test_transition_spec_to_plan_succeeds: start at spec phase, call transition_to_phase(plan), ASSERT current_phase is plan", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "1.3.2.6", "command": "TEST test_transition_spec_to_build_fails: start at spec phase, call transition_to_phase(build), ASSERT InvalidPhaseTransitionError raised", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "1.3.2.7", "command": "TEST test_transition_updates_phase_history: transition spec→plan, ASSERT phase_history.spec_completed_at is set, phase_history.plan_started_at is set", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Unit tests for StateManager + manual verification",
+        "verification_steps": [
+          "pytest apps/core/state_manager/tests/ -v",
+          "Manual: Create test session, call transition_to_phase('plan'), verify state.json updated"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "title": "SDK MCP Server for State Transitions",
+      "goal": "Create an in-process SDK MCP server that exposes StateManager operations as tools. Backend agents using the Claude Agent SDK will connect to this server via the mcpServers option.",
+      "prerequisites": [1],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": "apps/core/state_manager/state_manager.py", "status": "exists", "description": "StateManager with phase transition (from CP1)"}
+          ],
+          "tree": "apps/core/state_manager/ (from CP1)"
+        },
+        "ending": {
+          "files": [
+            {"path": "apps/core/mcp_tools/__init__.py", "status": "new", "description": "MCP tools package init"},
+            {"path": "apps/core/mcp_tools/session_tools.py", "status": "new", "description": "Session state MCP tool implementations"},
+            {"path": "apps/core/mcp_tools/server.py", "status": "new", "description": "SDK MCP server that registers session tools"},
+            {"path": "apps/core/agent/session_agent.py", "status": "new", "description": "Example agent using session MCP tools via SDK"}
+          ],
+          "tree": "apps/core/\n├── state_manager/\n├── mcp_tools/  ← NEW\n│   ├── __init__.py\n│   ├── session_tools.py\n│   └── server.py\n└── agent/  ← NEW\n    └── session_agent.py"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "2.1",
+          "title": "Create SDK MCP Tool Implementations",
+          "objective": "Implement session state tools as Python functions that can be registered with the Claude Agent SDK. These run in-process, not as a separate server.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.1.1",
+              "title": "Install Claude Agent SDK",
+              "file_path": "apps/core/pyproject.toml",
+              "description": "Add claude-agent-sdk package to dependencies.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/pyproject.toml", "lines": "all", "purpose": "Existing dependencies to extend"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "2.1.1.1", "command": "UPDATE apps/core/pyproject.toml: ADD dependency 'claude-agent-sdk' to project.dependencies", "file": "apps/core/pyproject.toml", "status": "pending"}
+              ]
+            },
+            {
+              "id": "2.1.2",
+              "title": "Create session MCP tool functions",
+              "file_path": "apps/core/mcp_tools/session_tools.py",
+              "description": "Implement tool functions that wrap StateManager operations. Each function takes session_dir and parameters, returns result dict.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/state_manager.py", "lines": "all", "purpose": "StateManager API to wrap"}
+                ],
+                "related_files": ["apps/core/state_manager/state_manager.py"]
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {"id": "2.1.2.1", "command": "CREATE FILE apps/core/mcp_tools/__init__.py", "file": "apps/core/mcp_tools/__init__.py", "status": "pending"},
+                {"id": "2.1.2.2", "command": "CREATE FILE apps/core/mcp_tools/session_tools.py", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"},
+                {"id": "2.1.2.3", "command": "CREATE FUNCTION session_transition_phase(session_dir: str, new_phase: str) -> dict: instantiate StateManager, call load(), transition_to_phase(), return {success: True, current_phase: ...}", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Create SDK MCP Server",
+          "objective": "Create an MCP server module that registers session tools. This server runs in-process with the agent.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.2.1",
+              "title": "Create SDK MCP server module",
+              "file_path": "apps/core/mcp_tools/server.py",
+              "description": "Create MCP server that can be passed to ClaudeAgentOptions.mcp_servers. Uses SDK MCP server pattern for in-process tools.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/mcp_tools/session_tools.py", "lines": "all", "purpose": "Tools to register"}
+                ],
+                "related_files": ["apps/core/mcp_tools/session_tools.py"]
+              },
+              "depends_on": ["2.1.2"],
+              "actions": [
+                {"id": "2.2.1.1", "command": "CREATE FILE apps/core/mcp_tools/server.py: create MCP server class/factory that registers session tools", "file": "apps/core/mcp_tools/server.py", "status": "pending"},
+                {"id": "2.2.1.2", "command": "CREATE FUNCTION get_session_mcp_server() -> dict: returns MCP server config dict for use in ClaudeAgentOptions.mcp_servers", "file": "apps/core/mcp_tools/server.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Create Example Agent Integration",
+          "objective": "Create an example agent that uses the session MCP tools via the Claude Agent SDK query() function.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.3.1",
+              "title": "Create session agent example",
+              "file_path": "apps/core/agent/session_agent.py",
+              "description": "Example script showing how to use session MCP tools with the Claude Agent SDK.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/mcp_tools/server.py", "lines": "all", "purpose": "MCP server to use"}
+                ],
+                "related_files": ["apps/core/mcp_tools/server.py", "apps/core/mcp_tools/session_tools.py"]
+              },
+              "depends_on": ["2.2.1"],
+              "actions": [
+                {"id": "2.3.1.1", "command": "CREATE FILE apps/core/agent/__init__.py", "file": "apps/core/agent/__init__.py", "status": "pending"},
+                {"id": "2.3.1.2", "command": "CREATE FILE apps/core/agent/session_agent.py: example using query() with mcp_servers={session_state: get_session_mcp_server()}, allowed_tools=['mcp__session_state__*']", "file": "apps/core/agent/session_agent.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "2.3.2",
+              "title": "Test SDK agent integration",
+              "file_path": null,
+              "description": "Run the example agent to verify MCP tools work end-to-end via SDK.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/core/agent/session_agent.py"]
+              },
+              "depends_on": ["2.3.1"],
+              "actions": [
+                {"id": "2.3.2.1", "command": "VERIFY: Run session_agent.py, verify agent can call session_transition_phase tool", "file": null, "status": "pending"},
+                {"id": "2.3.2.2", "command": "VERIFY: Check state.json updated after agent tool call", "file": null, "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "SDK integration test + example agent verification",
+        "verification_steps": [
+          "Run example agent, verify MCP tools connected via SDK",
+          "Agent successfully calls session_transition_phase",
+          "state.json updated after tool execution"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "title": "Complete StateManager Operations",
+      "goal": "Add remaining StateManager methods: checkpoint tracking, commit tracking, status updates, git context. Full state.json v2 coverage",
+      "prerequisites": [1],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": "apps/core/state_manager/state_manager.py", "status": "exists", "description": "StateManager with load/save/transition (from CP1)"}
+          ],
+          "tree": "apps/core/state_manager/ (from CP1)"
+        },
+        "ending": {
+          "files": [
+            {"path": "apps/core/state_manager/state_manager.py", "status": "modified", "description": "StateManager with full API coverage"}
+          ],
+          "tree": "apps/core/state_manager/ (same structure, extended functionality)"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "3.1",
+          "title": "Add Checkpoint Tracking Methods",
+          "objective": "Implement start_checkpoint(), complete_checkpoint(), and init_build_progress() for tracking build phase progress.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.1.1",
+              "title": "Add checkpoint methods to StateManager",
+              "file_path": "apps/core/state_manager/state_manager.py",
+              "description": "Add methods to track checkpoint start/completion. Updates build_progress in state.json.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/state_manager.py", "lines": "all", "purpose": "Existing StateManager to extend"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "278-283", "purpose": "build_progress schema"}
+                ],
+                "related_files": ["apps/core/state_manager/models.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "3.1.1.1", "command": "CREATE FUNCTION init_build_progress(self, checkpoints_total: int) -> None: initialize build_progress with total count, empty completed list, current=1", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "3.1.1.2", "command": "CREATE FUNCTION start_checkpoint(self, checkpoint_id: int) -> None: set current_checkpoint, validate checkpoint_id is valid", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "3.1.1.3", "command": "CREATE FUNCTION complete_checkpoint(self, checkpoint_id: int) -> None: add to checkpoints_completed, increment current_checkpoint, save()", "file": "apps/core/state_manager/state_manager.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "3.1.2",
+              "title": "Add checkpoint tests",
+              "file_path": "apps/core/state_manager/tests/test_state_manager.py",
+              "description": "Test checkpoint tracking methods.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/tests/test_state_manager.py", "lines": "all", "purpose": "Existing tests to extend"}
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.1.1"],
+              "actions": [
+                {"id": "3.1.2.1", "command": "TEST test_init_build_progress: ASSERT build_progress initialized with correct total and empty completed", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "3.1.2.2", "command": "TEST test_complete_checkpoint: ASSERT checkpoint added to completed list", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "3.1.2.3", "command": "TEST test_complete_invalid_checkpoint_fails: ASSERT error when completing checkpoint out of order", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Add Commit Tracking Methods",
+          "objective": "Implement add_commit() for recording git commits during build phase.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.2.1",
+              "title": "Add commit tracking method",
+              "file_path": "apps/core/state_manager/state_manager.py",
+              "description": "Add method to record commits with SHA, message, and checkpoint association.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/state_manager.py", "lines": "all", "purpose": "Existing StateManager"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "292-300", "purpose": "commits schema"}
+                ],
+                "related_files": ["apps/core/state_manager/models.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "3.2.1.1", "command": "CREATE FUNCTION add_commit(self, sha: str, message: str, checkpoint: int | None = None) -> None: append Commit to commits list, save()", "file": "apps/core/state_manager/state_manager.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "3.2.2",
+              "title": "Add commit tests",
+              "file_path": "apps/core/state_manager/tests/test_state_manager.py",
+              "description": "Test commit tracking.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/tests/test_state_manager.py", "lines": "all", "purpose": "Existing tests"}
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.2.1"],
+              "actions": [
+                {"id": "3.2.2.1", "command": "TEST test_add_commit: ASSERT commit appended with sha, message, checkpoint, created_at", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Add Status and Git Context Methods",
+          "objective": "Implement set_status() and git context methods.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.3.1",
+              "title": "Add status and git methods",
+              "file_path": "apps/core/state_manager/state_manager.py",
+              "description": "Add methods for setting session status (active/paused/complete/failed) and git context (branch/worktree).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/state_manager.py", "lines": "all", "purpose": "Existing StateManager"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "285-290", "purpose": "git schema"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "3.3.1.1", "command": "CREATE FUNCTION set_status(self, status: Status) -> None: update status field, save()", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "3.3.1.2", "command": "CREATE FUNCTION set_git_branch(self, branch: str) -> None: update git.branch, save()", "file": "apps/core/state_manager/state_manager.py", "status": "pending"},
+                {"id": "3.3.1.3", "command": "CREATE FUNCTION set_git_worktree(self, worktree: str | None) -> None: update git.worktree, save()", "file": "apps/core/state_manager/state_manager.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "3.3.2",
+              "title": "Add status and git tests",
+              "file_path": "apps/core/state_manager/tests/test_state_manager.py",
+              "description": "Test status and git context methods.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/tests/test_state_manager.py", "lines": "all", "purpose": "Existing tests"}
+                ],
+                "related_files": []
+              },
+              "depends_on": ["3.3.1"],
+              "actions": [
+                {"id": "3.3.2.1", "command": "TEST test_set_status: ASSERT status updated correctly", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"},
+                {"id": "3.3.2.2", "command": "TEST test_set_git_branch: ASSERT git.branch updated", "file": "apps/core/state_manager/tests/test_state_manager.py", "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Unit tests for each StateManager method",
+        "verification_steps": [
+          "pytest apps/core/state_manager/tests/ -v",
+          "All new methods have corresponding test coverage"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "title": "Complete SDK MCP Tool Suite",
+      "goal": "Expose all StateManager operations as SDK MCP tools. Full toolset: phase transitions, checkpoint progress, commits, status, git context - all usable via Claude Agent SDK.",
+      "prerequisites": [2, 3],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": "apps/core/mcp_tools/session_tools.py", "status": "exists", "description": "Session tools with transition (from CP2)"},
+            {"path": "apps/core/state_manager/state_manager.py", "status": "exists", "description": "Full StateManager API (from CP3)"}
+          ],
+          "tree": "apps/core/mcp_tools/ (from CP2)"
+        },
+        "ending": {
+          "files": [
+            {"path": "apps/core/mcp_tools/session_tools.py", "status": "modified", "description": "Full suite of session MCP tools"}
+          ],
+          "tree": "apps/core/mcp_tools/ (same structure, more tools)"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "4.1",
+          "title": "Add Remaining SDK MCP Tools",
+          "objective": "Add checkpoint, commit, status, and git tools to session_tools.py for use via Claude Agent SDK.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.1.1",
+              "title": "Add checkpoint SDK tools",
+              "file_path": "apps/core/mcp_tools/session_tools.py",
+              "description": "Add tool functions for checkpoint operations that wrap StateManager methods.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/mcp_tools/session_tools.py", "lines": "all", "purpose": "Existing tools"},
+                  {"file": "apps/core/state_manager/state_manager.py", "lines": "all", "purpose": "Checkpoint methods to wrap"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "4.1.1.1", "command": "CREATE FUNCTION session_init_build(session_dir: str, checkpoints_total: int) -> dict: wrap StateManager.init_build_progress()", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"},
+                {"id": "4.1.1.2", "command": "CREATE FUNCTION session_start_checkpoint(session_dir: str, checkpoint_id: int) -> dict: wrap StateManager.start_checkpoint()", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"},
+                {"id": "4.1.1.3", "command": "CREATE FUNCTION session_complete_checkpoint(session_dir: str, checkpoint_id: int) -> dict: wrap StateManager.complete_checkpoint()", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "4.1.2",
+              "title": "Add commit SDK tool",
+              "file_path": "apps/core/mcp_tools/session_tools.py",
+              "description": "Add tool function for recording commits.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/mcp_tools/session_tools.py", "lines": "all", "purpose": "Existing tools"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "4.1.2.1", "command": "CREATE FUNCTION session_add_commit(session_dir: str, sha: str, message: str, checkpoint: int | None = None) -> dict: wrap StateManager.add_commit()", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "4.1.3",
+              "title": "Add status and git SDK tools",
+              "file_path": "apps/core/mcp_tools/session_tools.py",
+              "description": "Add tool functions for status and git context updates.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/mcp_tools/session_tools.py", "lines": "all", "purpose": "Existing tools"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "4.1.3.1", "command": "CREATE FUNCTION session_set_status(session_dir: str, status: str) -> dict: wrap StateManager.set_status()", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"},
+                {"id": "4.1.3.2", "command": "CREATE FUNCTION session_set_git(session_dir: str, branch: str | None = None, worktree: str | None = None) -> dict: wrap StateManager.set_git_branch/worktree()", "file": "apps/core/mcp_tools/session_tools.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "4.1.4",
+              "title": "Update MCP server registration",
+              "file_path": "apps/core/mcp_tools/server.py",
+              "description": "Register all new tools in the MCP server.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/mcp_tools/server.py", "lines": "all", "purpose": "Existing server"},
+                  {"file": "apps/core/mcp_tools/session_tools.py", "lines": "all", "purpose": "New tools to register"}
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1", "4.1.2", "4.1.3"],
+              "actions": [
+                {"id": "4.1.4.1", "command": "UPDATE server registration to include all session tools: transition, init_build, start_checkpoint, complete_checkpoint, add_commit, set_status, set_git", "file": "apps/core/mcp_tools/server.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Verify Full SDK Tool Suite",
+          "objective": "Test all MCP tools work end-to-end via Claude Agent SDK.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.2.1",
+              "title": "Update example agent for full verification",
+              "file_path": "apps/core/agent/session_agent.py",
+              "description": "Extend example agent to test all session tools.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/agent/session_agent.py", "lines": "all", "purpose": "Existing example agent"}
+                ],
+                "related_files": ["apps/core/mcp_tools/session_tools.py"]
+              },
+              "depends_on": ["4.1.4"],
+              "actions": [
+                {"id": "4.2.1.1", "command": "UPDATE example to test all 7 session tools: transition, init_build, start_checkpoint, complete_checkpoint, add_commit, set_status, set_git", "file": "apps/core/agent/session_agent.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "4.2.2",
+              "title": "Run full verification tests",
+              "file_path": null,
+              "description": "Test full tool suite via SDK agent.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": ["apps/core/agent/session_agent.py"]
+              },
+              "depends_on": ["4.2.1"],
+              "actions": [
+                {"id": "4.2.2.1", "command": "VERIFY: Run full agent example, all 7 tools callable", "file": null, "status": "pending"},
+                {"id": "4.2.2.2", "command": "VERIFY: state.json reflects all tool operations", "file": null, "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "SDK integration test + example agent verification",
+        "verification_steps": [
+          "Run example agent with full tool suite",
+          "All 7 session tools callable via SDK",
+          "state.json correctly updated by each tool"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "title": "Update Skill Prompts",
+      "goal": "Replace direct state.json editing instructions with MCP tool calls in all session skill prompts. Migrate goals/questions/decisions to spec.md",
+      "prerequisites": [4],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": ".claude/skills/session/spec/OVERVIEW.md", "status": "exists", "description": "Spec skill - currently writes to state.json directly"},
+            {"path": ".claude/skills/session/plan/OVERVIEW.md", "status": "exists", "description": "Plan skill - updates plan_state in state.json"},
+            {"path": ".claude/skills/session/build/OVERVIEW.md", "status": "exists", "description": "Build skill - updates checkpoints and commits"},
+            {"path": ".claude/skills/session/SKILL.md", "status": "exists", "description": "Main session skill overview"}
+          ],
+          "tree": ".claude/skills/session/\n├── SKILL.md\n├── spec/OVERVIEW.md\n├── plan/OVERVIEW.md\n└── build/OVERVIEW.md"
+        },
+        "ending": {
+          "files": [
+            {"path": ".claude/skills/session/spec/OVERVIEW.md", "status": "modified", "description": "Uses MCP tools for phase transitions"},
+            {"path": ".claude/skills/session/plan/OVERVIEW.md", "status": "modified", "description": "Uses MCP tools for plan_state updates"},
+            {"path": ".claude/skills/session/build/OVERVIEW.md", "status": "modified", "description": "Uses MCP tools for checkpoint/commit tracking"},
+            {"path": ".claude/skills/session/SKILL.md", "status": "modified", "description": "Documents MCP tool usage"}
+          ],
+          "tree": ".claude/skills/session/ (same structure, updated content)"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "5.1",
+          "title": "Update Spec Skill",
+          "objective": "Replace state.json editing with MCP tool calls in spec skill. Move goals/questions/decisions sections to spec.md guidance.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.1.1",
+              "title": "Update spec OVERVIEW.md",
+              "file_path": ".claude/skills/session/spec/OVERVIEW.md",
+              "description": "Remove instructions to update state.json goals/questions/decisions. Add instruction to use session_transition_phase MCP tool when finalizing spec.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/spec/OVERVIEW.md", "lines": "all", "purpose": "Current spec skill instructions"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "329-358", "purpose": "New spec.md sections for goals/questions/decisions"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "5.1.1.1", "command": "REMOVE instructions to update state.json goals, open_questions, key_decisions fields", "file": ".claude/skills/session/spec/OVERVIEW.md", "status": "pending"},
+                {"id": "5.1.1.2", "command": "ADD instruction to write goals/questions/decisions to spec.md sections instead", "file": ".claude/skills/session/spec/OVERVIEW.md", "status": "pending"},
+                {"id": "5.1.1.3", "command": "ADD instruction: when finalizing spec, use mcp__session_state__session_transition_phase tool with new_phase='plan' (available via SDK MCP server)", "file": ".claude/skills/session/spec/OVERVIEW.md", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Update Plan Skill",
+          "objective": "Replace plan_state updates with MCP tool calls.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.2.1",
+              "title": "Update plan OVERVIEW.md",
+              "file_path": ".claude/skills/session/plan/OVERVIEW.md",
+              "description": "Replace direct state.json updates with MCP tool calls for plan phase transitions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/plan/OVERVIEW.md", "lines": "all", "purpose": "Current plan skill instructions"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "5.2.1.1", "command": "REMOVE instructions to directly update plan_state in state.json", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending"},
+                {"id": "5.2.1.2", "command": "ADD instruction: when finalizing plan, use mcp__session_state__session_transition_phase with new_phase='build'", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending"},
+                {"id": "5.2.1.3", "command": "ADD instruction: use mcp__session_state__session_init_build to set checkpoints_total", "file": ".claude/skills/session/plan/OVERVIEW.md", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.3",
+          "title": "Update Build Skill",
+          "objective": "Replace checkpoint and commit tracking with MCP tool calls.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.3.1",
+              "title": "Update build OVERVIEW.md",
+              "file_path": ".claude/skills/session/build/OVERVIEW.md",
+              "description": "Replace direct state.json updates with MCP tool calls for checkpoint completion and commit tracking.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/build/OVERVIEW.md", "lines": "all", "purpose": "Current build skill instructions"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "5.3.1.1", "command": "REMOVE instructions to directly update checkpoints_completed in state.json", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending"},
+                {"id": "5.3.1.2", "command": "ADD instruction: after checkpoint commit, use mcp__session_state__session_complete_checkpoint tool", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending"},
+                {"id": "5.3.1.3", "command": "ADD instruction: after git commit, use mcp__session_state__session_add_commit tool with sha and message", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending"},
+                {"id": "5.3.1.4", "command": "ADD instruction: when build complete, use mcp__session_state__session_transition_phase with new_phase='docs' or 'complete'", "file": ".claude/skills/session/build/OVERVIEW.md", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.4",
+          "title": "Update Main Session Skill",
+          "objective": "Document MCP tools in main SKILL.md overview.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.4.1",
+              "title": "Update SKILL.md",
+              "file_path": ".claude/skills/session/SKILL.md",
+              "description": "Add section documenting available MCP tools and when to use them.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/SKILL.md", "lines": "all", "purpose": "Current session skill overview"}
+                ],
+                "related_files": [".mcp.json"]
+              },
+              "depends_on": ["5.1.1", "5.2.1", "5.3.1"],
+              "actions": [
+                {"id": "5.4.1.1", "command": "ADD section 'SDK MCP Tools for State Updates' listing all mcp__session_state__* tools and their purposes", "file": ".claude/skills/session/SKILL.md", "status": "pending"},
+                {"id": "5.4.1.2", "command": "UPDATE overview to reference state.json v2 schema and SDK MCP tool usage", "file": ".claude/skills/session/SKILL.md", "status": "pending"},
+                {"id": "5.4.1.3", "command": "ADD note: these tools are available when agent runs via Claude Agent SDK with session_state MCP server configured", "file": ".claude/skills/session/SKILL.md", "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Prompt review + end-to-end session test",
+        "verification_steps": [
+          "Grep for 'state.json' in skill prompts - should only reference reading, not direct editing",
+          "Run /session:spec on test session, verify MCP tools called for transitions"
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "title": "Templates & Init Script Update",
+      "goal": "Update state.json template to v2 schema, update spec.md template with Goals/Questions/Decisions sections, update init-session.py",
+      "prerequisites": [5],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": ".claude/skills/session/spec/templates/state.json", "status": "exists", "description": "Current v1 state.json template"},
+            {"path": ".claude/skills/session/spec/templates/spec.md", "status": "exists", "description": "Current spec.md template (if exists)"},
+            {"path": ".claude/skills/session/scripts/init-session.py", "status": "exists", "description": "Session initialization script"}
+          ],
+          "tree": ".claude/skills/session/\n├── spec/templates/\n│   ├── state.json\n│   └── spec.md\n└── scripts/\n    └── init-session.py"
+        },
+        "ending": {
+          "files": [
+            {"path": ".claude/skills/session/spec/templates/state.json", "status": "modified", "description": "v2 state.json template"},
+            {"path": ".claude/skills/session/spec/templates/spec.md", "status": "modified", "description": "Updated with Goals/Questions/Decisions sections"},
+            {"path": ".claude/skills/session/scripts/init-session.py", "status": "modified", "description": "Creates v2 state.json"}
+          ],
+          "tree": ".claude/skills/session/ (same structure, updated templates)"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "6.1",
+          "title": "Update state.json Template",
+          "objective": "Replace v1 template with v2 schema matching the spec.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "6.1.1",
+              "title": "Update state.json template",
+              "file_path": ".claude/skills/session/spec/templates/state.json",
+              "description": "Replace template with v2 schema: remove goals/questions/decisions, add phase_history, build_progress, git, commits, artifacts.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/spec/templates/state.json", "lines": "all", "purpose": "Current template to replace"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "246-327", "purpose": "v2 schema definition"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "6.1.1.1", "command": "REPLACE entire state.json template with v2 schema", "file": ".claude/skills/session/spec/templates/state.json", "status": "pending"},
+                {"id": "6.1.1.2", "command": "REMOVE goals, open_questions, key_decisions fields", "file": ".claude/skills/session/spec/templates/state.json", "status": "pending"},
+                {"id": "6.1.1.3", "command": "ADD phase_history object with null timestamps", "file": ".claude/skills/session/spec/templates/state.json", "status": "pending"},
+                {"id": "6.1.1.4", "command": "ADD build_progress object with null values", "file": ".claude/skills/session/spec/templates/state.json", "status": "pending"},
+                {"id": "6.1.1.5", "command": "ADD git object with null branch/worktree/base_branch", "file": ".claude/skills/session/spec/templates/state.json", "status": "pending"},
+                {"id": "6.1.1.6", "command": "ADD artifacts object with default paths", "file": ".claude/skills/session/spec/templates/state.json", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "6.2",
+          "title": "Update spec.md Template",
+          "objective": "Add Goals, Open Questions, Key Decisions sections to spec.md template.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "6.2.1",
+              "title": "Update spec.md template",
+              "file_path": ".claude/skills/session/spec/templates/spec.md",
+              "description": "Add structured sections for Goals (High/Mid/Low), Open Questions (checkbox list), Key Decisions (with rationale).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/spec/templates/spec.md", "lines": "all", "purpose": "Current template (if exists)"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "337-358", "purpose": "Example sections structure"}
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "6.2.1.1", "command": "ADD section '## Goals' with subsections High-Level, Mid-Level, Implementation Goals", "file": ".claude/skills/session/spec/templates/spec.md", "status": "pending"},
+                {"id": "6.2.1.2", "command": "ADD section '## Open Questions' with checkbox list format", "file": ".claude/skills/session/spec/templates/spec.md", "status": "pending"},
+                {"id": "6.2.1.3", "command": "ADD section '## Key Decisions' with decision/rationale/date format", "file": ".claude/skills/session/spec/templates/spec.md", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "6.3",
+          "title": "Update Init Script",
+          "objective": "Update init-session.py to create v2 state.json structure.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "6.3.1",
+              "title": "Update init-session.py",
+              "file_path": ".claude/skills/session/scripts/init-session.py",
+              "description": "Update script to generate v2 state.json with new schema fields.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": ".claude/skills/session/scripts/init-session.py", "lines": "all", "purpose": "Current init script"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "246-327", "purpose": "v2 schema to generate"}
+                ],
+                "related_files": [".claude/skills/session/spec/templates/state.json"]
+              },
+              "depends_on": ["6.1.1"],
+              "actions": [
+                {"id": "6.3.1.1", "command": "UPDATE state.json generation to match v2 schema", "file": ".claude/skills/session/scripts/init-session.py", "status": "pending"},
+                {"id": "6.3.1.2", "command": "ADD phase_history initialization with spec_started_at set to creation time", "file": ".claude/skills/session/scripts/init-session.py", "status": "pending"},
+                {"id": "6.3.1.3", "command": "ADD build_progress initialization with null values", "file": ".claude/skills/session/scripts/init-session.py", "status": "pending"},
+                {"id": "6.3.1.4", "command": "ADD git initialization (detect current branch if in git repo)", "file": ".claude/skills/session/scripts/init-session.py", "status": "pending"},
+                {"id": "6.3.1.5", "command": "ADD artifacts initialization with default paths", "file": ".claude/skills/session/scripts/init-session.py", "status": "pending"}
+              ]
+            },
+            {
+              "id": "6.3.2",
+              "title": "Test init script",
+              "file_path": null,
+              "description": "Verify init-session.py creates correct v2 structure.",
+              "status": "pending",
+              "context": {
+                "read_before": [],
+                "related_files": [".claude/skills/session/scripts/init-session.py"]
+              },
+              "depends_on": ["6.3.1"],
+              "actions": [
+                {"id": "6.3.2.1", "command": "VERIFY: Run init-session.py, check state.json matches v2 schema", "file": null, "status": "pending"},
+                {"id": "6.3.2.2", "command": "VERIFY: Created state.json can be loaded by StateManager", "file": null, "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Create new session and verify structure",
+        "verification_steps": [
+          "Run init-session.py, verify state.json matches v2 schema",
+          "Verify spec.md has Goals/Questions/Decisions sections",
+          "StateManager.load() succeeds on newly created session"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "title": "Database Onboarding & Sync",
+      "goal": "Implement filesystem→database sync: onboard existing sessions from state.json v2, query sessions by project. Database becomes reconstructable index from filesystem.",
+      "prerequisites": [6],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            {"path": "apps/core/session_db/crud.py", "status": "exists", "description": "Existing CRUD operations"},
+            {"path": "apps/core/session_db/models.py", "status": "exists", "description": "SQLModel database models"}
+          ],
+          "tree": "apps/core/session_db/"
+        },
+        "ending": {
+          "files": [
+            {"path": "apps/core/session_db/sync.py", "status": "new", "description": "Sync functions for filesystem→database"},
+            {"path": "apps/core/session_db/models.py", "status": "modified", "description": "Updated to match state.json v2 fields"},
+            {"path": "apps/core/session_db/tests/test_sync.py", "status": "new", "description": "Tests for sync functions"}
+          ],
+          "tree": "apps/core/session_db/\n├── models.py\n├── crud.py\n├── sync.py  ← NEW\n└── tests/\n    └── test_sync.py  ← NEW"
+        }
+      },
+      "task_groups": [
+        {
+          "id": "7.1",
+          "title": "Update Database Models for state.json v2",
+          "objective": "Ensure database Session model has fields matching state.json v2 schema for proper sync.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "7.1.1",
+              "title": "Update Session model fields",
+              "file_path": "apps/core/session_db/models.py",
+              "description": "Add/update fields to match state.json v2: phase_history, build_progress, git context, artifacts.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/session_db/models.py", "lines": "all", "purpose": "Current Session model"},
+                  {"file": "agents/sessions/2026-02-14_claude-code-agent-sdk-integration/spec.md", "lines": "246-327", "purpose": "state.json v2 schema"}
+                ],
+                "related_files": ["apps/core/state_manager/models.py"]
+              },
+              "depends_on": [],
+              "actions": [
+                {"id": "7.1.1.1", "command": "UPDATE Session model: ensure fields match v2 schema - phase_history, build_progress as JSON columns", "file": "apps/core/session_db/models.py", "status": "pending"},
+                {"id": "7.1.1.2", "command": "ADD git_branch, git_worktree, git_base_branch fields if not present", "file": "apps/core/session_db/models.py", "status": "pending"},
+                {"id": "7.1.1.3", "command": "REMOVE any fields that don't exist in v2 (goals, open_questions, key_decisions - now in spec.md)", "file": "apps/core/session_db/models.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "7.2",
+          "title": "Create Sync Functions",
+          "objective": "Implement sync_session_from_filesystem() and onboard_project_sessions() functions.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "7.2.1",
+              "title": "Create sync module",
+              "file_path": "apps/core/session_db/sync.py",
+              "description": "Implement functions to read state.json v2 and upsert to database.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/state_manager/models.py", "lines": "all", "purpose": "SessionState Pydantic model to load"},
+                  {"file": "apps/core/session_db/models.py", "lines": "all", "purpose": "Session SQLModel to upsert"},
+                  {"file": "docs/.drafts/agent-architecture/85-session-data-architecture.md", "lines": "255-305", "purpose": "Sync function design"}
+                ],
+                "related_files": ["apps/core/state_manager/state_manager.py", "apps/core/session_db/crud.py"]
+              },
+              "depends_on": ["7.1.1"],
+              "actions": [
+                {"id": "7.2.1.1", "command": "CREATE FILE apps/core/session_db/sync.py", "file": "apps/core/session_db/sync.py", "status": "pending"},
+                {"id": "7.2.1.2", "command": "CREATE FUNCTION sync_session_from_filesystem(working_dir: str, session_slug: str, project_id: UUID | None) -> Session: read state.json, map to Session, upsert", "file": "apps/core/session_db/sync.py", "status": "pending"},
+                {"id": "7.2.1.3", "command": "CREATE FUNCTION onboard_project_sessions(working_dir: str, project_id: UUID) -> list[Session]: scan agents/sessions/*, sync each", "file": "apps/core/session_db/sync.py", "status": "pending"},
+                {"id": "7.2.1.4", "command": "CREATE FUNCTION map_state_to_session(state: SessionState, project_id: UUID | None) -> SessionCreate: map v2 fields to database DTO", "file": "apps/core/session_db/sync.py", "status": "pending"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "7.3",
+          "title": "Add Sync Tests",
+          "objective": "Test sync functions with real session directories.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "7.3.1",
+              "title": "Create sync tests",
+              "file_path": "apps/core/session_db/tests/test_sync.py",
+              "description": "Test sync_session_from_filesystem and onboard_project_sessions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {"file": "apps/core/session_db/sync.py", "lines": "all", "purpose": "Functions to test"}
+                ],
+                "related_files": []
+              },
+              "depends_on": ["7.2.1"],
+              "actions": [
+                {"id": "7.3.1.1", "command": "CREATE FILE apps/core/session_db/tests/test_sync.py", "file": "apps/core/session_db/tests/test_sync.py", "status": "pending"},
+                {"id": "7.3.1.2", "command": "TEST test_sync_creates_session: sync from temp dir with state.json, ASSERT session created in DB", "file": "apps/core/session_db/tests/test_sync.py", "status": "pending"},
+                {"id": "7.3.1.3", "command": "TEST test_sync_updates_existing: sync twice, ASSERT session updated not duplicated", "file": "apps/core/session_db/tests/test_sync.py", "status": "pending"},
+                {"id": "7.3.1.4", "command": "TEST test_onboard_scans_sessions: create temp dir with 3 sessions, ASSERT all 3 synced", "file": "apps/core/session_db/tests/test_sync.py", "status": "pending"}
+              ]
+            }
+          ]
+        }
+      ],
+      "testing_strategy": {
+        "approach": "Integration tests for sync functions",
+        "verification_steps": [
+          "pytest apps/core/session_db/tests/test_sync.py -v",
+          "Manual: Onboard real project, verify sessions appear in database",
+          "Query sessions by project_id, verify matches filesystem"
+        ]
+      }
+    }
+  ]
+}

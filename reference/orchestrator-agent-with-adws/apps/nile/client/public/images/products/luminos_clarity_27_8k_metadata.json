@@ -1,0 +1,30 @@
+{
+  "id": "luminos_clarity_27_8k",
+  "name": "Luminos Clarity 27\" 8K",
+  "description": "First consumer 8K monitor at 27 inches with 7680x4320 resolution. Features quantum dot technology, 1000 nit HDR, and built-in AI upscaling for lower resolution content.",
+  "price": 2999.99,
+  "category": "Monitors",
+  "brand": "Luminos",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "8K at 27 inches is unreal. Every pixel invisible.",
+      "rating": 5,
+      "reviewer_name": "ResolutionChaser",
+      "review_date": "2025-01-22"
+    },
+    {
+      "review_text": "AI upscaling makes 4K content look native.",
+      "rating": 5,
+      "reviewer_name": "UpscaleFan",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Needs serious GPU power for 8K gaming.",
+      "rating": 4,
+      "reviewer_name": "GPURealist",
+      "review_date": "2025-01-14"
+    }
+  ]
+}

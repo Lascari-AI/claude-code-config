@@ -1,0 +1,30 @@
+{
+  "id": "tp_link_deco_xe75_pro",
+  "name": "TP-Link Deco XE75 Pro WiFi 6E Mesh",
+  "description": "WiFi 6E mesh system with 6GHz band for backhaul. Features 5400Mbps speeds, 200+ device support, and AI-driven mesh optimization. Coverage up to 7200 sq ft.",
+  "price": 399.99,
+  "category": "Networking",
+  "brand": "TP-Link",
+  "rating": 4.6,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "6GHz backhaul makes mesh actually work.",
+      "rating": 5,
+      "reviewer_name": "MeshBeliever",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Covers my entire house with fast WiFi.",
+      "rating": 5,
+      "reviewer_name": "LargeHomeOwner",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Easy setup through Deco app.",
+      "rating": 4,
+      "reviewer_name": "EasySetupFan",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

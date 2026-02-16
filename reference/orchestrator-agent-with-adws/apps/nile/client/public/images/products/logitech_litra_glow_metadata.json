@@ -1,0 +1,30 @@
+{
+  "id": "logitech_litra_glow",
+  "name": "Logitech Litra Glow",
+  "description": "Compact streaming light with TrueSoft technology. Features frameless design, edge-lit LEDs, and Logitech G Hub control. Perfect for video calls and streaming.",
+  "price": 59.99,
+  "category": "Desk Lighting",
+  "brand": "Logitech",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "TrueSoft really does look more natural.",
+      "rating": 5,
+      "reviewer_name": "NaturalLight",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Compact size perfect for small setups.",
+      "rating": 5,
+      "reviewer_name": "SmallSetup",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Not as bright as Key Light but sufficient.",
+      "rating": 4,
+      "reviewer_name": "BrightnessComparer",
+      "review_date": "2024-12-07"
+    }
+  ]
+}

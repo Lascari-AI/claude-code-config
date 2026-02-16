@@ -1,0 +1,30 @@
+{
+  "id": "tessera_cable_management_kit",
+  "name": "Tessera Cable Management Kit",
+  "description": "Premium modular cable management system. Features magnetic cable clips, under-desk cable channels, and velcro straps. Everything needed for a clean setup.",
+  "price": 79.99,
+  "category": "Cable Management",
+  "brand": "Tessera",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Transformed my cable mess into clean setup.",
+      "rating": 5,
+      "reviewer_name": "CableOCD",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Modular system works with any desk.",
+      "rating": 5,
+      "reviewer_name": "FlexibleSetup",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Premium price but premium quality.",
+      "rating": 4,
+      "reviewer_name": "QualityBuyer",
+      "review_date": "2025-01-10"
+    }
+  ]
+}

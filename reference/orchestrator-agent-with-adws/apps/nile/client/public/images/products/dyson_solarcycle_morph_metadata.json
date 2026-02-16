@@ -1,0 +1,30 @@
+{
+  "id": "dyson_solarcycle_morph",
+  "name": "Dyson Solarcycle Morph",
+  "description": "Transformable task light that adapts to different uses. Features daylight tracking, 60-year lifespan LED, and Dyson's legendary engineering and design.",
+  "price": 649.00,
+  "category": "Desk Lighting",
+  "brand": "Dyson",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Transforms for different tasks. Genius design.",
+      "rating": 5,
+      "reviewer_name": "DysonFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "60-year LED lifespan is crazy.",
+      "rating": 5,
+      "reviewer_name": "LongevityBuyer",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Dyson premium price as expected.",
+      "rating": 4,
+      "reviewer_name": "PriceAware",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

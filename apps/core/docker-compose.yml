@@ -26,7 +26,7 @@ services:
       - "54320:5432"  # Use non-standard port to avoid conflicts with local PostgreSQL
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./session_db/scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d session_db"]
       interval: 5s
@@ -50,12 +50,12 @@ services:
     volumes:
       # Mount source for hot reload
       - ./backend:/app/backend:ro
-      - ./session_db:/app/session_db:ro
+      - ./session_db/src/session_db:/app/session_db:ro
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
-    command: uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app
+    command: uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/backend
 
   # ═══════════════════════════════════════════════════════════════════════════════
   # FRONTEND - Next.js

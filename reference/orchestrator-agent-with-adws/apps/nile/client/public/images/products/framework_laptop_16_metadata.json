@@ -1,0 +1,30 @@
+{
+  "id": "framework_laptop_16",
+  "name": "Framework Laptop 16",
+  "description": "Revolutionary modular laptop with swappable GPU, customizable ports, and user-upgradeable everything. Built for repairability and longevity.",
+  "price": 1399.00,
+  "category": "Laptops",
+  "brand": "Framework",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "The future of laptops. Upgraded GPU module in minutes.",
+      "rating": 5,
+      "reviewer_name": "RightToRepair",
+      "review_date": "2025-01-14"
+    },
+    {
+      "review_text": "Finally a laptop I can actually fix myself.",
+      "rating": 5,
+      "reviewer_name": "DIYEnthusiast",
+      "review_date": "2025-01-09"
+    },
+    {
+      "review_text": "Great concept, execution improving with each batch.",
+      "rating": 4,
+      "reviewer_name": "EarlyAdopter",
+      "review_date": "2025-01-04"
+    }
+  ]
+}

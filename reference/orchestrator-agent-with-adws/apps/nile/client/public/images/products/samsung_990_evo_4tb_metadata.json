@@ -1,0 +1,30 @@
+{
+  "id": "samsung_990_evo_4tb",
+  "name": "Samsung 990 EVO 4TB",
+  "description": "High-capacity PCIe 5.0 SSD with 4TB storage and 10,000MB/s reads. Perfect for game libraries, video editing, and developers who need massive fast storage.",
+  "price": 349.99,
+  "category": "Storage",
+  "brand": "Samsung",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "4TB of blazing fast storage. Game libraries rejoice.",
+      "rating": 5,
+      "reviewer_name": "GameCollector",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "PCIe 5.0 speeds are insane. Video editing transformed.",
+      "rating": 5,
+      "reviewer_name": "VideoProducer",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Expensive but Samsung reliability is worth it.",
+      "rating": 4,
+      "reviewer_name": "ReliabilityFan",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

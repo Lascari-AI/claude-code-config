@@ -1,0 +1,30 @@
+{
+  "id": "alienware_aw3225qf",
+  "name": "Alienware AW3225QF 32\" 4K QD-OLED",
+  "description": "32-inch curved 4K QD-OLED with 240Hz refresh rate. Features quantum dot enhancement, infinite contrast, and Alienware's signature design for the ultimate gaming experience.",
+  "price": 1299.99,
+  "category": "Monitors",
+  "brand": "Alienware",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "QD-OLED is the best of both worlds. Incredible colors.",
+      "rating": 5,
+      "reviewer_name": "QDOLEDFan",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "4K 240Hz OLED gaming is the endgame.",
+      "rating": 5,
+      "reviewer_name": "EndgameGamer",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Alienware design is love or hate but display is perfect.",
+      "rating": 4,
+      "reviewer_name": "DesignNeutral",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

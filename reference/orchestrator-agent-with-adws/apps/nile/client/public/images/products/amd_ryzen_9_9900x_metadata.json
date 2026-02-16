@@ -1,0 +1,30 @@
+{
+  "id": "amd_ryzen_9_9900x",
+  "name": "AMD Ryzen 9 9900X",
+  "description": "High-end Zen 5 CPU with 12 cores/24 threads. Perfect balance of gaming and productivity with excellent single-thread performance and reasonable TDP.",
+  "price": 499.99,
+  "category": "Processors",
+  "brand": "AMD",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best all-around CPU for developers. Handles everything.",
+      "rating": 5,
+      "reviewer_name": "FullStackDev",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Gaming performance matches Intel now.",
+      "rating": 5,
+      "reviewer_name": "AMDGamer",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Great chip at a fair price.",
+      "rating": 4,
+      "reviewer_name": "ValueSeeker",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

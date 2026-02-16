@@ -1,0 +1,30 @@
+{
+  "id": "amd_radeon_rx_9800_xtx",
+  "name": "AMD Radeon RX 9800 XTX",
+  "description": "AMD flagship GPU with 24GB GDDR7 and RDNA 5 architecture. Features FSR 4.0 with ML frame generation, excellent ray tracing, and industry-leading power efficiency.",
+  "price": 999.99,
+  "category": "Graphics Cards",
+  "brand": "AMD",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Finally competitive with NVIDIA at the high end. Great card.",
+      "rating": 5,
+      "reviewer_name": "TeamRed",
+      "review_date": "2025-01-15"
+    },
+    {
+      "review_text": "FSR 4.0 is impressive. Almost matches DLSS now.",
+      "rating": 5,
+      "reviewer_name": "OpenSourceFan",
+      "review_date": "2025-01-10"
+    },
+    {
+      "review_text": "Amazing Linux support. Drivers just work.",
+      "rating": 5,
+      "reviewer_name": "LinuxGamer",
+      "review_date": "2025-01-05"
+    }
+  ]
+}

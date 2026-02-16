@@ -1,0 +1,30 @@
+{
+  "id": "apple_airpods_max",
+  "name": "Apple AirPods Max",
+  "description": "Apple's premium over-ear headphones with H1 chips, Adaptive EQ, and Spatial Audio. Features stunning aluminum design, 20-hour battery, and seamless Apple ecosystem integration.",
+  "price": 549.0,
+  "category": "Headphones",
+  "brand": "Apple",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Spatial Audio is incredible for movies. Worth it for Apple users.",
+      "rating": 5,
+      "reviewer_name": "AppleEcosystem",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Build quality is unmatched. Feels premium.",
+      "rating": 5,
+      "reviewer_name": "PremiumBuyer",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Case design is still bizarre but headphones are great.",
+      "rating": 4,
+      "reviewer_name": "CaseCritic",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

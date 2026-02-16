@@ -1,0 +1,30 @@
+{
+  "id": "dell_xps_16_2025",
+  "name": "Dell XPS 16 (2025)",
+  "description": "Premium Windows laptop with 16-inch 4K OLED display, Intel Core Ultra 9, and RTX 4070. Stunning design with haptic touchpad and excellent build quality.",
+  "price": 2299.00,
+  "category": "Laptops",
+  "brand": "Dell",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "OLED display is breathtaking. Best laptop screen.",
+      "rating": 5,
+      "reviewer_name": "DisplaySnob",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "Finally a Windows laptop that rivals MacBook quality.",
+      "rating": 5,
+      "reviewer_name": "WindowsPro",
+      "review_date": "2025-01-08"
+    },
+    {
+      "review_text": "Keyboard is excellent but touchpad takes adjustment.",
+      "rating": 4,
+      "reviewer_name": "InputPurist",
+      "review_date": "2025-01-03"
+    }
+  ]
+}

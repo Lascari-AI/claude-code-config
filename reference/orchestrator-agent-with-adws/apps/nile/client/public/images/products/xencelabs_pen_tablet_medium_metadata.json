@@ -1,0 +1,30 @@
+{
+  "id": "xencelabs_pen_tablet_medium",
+  "name": "Xencelabs Pen Tablet Medium",
+  "description": "Professional pen tablet from Wacom veterans with two styluses included (thin and standard). Features 8192 pressure levels, quick keys, and OLED display for settings.",
+  "price": 279.99,
+  "category": "Drawing Tablets",
+  "brand": "Xencelabs",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Two styluses included is brilliant. Different feels.",
+      "rating": 5,
+      "reviewer_name": "DualStylusFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Made by ex-Wacom team and it shows.",
+      "rating": 5,
+      "reviewer_name": "QualityAppreciator",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Quick keys OLED is useful but adds complexity.",
+      "rating": 4,
+      "reviewer_name": "SimplicitySeeker",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

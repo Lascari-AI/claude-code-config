@@ -1,0 +1,30 @@
+{
+  "id": "corsair_mm700_rgb",
+  "name": "Corsair MM700 RGB Extended",
+  "description": "Extended cloth mouse pad with RGB edge lighting. Features 360-degree RGB, USB passthrough port, and spill-resistant surface. For gamers who want the full setup.",
+  "price": 59.99,
+  "category": "Mouse Pads",
+  "brand": "Corsair",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "RGB around the desk looks amazing.",
+      "rating": 5,
+      "reviewer_name": "RGBFan",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "USB passthrough is surprisingly useful.",
+      "rating": 5,
+      "reviewer_name": "PassthroughUser",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "iCUE sync with other Corsair gear.",
+      "rating": 4,
+      "reviewer_name": "iCUEUser",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

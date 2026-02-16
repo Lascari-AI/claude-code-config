@@ -1,0 +1,30 @@
+{
+  "id": "ubiquiti_unifi_dream_machine_pro",
+  "name": "Ubiquiti UniFi Dream Machine Pro",
+  "description": "Enterprise-grade network appliance with 10G SFP+ WAN, built-in UniFi controller, and IDS/IPS. Features expandable storage bay for UniFi Protect NVR functionality.",
+  "price": 499.00,
+  "category": "Networking",
+  "brand": "Ubiquiti",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Home lab networking perfected. 10G WAN future-proofs.",
+      "rating": 5,
+      "reviewer_name": "HomeLabPro",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "All-in-one appliance simplifies network stack.",
+      "rating": 5,
+      "reviewer_name": "NetworkSimplifier",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Overkill for most but perfect for enthusiasts.",
+      "rating": 5,
+      "reviewer_name": "EnthusiastBuilder",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

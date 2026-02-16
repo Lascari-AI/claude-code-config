@@ -1,0 +1,30 @@
+{
+  "id": "luminos_prism_34",
+  "name": "Luminos Prism 34\" OLED Ultrawide",
+  "description": "Premium 34-inch OLED ultrawide with 175Hz refresh rate and 3440x1440 resolution. Features integrated ambient lighting, USB-C 96W charging, and AI-optimized color profiles.",
+  "price": 1599.99,
+  "category": "Monitors",
+  "brand": "Luminos",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "OLED ultrawide is the perfect format. Immersive and practical.",
+      "rating": 5,
+      "reviewer_name": "UltrawideOLED",
+      "review_date": "2025-01-20"
+    },
+    {
+      "review_text": "Ambient lighting matches screen content. Beautiful.",
+      "rating": 5,
+      "reviewer_name": "AmbientFan",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "New brand but quality rivals established players.",
+      "rating": 5,
+      "reviewer_name": "BrandAgnostic",
+      "review_date": "2025-01-12"
+    }
+  ]
+}

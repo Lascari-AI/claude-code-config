@@ -1,0 +1,30 @@
+{
+  "id": "zowie_ec2_cw",
+  "name": "Zowie EC2-CW Wireless",
+  "description": "Professional esports mouse with wireless freedom. Features legendary EC2 ergonomic shape, 3370 sensor, and driverless plug-and-play design. Pure performance, no distractions.",
+  "price": 139.99,
+  "category": "Mice",
+  "brand": "Zowie",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "EC2 shape wireless. Dreams do come true.",
+      "rating": 5,
+      "reviewer_name": "ZowieFan",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "No software means no issues. Just works.",
+      "rating": 5,
+      "reviewer_name": "NoSoftwarePlease",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Wish it was lighter but shape is unbeatable.",
+      "rating": 4,
+      "reviewer_name": "ShapePurist",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

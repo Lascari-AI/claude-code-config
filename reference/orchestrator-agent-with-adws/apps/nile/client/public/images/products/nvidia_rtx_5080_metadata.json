@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_5080",
+  "name": "NVIDIA GeForce RTX 5080",
+  "description": "High-end Blackwell GPU with 16GB GDDR7 memory and full DLSS 4.0 support. Perfect balance of performance and price for enthusiast 4K gaming and content creation.",
+  "price": 999.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "The sweet spot for 4K gaming. Runs everything maxed out.",
+      "rating": 5,
+      "reviewer_name": "4KGamer",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "Great for Stable Diffusion. VRAM is sufficient for most models.",
+      "rating": 5,
+      "reviewer_name": "AIArtist",
+      "review_date": "2025-01-08"
+    },
+    {
+      "review_text": "Solid upgrade from 3080. Night and day difference.",
+      "rating": 5,
+      "reviewer_name": "Upgrader",
+      "review_date": "2025-01-03"
+    }
+  ]
+}

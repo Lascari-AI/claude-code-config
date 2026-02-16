@@ -1,0 +1,30 @@
+{
+  "id": "voltaic_power_hub",
+  "name": "Voltaic PowerHub Pro",
+  "description": "Desktop charging station with 140W total output. Features 4 USB-C ports with dynamic power allocation, built-in cable management, and premium aluminum design.",
+  "price": 149.99,
+  "category": "Cable Management",
+  "brand": "Voltaic",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Dynamic power allocation is genius.",
+      "rating": 5,
+      "reviewer_name": "MultiCharger",
+      "review_date": "2025-01-16"
+    },
+    {
+      "review_text": "Reduced my charging cables to one hub.",
+      "rating": 5,
+      "reviewer_name": "CableReducer",
+      "review_date": "2025-01-12"
+    },
+    {
+      "review_text": "Premium price but replaces multiple chargers.",
+      "rating": 4,
+      "reviewer_name": "ConsolidationFan",
+      "review_date": "2025-01-08"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "netgear_gs110emx",
+  "name": "NETGEAR Nighthawk GS110EMX",
+  "description": "10-port switch with 2x 10G multi-gig ports. Features NETGEAR Armor, QoS for gaming, and web management. Bridge your 10G and 1G networks easily.",
+  "price": 199.99,
+  "category": "Networking",
+  "brand": "NETGEAR",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "10G ports bridge NAS to network.",
+      "rating": 5,
+      "reviewer_name": "10GBridge",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Gaming QoS actually helps latency.",
+      "rating": 5,
+      "reviewer_name": "GamerNetwork",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Nighthawk branding is gaming focused.",
+      "rating": 4,
+      "reviewer_name": "BrandingAware",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

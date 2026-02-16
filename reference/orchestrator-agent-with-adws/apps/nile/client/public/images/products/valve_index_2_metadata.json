@@ -1,0 +1,30 @@
+{
+  "id": "valve_index_2",
+  "name": "Valve Index 2",
+  "description": "Next-gen PC VR with 144Hz micro-OLED displays and wider field of view. Features improved Knuckles controllers and best-in-class tracking for enthusiasts.",
+  "price": 999.99,
+  "category": "VR/AR Headsets",
+  "brand": "Valve",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "This is what PCVR should be. Incredible upgrade.",
+      "rating": 5,
+      "reviewer_name": "PCVREnthusiast",
+      "review_date": "2025-01-22"
+    },
+    {
+      "review_text": "144Hz makes motion sickness a thing of the past.",
+      "rating": 5,
+      "reviewer_name": "RefreshRateSensitive",
+      "review_date": "2025-01-18"
+    },
+    {
+      "review_text": "Expensive but worth it for serious VR users.",
+      "rating": 5,
+      "reviewer_name": "VRDedicated",
+      "review_date": "2025-01-14"
+    }
+  ]
+}

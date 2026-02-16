@@ -1,0 +1,412 @@
+# Database Implementation Expertise
+# Multi-Agent Orchestration System - PostgreSQL Architecture
+
+overview:
+  description: "PostgreSQL database layer using asyncpg for connection pooling and Pydantic for type-safe modeling"
+  database_system: "PostgreSQL (NeonDB recommended)"
+  driver: "asyncpg (asynchronous driver for asyncio)"
+  orm_pattern: "Lightweight Pydantic models over raw SQL queries (No heavy ORM like SQLAlchemy)"
+  schema_management: "Idempotent SQL migrations"
+
+core_implementation:
+  database_module:
+    file: "apps/orchestrator_3_stream/backend/modules/database.py"
+    lines: 1600
+    purpose: "Connection pooling and database operations"
+
+    connection_pool:
+      lifecycle:
+        init_pool: "Creates asyncpg.create_pool with min/max size config (line 34)"
+        get_pool: "Returns existing pool or raises RuntimeError (line 67)"
+        close_pool: "Gracefully closes all connections (line 82)"
+        get_connection: "Context manager for acquiring connections from pool (line 96)"
+      config:
+        min_size: 5
+        max_size: 20
+        timeout: 60s
+
+    query_patterns:
+      - "Explicit transaction management (async with conn.transaction():)"
+      - "Raw SQL with parameter substitution ($1, $2, etc.)"
+      - "Return values mapped to Pydantic models or dictionaries"
+      - "JSONB handling via json.dumps/loads"
+
+  data_models:
+    file: "apps/orchestrator_db/models.py"
+    purpose: "Single source of truth for data structures"
+    framework: "Pydantic V2"
+
+    models:
+      - "OrchestratorAgent: orchestrator_agents table"
+      - "Agent: agents table"
+      - "Prompt: prompts table"
+      - "AgentLog: agent_logs table"
+      - "SystemLog: system_logs table"
+      - "OrchestratorChat: orchestrator_chat table"
+
+    features:
+      - "Automatic UUID conversion (asyncpg UUID <-> Python UUID)"
+      - "Decimal to Float conversion for currency"
+      - "JSON string parsing for metadata/payload fields"
+      - "Datetime serialization to ISO format"
+      - "Literal types for status enums"
+
+    distribution:
+      source: "apps/orchestrator_db/models.py"
+      synced_to:
+        - "apps/orchestrator_3_stream/backend/modules/orch_database_models.py"
+      sync_script: "apps/orchestrator_db/sync_models.py"
+
+  schema_migrations:
+    directory: "apps/orchestrator_db/migrations/"
+    runner: "apps/orchestrator_db/run_migrations.py"
+    pattern: "Numbered SQL files (0_*.sql, 1_*.sql, ..., 8_*.sql) executed in order"
+    idempotency: "Uses 'CREATE TABLE IF NOT EXISTS' and 'CREATE INDEX IF NOT EXISTS'"
+    files:
+      - "0_orchestrator_agents.sql"
+      - "1_agents.sql"
+      - "2_prompts.sql"
+      - "3_agent_logs.sql"
+      - "4_system_logs.sql"
+      - "5_indexes.sql"
+      - "6_functions.sql"
+      - "7_triggers.sql"
+      - "8_orchestrator_chat.sql"
+
+schema_structure:
+  logging_architecture:
+    overview: "Separate logging tables for orchestrator vs command-level agents"
+    orchestrator_logs: "Stored in orchestrator_chat table (FK: orchestrator_agent_id -> orchestrator_agents.id)"
+    command_agent_logs: "Stored in agent_logs table (FK: agent_id -> agents.id)"
+    system_logs: "Application-level logs only (no agent-specific activity)"
+    key_distinction: "agent_logs references agents.id, NOT orchestrator_agents.id"
+
+  tables:
+    orchestrator_agents:
+      description: "Singleton state for the main orchestrator"
+      pk: "id (UUID)"
+      unique: "session_id"
+      fields:
+        - "session_id (TEXT, nullable, UNIQUE): Claude SDK session identifier"
+        - "system_prompt (TEXT): Orchestrator system prompt"
+        - "status (TEXT): idle, executing, waiting, blocked, complete"
+        - "working_dir (TEXT): Working directory path"
+        - "input_tokens, output_tokens (INTEGER DEFAULT 0)"
+        - "total_cost (DECIMAL(10,4) DEFAULT 0.0000)"
+        - "archived (BOOLEAN DEFAULT false): Soft delete flag"
+        - "metadata (JSONB DEFAULT '{}')"
+        - "created_at, updated_at (TIMESTAMPTZ)"
+      indexes:
+        - "idx_orchestrator_agents_status"
+        - "idx_orchestrator_agents_updated_at"
+      logs_stored_in: "orchestrator_chat table"
+
+    agents:
+      description: "Registry of specialized sub-agents (command-level agents)"
+      pk: "id (UUID)"
+      fk: "orchestrator_agent_id -> orchestrator_agents.id ON DELETE CASCADE"
+      unique: "(orchestrator_agent_id, name) - agent names unique per orchestrator"
+      fields:
+        - "name (TEXT NOT NULL)"
+        - "model (TEXT NOT NULL): Claude model ID"
+        - "system_prompt (TEXT)"
+        - "working_dir (TEXT)"
+        - "git_worktree (TEXT): Git worktree path if using worktrees"
+        - "status (TEXT): idle, executing, waiting, blocked, complete"
+        - "session_id (TEXT): Claude SDK session ID"
+        - "adw_id (TEXT): AI Developer Workflow ID"
+        - "adw_step (TEXT): ADW step identifier"
+        - "input_tokens, output_tokens (INTEGER DEFAULT 0)"
+        - "total_cost (DECIMAL(10,4) DEFAULT 0.0000)"
+        - "archived (BOOLEAN DEFAULT false)"
+        - "metadata (JSONB DEFAULT '{}')"
+        - "created_at, updated_at (TIMESTAMPTZ)"
+      indexes:
+        - "idx_agents_status"
+        - "idx_agents_archived"
+        - "idx_agents_updated_at"
+        - "idx_agents_name"
+      logs_stored_in: "agent_logs table"
+
+    agent_logs:
+      description: "Event stream for COMMAND-LEVEL AGENTS ONLY. FK references agents.id"
+      pk: "id (UUID)"
+      fk: "agent_id -> agents.id ON DELETE CASCADE"
+      important: "Orchestrator logs go to orchestrator_chat, not here"
+      fields:
+        - "agent_id (UUID NOT NULL)"
+        - "session_id (TEXT): Claude SDK session ID"
+        - "task_slug (TEXT): Task identifier (kebab-case)"
+        - "adw_id (TEXT): AI Developer Workflow identifier"
+        - "adw_step (TEXT): ADW step identifier"
+        - "entry_index (INTEGER): Sequential index for tail reading"
+        - "event_category (TEXT NOT NULL): hook, response"
+        - "event_type (TEXT NOT NULL): PreToolUse, PostToolUse, text, thinking, tool_use, tool_result"
+        - "content (TEXT): Primary text content"
+        - "payload (JSONB DEFAULT '{}'): Structured event data"
+        - "summary (TEXT): AI-generated summary"
+        - "timestamp (TIMESTAMPTZ DEFAULT NOW())"
+      indexes:
+        - "idx_agent_logs_agent_id"
+        - "idx_agent_logs_task_slug (partial)"
+        - "idx_agent_logs_adw_id, idx_agent_logs_adw_step (partial)"
+        - "idx_agent_logs_task_index (composite)"
+        - "idx_agent_logs_category, idx_agent_logs_type"
+        - "idx_agent_logs_category_type (composite)"
+        - "idx_agent_logs_timestamp"
+        - "idx_agent_logs_session (partial)"
+
+    orchestrator_chat:
+      description: "3-way communication: user ↔ orchestrator ↔ agents"
+      pk: "id (UUID)"
+      fk:
+        - "orchestrator_agent_id -> orchestrator_agents.id ON DELETE CASCADE"
+        - "agent_id -> agents.id ON DELETE CASCADE (nullable)"
+      constraint: "agent_id required when sender_type or receiver_type is 'agent'"
+      fields:
+        - "orchestrator_agent_id (UUID NOT NULL)"
+        - "sender_type (TEXT NOT NULL): user, orchestrator, agent"
+        - "receiver_type (TEXT NOT NULL): user, orchestrator, agent"
+        - "message (TEXT NOT NULL)"
+        - "summary (TEXT): AI-generated summary"
+        - "agent_id (UUID, nullable): Required when sender/receiver is agent"
+        - "metadata (JSONB DEFAULT '{}')"
+        - "created_at, updated_at (TIMESTAMPTZ)"
+      indexes:
+        - "idx_orchestrator_chat_orch_id"
+        - "idx_orchestrator_chat_agent_id"
+        - "idx_orchestrator_chat_sender_type"
+        - "idx_orchestrator_chat_receiver_type"
+        - "idx_orchestrator_chat_orch_created (composite)"
+        - "idx_orchestrator_chat_agent_created (composite)"
+
+    prompts:
+      description: "History of prompts sent to agents"
+      pk: "id (UUID)"
+      fk: "agent_id -> agents.id ON DELETE CASCADE (nullable)"
+      fields:
+        - "agent_id (UUID, nullable)"
+        - "task_slug (TEXT)"
+        - "author (TEXT NOT NULL): engineer, orchestrator_agent"
+        - "prompt_text (TEXT NOT NULL)"
+        - "summary (TEXT)"
+        - "timestamp (TIMESTAMPTZ DEFAULT NOW())"
+        - "session_id (TEXT)"
+      indexes:
+        - "idx_prompts_agent_id"
+        - "idx_prompts_author"
+        - "idx_prompts_timestamp"
+        - "idx_prompts_task_slug (partial)"
+
+    system_logs:
+      description: "Application-level logs ONLY (global events, no agent-specific activity)"
+      pk: "id (UUID)"
+      important: "Agent logs go to agent_logs or orchestrator_chat, not here"
+      fields:
+        - "file_path (TEXT)"
+        - "adw_id (TEXT)"
+        - "adw_step (TEXT)"
+        - "level (TEXT NOT NULL): DEBUG, INFO, WARNING, ERROR"
+        - "message (TEXT NOT NULL)"
+        - "summary (TEXT)"
+        - "metadata (JSONB DEFAULT '{}')"
+        - "timestamp (TIMESTAMPTZ DEFAULT NOW())"
+      indexes:
+        - "idx_system_logs_level"
+        - "idx_system_logs_timestamp"
+        - "idx_system_logs_adw_id, idx_system_logs_adw_step (partial)"
+
+key_operations:
+  orchestrator_management:
+    get_or_create:
+      function: "get_or_create_orchestrator (line 122)"
+      logic: "Returns existing active orchestrator or creates new one"
+
+    create_new:
+      function: "create_new_orchestrator (line 186)"
+      logic: "Creates new orchestrator with initial values"
+
+    get:
+      function: "get_orchestrator (line 238)"
+      logic: "Returns active orchestrator (archived=false) or None"
+
+    get_by_session:
+      function: "get_orchestrator_by_session (line 265)"
+      logic: "Look up orchestrator by Claude SDK session_id"
+
+    get_by_id:
+      function: "get_orchestrator_by_id (line 298)"
+      logic: "Look up orchestrator by UUID"
+
+    session_update:
+      function: "update_orchestrator_session (line 329)"
+      logic: "Updates session_id only if current value is NULL"
+
+    cost_tracking:
+      function: "update_orchestrator_costs (line 379)"
+      logic: "Accumulates token usage and USD cost using SQL SET total_cost = total_cost + $value"
+
+    status_update:
+      function: "update_orchestrator_status (line 453)"
+      logic: "Updates orchestrator status field"
+
+    metadata_update:
+      function: "update_orchestrator_metadata (line 480)"
+      logic: "Merges JSONB metadata using || operator"
+
+  agent_management:
+    create:
+      function: "create_agent (line 738)"
+      logic: "Creates new command agent under orchestrator"
+
+    get:
+      function: "get_agent (line 787)"
+      logic: "Retrieve agent by UUID"
+
+    get_by_name:
+      function: "get_agent_by_name (line 807)"
+      logic: "Retrieve agent by orchestrator_id + name"
+
+    list:
+      function: "list_agents (line 835)"
+      logic: "List all agents for orchestrator"
+
+    status_update:
+      function: "update_agent_status (line 860)"
+      logic: "Updates agent status field"
+
+    session_update:
+      function: "update_agent_session (line 876)"
+      logic: "Updates agent Claude SDK session_id"
+
+    cost_tracking:
+      function: "update_agent_costs (line 892)"
+      logic: "Accumulates agent token usage and cost"
+
+    reset_tokens:
+      function: "reset_agent_tokens (line 923)"
+      logic: "Resets token counts to zero (for /compact)"
+
+    delete:
+      function: "delete_agent (line 946)"
+      logic: "Soft delete agent (sets archived=true)"
+
+  chat_operations:
+    insert:
+      function: "insert_chat_message (line 523)"
+      pattern: "Insert -> Return UUID"
+
+    get_history:
+      function: "get_chat_history (line 613)"
+      logic: "Retrieves chat messages, sorted by created_at ASC"
+
+    get_turn_count:
+      function: "get_turn_count (line 677)"
+      logic: "Returns count of chat messages for orchestrator"
+
+    delete_history:
+      function: "delete_chat_history (line 706)"
+      logic: "Deletes all chat for orchestrator"
+
+  agent_logging:
+    insert_hook:
+      function: "insert_hook_event (line 965)"
+      logic: "Writes hook event to agent_logs"
+
+    insert_block:
+      function: "insert_message_block (line 1019)"
+      logic: "Writes response block to agent_logs"
+
+    update_summary:
+      function: "update_log_summary (line 1073)"
+      logic: "Updates agent_logs.summary field"
+
+    update_payload:
+      function: "update_log_payload (line 1087)"
+      logic: "Merges JSONB payload using || operator"
+
+    get_logs:
+      function: "get_agent_logs (line 1146)"
+      logic: "Retrieves agent_logs with filtering"
+
+    get_tail:
+      function: "get_tail_summaries (line 1205), get_tail_raw (line 1240)"
+      logic: "Tail-style retrieval of recent logs"
+
+    get_latest_task:
+      function: "get_latest_task_slug (line 1281)"
+      logic: "Returns most recent task_slug for agent"
+
+  summary_updates:
+    - "update_log_summary (line 1073): Updates agent_logs.summary"
+    - "update_chat_summary (line 1104): Updates orchestrator_chat.summary"
+    - "update_prompt_summary (line 1118): Updates prompts.summary"
+    - "update_system_log_summary (line 1132): Updates system_logs.summary"
+
+  prompt_operations:
+    insert:
+      function: "insert_prompt (line 1307)"
+      logic: "Creates new prompt record"
+
+  system_logging:
+    insert:
+      function: "insert_system_log (line 1352)"
+      logic: "Creates system log entry"
+
+    list:
+      function: "list_system_logs (line 1447)"
+      logic: "Retrieves system logs with filtering"
+
+  event_stream:
+    list_agent_logs:
+      function: "list_agent_logs (line 1407)"
+      logic: "Gets all agent_logs for orchestrator with JOIN for agent_name"
+
+    get_orchestrator_action_blocks:
+      function: "get_orchestrator_action_blocks (line 1508)"
+      logic: "Queries system_logs for thinking_block/tool_use_block by orchestrator"
+
+    list_orchestrator_chat:
+      function: "list_orchestrator_chat (line 1549)"
+      logic: "Gets orchestrator_chat with optional filtering"
+
+performance_tuning:
+  indexes:
+    - "Foreign keys indexed for join performance"
+    - "Status columns indexed for filtering active agents"
+    - "Timestamp columns indexed (DESC) for chronological sorting"
+    - "Partial indexes on nullable fields (WHERE field IS NOT NULL)"
+    - "Composite indexes for common query patterns"
+
+  connection_pooling:
+    - "Min connections: 5 (prevents cold start latency)"
+    - "Max connections: 20 (prevents connection exhaustion)"
+    - "Statement preparation enabled by default in asyncpg"
+
+  fetching:
+    - "Use 'fetch' for lists, 'fetchrow' for single items, 'fetchval' for scalars"
+    - "Pagination via LIMIT/OFFSET"
+
+testing:
+  integration_tests:
+    file: "apps/orchestrator_3_stream/backend/tests/test_database.py"
+    coverage:
+      - "Connection lifecycle"
+      - "Orchestrator creation/retrieval"
+      - "Chat message persistence"
+      - "Cost accumulation accuracy"
+      - "Session tracking"
+
+best_practices:
+  - "Always use UUID objects in Python, let asyncpg handle conversion"
+  - "Always use UTC for timestamps (TIMESTAMPTZ)"
+  - "Use JSONB for flexible schema needs (metadata, payloads)"
+  - "Never store secrets in the database (API keys via env vars)"
+  - "Run migrations via run_migrations.py, never manual SQL"
+  - "Sync models.py changes immediately to app directories"
+  - "Use ON DELETE CASCADE for child records"
+
+known_issues:
+  - "No specialized table for file tracking (currently inside agent_logs payload)"
+  - "Cost calculation logic duplicated in SQL and Python"
+  - "No hard delete (archived flag used, but manual cleanup scripts exist)"

@@ -1,0 +1,30 @@
+{
+  "id": "lacie_rugged_ssd_pro_4tb",
+  "name": "LaCie Rugged SSD Pro 4TB",
+  "description": "Thunderbolt 3 portable SSD with 2800MB/s speeds. Features 4TB capacity, IP67 rating, and 3m drop resistance. The production professional's choice.",
+  "price": 599.99,
+  "category": "Storage",
+  "brand": "LaCie",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Thunderbolt speeds in rugged form.",
+      "rating": 5,
+      "reviewer_name": "ProductionPro",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Survives film set abuse.",
+      "rating": 5,
+      "reviewer_name": "FilmMaker",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Premium price for premium durability.",
+      "rating": 4,
+      "reviewer_name": "DurabilityBuyer",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

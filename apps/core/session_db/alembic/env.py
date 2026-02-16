@@ -11,21 +11,24 @@ import sys
 from logging.config import fileConfig
 from pathlib import Path
 
+from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from alembic import context
-
 # Load environment variables
 load_dotenv()
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add src directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from models import SQLModel  # noqa: E402
-from models import Session, Agent, AgentLog  # noqa: E402, F401 - needed for metadata
+from session_db.models import (  # noqa: E402, F401 - needed for metadata
+    Agent,
+    AgentLog,
+    Session,
+)
+from sqlmodel import SQLModel  # noqa: E402
 
 # this is the Alembic Config object
 config = context.config

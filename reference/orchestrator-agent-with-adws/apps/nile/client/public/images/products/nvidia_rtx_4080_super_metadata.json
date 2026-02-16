@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_4080_super",
+  "name": "NVIDIA GeForce RTX 4080 Super",
+  "description": "Enhanced Ada Lovelace GPU with 16GB GDDR6X and improved CUDA cores. Excellent 4K gaming performance with proven stability and great value.",
+  "price": 999.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Great 4K card at a reasonable price. Very happy.",
+      "rating": 5,
+      "reviewer_name": "4KEnthusiast",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Solid choice for content creators. Premiere flies.",
+      "rating": 5,
+      "reviewer_name": "VideoCreator",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Good card but 5080 is coming soon.",
+      "rating": 4,
+      "reviewer_name": "WaitAndSee",
+      "review_date": "2024-12-05"
+    }
+  ]
+}

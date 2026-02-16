@@ -1,0 +1,30 @@
+{
+  "id": "beyerdynamic_dt_900_pro_x",
+  "name": "Beyerdynamic DT 900 Pro X",
+  "description": "Professional open-back studio headphones with STELLAR.45 drivers. Features replaceable velour earpads, single-sided cable, and German engineering for critical listening.",
+  "price": 269.00,
+  "category": "Headphones",
+  "brand": "Beyerdynamic",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Studio reference sound. Perfect for mixing and mastering.",
+      "rating": 5,
+      "reviewer_name": "StudioEngineer",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Open-back soundstage is incredible for gaming too.",
+      "rating": 5,
+      "reviewer_name": "ImmersiveGamer",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Everyone can hear your music. Office unfriendly.",
+      "rating": 4,
+      "reviewer_name": "OfficeWorker",
+      "review_date": "2024-12-08"
+    }
+  ]
+}

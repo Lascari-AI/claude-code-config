@@ -1,0 +1,29 @@
+{
+  "name": "Sony WH-1000XM5",
+  "description": "Industry-leading noise canceling wireless headphones with 30-hour battery life. Features Auto NC Optimizer, Speak-to-Chat, multipoint connection, and crystal-clear call quality with 8 microphones.",
+  "price": 349.99,
+  "category": "Headphones",
+  "brand": "Sony",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Best ANC on the market. Office noise completely gone.",
+      "rating": 5,
+      "reviewer_name": "OpenOfficeSurvivor",
+      "review_date": "2024-11-19"
+    },
+    {
+      "review_text": "Comfort is unmatched for all-day coding sessions.",
+      "rating": 5,
+      "reviewer_name": "RemoteDev",
+      "review_date": "2024-10-24"
+    },
+    {
+      "review_text": "Sound quality is excellent. Worth the upgrade from XM4.",
+      "rating": 5,
+      "reviewer_name": "Audiophile",
+      "review_date": "2024-09-12"
+    }
+  ]
+}

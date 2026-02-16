@@ -1,0 +1,30 @@
+{
+  "id": "bigscreen_beyond",
+  "name": "Bigscreen Beyond",
+  "description": "The world's smallest and lightest PCVR headset at just 127g. Features custom-fitted face cushion, micro-OLED displays, and SteamVR tracking compatibility.",
+  "price": 999.00,
+  "category": "VR/AR Headsets",
+  "brand": "Bigscreen",
+  "rating": 4.7,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "So light I forget I am wearing it. Game changer.",
+      "rating": 5,
+      "reviewer_name": "LightweightVR",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "Custom fit is worth the wait. Perfect seal.",
+      "rating": 5,
+      "reviewer_name": "CustomFitFan",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "No inside-out tracking limits versatility.",
+      "rating": 4,
+      "reviewer_name": "FlexibilityWanter",
+      "review_date": "2024-12-11"
+    }
+  ]
+}

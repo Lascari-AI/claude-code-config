@@ -1,0 +1,30 @@
+{
+  "id": "nvidia_rtx_4090",
+  "name": "NVIDIA GeForce RTX 4090",
+  "description": "Previous-gen flagship with 24GB GDDR6X memory. Still delivers incredible 4K gaming performance with mature driver support and proven reliability for professionals.",
+  "price": 1599.99,
+  "category": "Graphics Cards",
+  "brand": "NVIDIA",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Still the king for AI workloads. 24GB VRAM is unmatched.",
+      "rating": 5,
+      "reviewer_name": "LLMTrainer",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "Rock solid for production work. Drivers are mature.",
+      "rating": 5,
+      "reviewer_name": "StudioPro",
+      "review_date": "2024-12-15"
+    },
+    {
+      "review_text": "Massive card but performs like nothing else.",
+      "rating": 5,
+      "reviewer_name": "PowerUser",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

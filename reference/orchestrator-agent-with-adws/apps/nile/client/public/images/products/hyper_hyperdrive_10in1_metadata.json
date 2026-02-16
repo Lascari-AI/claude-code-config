@@ -1,0 +1,30 @@
+{
+  "id": "hyper_hyperdrive_10in1",
+  "name": "HyperDrive 10-in-1 USB-C Hub",
+  "description": "Premium 10-port USB-C hub with dual HDMI for extended desktop. Features 100W PD, Gigabit Ethernet, and travel-friendly size. The power user's portable hub.",
+  "price": 99.99,
+  "category": "USB Hubs",
+  "brand": "Hyper",
+  "rating": 4.5,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Dual HDMI in portable hub is rare.",
+      "rating": 5,
+      "reviewer_name": "DualDisplayNeed",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "Premium build quality throughout.",
+      "rating": 5,
+      "reviewer_name": "QualityCheck",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Runs warm with many devices.",
+      "rating": 4,
+      "reviewer_name": "ThermalAware",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

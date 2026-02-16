@@ -1,0 +1,31 @@
+{
+  "id": "apple_ipad_pro_13",
+  "name": "Apple iPad Pro 13\" M4",
+  "image_prompt": "Apple iPad Pro 13 inch, space black, Ultra Retina XDR display, thin profile, Apple Pencil Pro attached",
+  "description": "Thinnest Apple product ever with M4 chip and stunning tandem OLED display. Features 13-inch Ultra Retina XDR, ProMotion 120Hz, Face ID, and Thunderbolt connectivity for pro workflows.",
+  "price": 1299.0,
+  "category": "Tablets",
+  "brand": "Apple",
+  "rating": 4.8,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "The display is unreal. OLED makes everything pop.",
+      "rating": 5,
+      "reviewer_name": "VisualDesigner",
+      "review_date": "2024-11-16"
+    },
+    {
+      "review_text": "M4 handles everything. Replaced my laptop for travel.",
+      "rating": 5,
+      "reviewer_name": "DigitalNomad",
+      "review_date": "2024-10-24"
+    },
+    {
+      "review_text": "Amazing hardware but iPadOS still limits it.",
+      "rating": 4,
+      "reviewer_name": "ProUserWaiting",
+      "review_date": "2024-09-28"
+    }
+  ]
+}

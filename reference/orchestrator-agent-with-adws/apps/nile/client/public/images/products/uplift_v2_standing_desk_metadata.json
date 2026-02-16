@@ -1,0 +1,30 @@
+{
+  "id": "uplift_v2_standing_desk",
+  "name": "UPLIFT V2 Standing Desk",
+  "description": "Premium standing desk with 4-leg stability and 355lb capacity. Features bamboo top option, advanced keypad with memory, and industry-leading 15-year warranty.",
+  "price": 699.00,
+  "category": "Desks",
+  "brand": "UPLIFT",
+  "rating": 4.8,
+  "shipping_speed": "5-day",
+  "reviews": [
+    {
+      "review_text": "15-year warranty says it all. Built to last.",
+      "rating": 5,
+      "reviewer_name": "LongTermBuyer",
+      "review_date": "2024-12-18"
+    },
+    {
+      "review_text": "Bamboo top is beautiful and sustainable.",
+      "rating": 5,
+      "reviewer_name": "EcoConscious",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Heavy but that is the point. Rock solid.",
+      "rating": 5,
+      "reviewer_name": "StabilityFirst",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

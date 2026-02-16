@@ -1,0 +1,30 @@
+{
+  "id": "amd_ryzen_7_9700x",
+  "name": "AMD Ryzen 7 9700X",
+  "description": "Mainstream Zen 5 CPU with 8 cores/16 threads and 5.5GHz boost. Excellent gaming performance with low power consumption. Sweet spot for most users.",
+  "price": 359.99,
+  "category": "Processors",
+  "brand": "AMD",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Perfect gaming CPU. 8 cores is the sweet spot.",
+      "rating": 5,
+      "reviewer_name": "PureGamer",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "65W TDP means tiny cooler and silent operation.",
+      "rating": 5,
+      "reviewer_name": "SilentPCFan",
+      "review_date": "2024-12-11"
+    },
+    {
+      "review_text": "Great for streaming and gaming simultaneously.",
+      "rating": 4,
+      "reviewer_name": "StreamerGamer",
+      "review_date": "2024-12-06"
+    }
+  ]
+}

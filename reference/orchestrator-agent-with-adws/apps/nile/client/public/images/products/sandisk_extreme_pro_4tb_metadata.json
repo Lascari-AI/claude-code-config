@@ -1,0 +1,30 @@
+{
+  "id": "sandisk_extreme_pro_4tb",
+  "name": "SanDisk Extreme Pro 4TB Portable SSD",
+  "description": "Rugged portable SSD with 2000MB/s speeds and IP65 rating. Features 4TB capacity, aluminum enclosure, and 256-bit AES encryption. Adventure-proof storage.",
+  "price": 349.99,
+  "category": "Storage",
+  "brand": "SanDisk",
+  "rating": 4.7,
+  "shipping_speed": "2-day",
+  "reviews": [
+    {
+      "review_text": "Survives my outdoor shoots perfectly.",
+      "rating": 5,
+      "reviewer_name": "OutdoorPhotographer",
+      "review_date": "2024-12-17"
+    },
+    {
+      "review_text": "2000MB/s in portable form is amazing.",
+      "rating": 5,
+      "reviewer_name": "SpeedChaser",
+      "review_date": "2024-12-13"
+    },
+    {
+      "review_text": "Gets warm under sustained transfers.",
+      "rating": 4,
+      "reviewer_name": "ThermalMonitor",
+      "review_date": "2024-12-09"
+    }
+  ]
+}

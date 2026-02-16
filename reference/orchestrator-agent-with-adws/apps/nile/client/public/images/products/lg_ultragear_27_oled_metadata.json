@@ -1,0 +1,30 @@
+{
+  "id": "lg_ultragear_27_oled",
+  "name": "LG UltraGear 27\" OLED Gaming Monitor",
+  "description": "27-inch QHD OLED gaming monitor with 240Hz refresh rate and 0.03ms response time. Features perfect blacks, infinite contrast, and NVIDIA G-SYNC compatibility.",
+  "price": 899.99,
+  "category": "Monitors",
+  "brand": "LG",
+  "rating": 4.9,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "OLED gaming is a revelation. Colors and contrast are perfect.",
+      "rating": 5,
+      "reviewer_name": "OLEDConvert",
+      "review_date": "2024-12-20"
+    },
+    {
+      "review_text": "240Hz OLED is the new gold standard.",
+      "rating": 5,
+      "reviewer_name": "RefreshRateChaser",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Burn-in worry is overblown. Just use pixel refresh.",
+      "rating": 5,
+      "reviewer_name": "BurnInAware",
+      "review_date": "2024-12-12"
+    }
+  ]
+}

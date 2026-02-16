@@ -1,0 +1,30 @@
+{
+  "id": "hhkb_hybrid_type_s",
+  "name": "HHKB Professional Hybrid Type-S",
+  "description": "Legendary Japanese keyboard with silenced Topre electrostatic capacitive switches. Features Bluetooth and USB-C, compact 60-key layout, and the iconic HHKB layout loved by programmers.",
+  "price": 339.00,
+  "category": "Keyboards",
+  "brand": "HHKB",
+  "rating": 4.8,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Topre thock is addictive. Cannot go back to MX.",
+      "rating": 5,
+      "reviewer_name": "TopeFanatic",
+      "review_date": "2024-12-19"
+    },
+    {
+      "review_text": "The layout takes time but becomes second nature.",
+      "rating": 5,
+      "reviewer_name": "VimUser",
+      "review_date": "2024-12-14"
+    },
+    {
+      "review_text": "Expensive but it is a buy-it-for-life keyboard.",
+      "rating": 5,
+      "reviewer_name": "LongTermInvestor",
+      "review_date": "2024-12-10"
+    }
+  ]
+}

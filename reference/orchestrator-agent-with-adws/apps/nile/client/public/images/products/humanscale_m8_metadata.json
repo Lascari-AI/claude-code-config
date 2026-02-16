@@ -1,0 +1,30 @@
+{
+  "id": "humanscale_m8",
+  "name": "Humanscale M8.1 Monitor Arm",
+  "description": "Elegant monitor arm with weight-compensating mechanism. Features tool-free adjustment, minimalist design, and Humanscale's focus on human-centered ergonomics.",
+  "price": 395.00,
+  "category": "Monitor Arms",
+  "brand": "Humanscale",
+  "rating": 4.7,
+  "shipping_speed": "3-day",
+  "reviews": [
+    {
+      "review_text": "Most beautiful monitor arm on the market.",
+      "rating": 5,
+      "reviewer_name": "DesignSnob",
+      "review_date": "2024-12-16"
+    },
+    {
+      "review_text": "Tool-free adjustment is incredibly convenient.",
+      "rating": 5,
+      "reviewer_name": "NoToolsNeeded",
+      "review_date": "2024-12-12"
+    },
+    {
+      "review_text": "Premium price for premium design.",
+      "rating": 4,
+      "reviewer_name": "ValueConscious",
+      "review_date": "2024-12-08"
+    }
+  ]
+}
