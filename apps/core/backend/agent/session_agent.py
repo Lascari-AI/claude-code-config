@@ -2,9 +2,18 @@
 """Example agent using session MCP tools via Claude Agent SDK.
 
 This script demonstrates how to:
-1. Create an agent with session state MCP tools
-2. Have the agent transition a session through phases
+1. Create an agent with all 7 session state MCP tools
+2. Have the agent manage session state through MCP tool calls
 3. Verify state.json is updated correctly
+
+Available MCP Tools:
+    - session_transition_phase: Transition session to a new phase
+    - session_init_build: Initialize build progress with checkpoint count
+    - session_start_checkpoint: Set current active checkpoint
+    - session_complete_checkpoint: Mark checkpoint as completed
+    - session_add_commit: Record a git commit
+    - session_set_status: Set session status (active/paused/complete/failed)
+    - session_set_git: Set git context (branch/worktree)
 
 Usage:
     # Set your API key
@@ -66,17 +75,60 @@ async def run_session_agent(session_dir: str, action: str = "status") -> None:
         Use the session_transition_phase tool with:
         - session_dir: {session_dir}
         - new_phase: build"""
+    elif action == "init_build":
+        prompt = f"""Initialize build progress for the session at {session_dir}.
+        Use the session_init_build tool with:
+        - session_dir: {session_dir}
+        - checkpoints_total: 5 (example count)"""
+    elif action == "complete_checkpoint":
+        prompt = f"""Mark checkpoint 1 as completed for the session at {session_dir}.
+        Use the session_complete_checkpoint tool with:
+        - session_dir: {session_dir}
+        - checkpoint_id: 1"""
+    elif action == "add_commit":
+        prompt = f"""Record a test commit for the session at {session_dir}.
+        Use the session_add_commit tool with:
+        - session_dir: {session_dir}
+        - sha: abc1234
+        - message: test commit from agent
+        - checkpoint: 1 (optional)"""
+    elif action == "set_status":
+        prompt = f"""Set the session status to 'paused' for the session at {session_dir}.
+        Use the session_set_status tool with:
+        - session_dir: {session_dir}
+        - status: paused"""
+    elif action == "set_git":
+        prompt = f"""Set the git branch for the session at {session_dir}.
+        Use the session_set_git tool with:
+        - session_dir: {session_dir}
+        - branch: feature/test-branch"""
+    elif action == "test_all":
+        prompt = f"""Test all 7 session MCP tools for the session at {session_dir}.
+
+        Run each tool in order and report results:
+        1. session_transition_phase (report current phase, don't actually transition)
+        2. session_init_build (report if build progress can be initialized)
+        3. session_start_checkpoint (report current checkpoint)
+        4. session_complete_checkpoint (report checkpoint status)
+        5. session_add_commit (report commit count)
+        6. session_set_status (report current status)
+        7. session_set_git (report git context)
+
+        For each tool, just READ the current state and report what the tool would do.
+        Do NOT make actual changes unless explicitly told to do so.
+
+        Session dir: {session_dir}"""
     else:
         prompt = f"Help the user with session management for: {session_dir}. Action: {action}"
 
-    # Configure the agent with session MCP tools
+    # Configure the agent with all session MCP tools
     options = ClaudeAgentOptions(
         mcp_servers={SERVER_NAME: get_session_mcp_server()},
         allowed_tools=[
-            f"mcp__{SERVER_NAME}__session_transition_phase",
+            f"mcp__{SERVER_NAME}__*",  # All session tools
             "Read",  # For reading state.json
         ],
-        max_turns=5,
+        max_turns=10,
     )
 
     print(f"\n{'=' * 60}")
@@ -150,6 +202,24 @@ Examples:
     # Transition to plan phase
     python -m agent.session_agent /path/to/session transition_to_plan
 
+    # Initialize build progress
+    python -m agent.session_agent /path/to/session init_build
+
+    # Complete a checkpoint
+    python -m agent.session_agent /path/to/session complete_checkpoint
+
+    # Record a commit
+    python -m agent.session_agent /path/to/session add_commit
+
+    # Set session status
+    python -m agent.session_agent /path/to/session set_status
+
+    # Set git context
+    python -m agent.session_agent /path/to/session set_git
+
+    # Test all 7 tools (read-only)
+    python -m agent.session_agent /path/to/session test_all
+
     # Run full demo workflow
     python -m agent.session_agent /path/to/session demo
         """,
@@ -164,7 +234,18 @@ Examples:
         type=str,
         nargs="?",
         default="status",
-        choices=["status", "transition_to_plan", "transition_to_build", "demo"],
+        choices=[
+            "status",
+            "transition_to_plan",
+            "transition_to_build",
+            "init_build",
+            "complete_checkpoint",
+            "add_commit",
+            "set_status",
+            "set_git",
+            "test_all",
+            "demo",
+        ],
         help="Action to perform (default: status)",
     )
 
