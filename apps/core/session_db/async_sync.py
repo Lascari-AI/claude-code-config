@@ -97,3 +97,51 @@ def make_sync_callback(working_dir: str) -> Callable[[Path], None]:
         queue_sync_task(session_dir, working_dir)
 
     return callback
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BATCH SYNC FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+async def _batch_sync_async(working_dir: str, project_id: str | None = None) -> None:
+    """
+    Async wrapper for sync_all_sessions_in_project.
+
+    This is the actual async work that runs in the background task.
+    """
+    from uuid import UUID
+
+    from .sync import sync_all_sessions_in_project
+
+    try:
+        async with get_async_session() as db:
+            pid = UUID(project_id) if project_id else None
+            result = await sync_all_sessions_in_project(db, working_dir, pid)
+            logger.info(
+                "Batch sync complete for %s: %d synced, %d failed",
+                working_dir,
+                len(result["synced"]),
+                len(result["failed"]),
+            )
+    except Exception as e:
+        logger.exception("Failed to batch sync project %s: %s", working_dir, e)
+
+
+def queue_batch_sync_task(working_dir: str, project_id: str | None = None) -> None:
+    """
+    Queue an async task to sync all sessions in a project.
+
+    Fire-and-forget: returns immediately, task runs in background.
+    Errors are logged but not raised.
+
+    Args:
+        working_dir: Project root directory (absolute path)
+        project_id: Optional project UUID as string
+    """
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(_batch_sync_async(working_dir, project_id))
+    except RuntimeError:
+        # No running event loop - log and skip
+        logger.warning("No event loop available to batch sync %s", working_dir)

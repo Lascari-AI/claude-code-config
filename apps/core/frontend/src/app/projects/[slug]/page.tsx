@@ -42,6 +42,16 @@ export default function ProjectDetailPage() {
     }
   }, [selectedProject?.id, fetchProjectSessions]);
 
+  // Trigger background sync when project loads
+  useEffect(() => {
+    if (selectedProject?.id) {
+      // Fire-and-forget sync request - ensures session data is fresh
+      fetch(`/api/projects/${selectedProject.id}/sync`, { method: "POST" }).catch(
+        () => {}
+      ); // Silently ignore errors
+    }
+  }, [selectedProject?.id]);
+
   // Handle phase click - navigate to session detail with phase tab
   const handlePhaseClick = (sessionSlug: string, phase: SessionPhase) => {
     router.push(`/projects/${slug}/sessions/${sessionSlug}?phase=${phase}`);
