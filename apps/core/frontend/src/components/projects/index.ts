@@ -7,3 +7,5 @@
 export { ProjectCard } from "./ProjectCard";
 export { ProjectsList } from "./ProjectsList";
 export { OnboardingDialog } from "./OnboardingDialog";
+export { RenameProjectDialog } from "./RenameProjectDialog";
+export { DeleteProjectDialog } from "./DeleteProjectDialog";

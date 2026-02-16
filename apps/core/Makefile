@@ -66,7 +66,7 @@ dev-backend: ## Run backend locally with hot reload - run in Terminal 2
 	@echo "Starting FastAPI backend on http://localhost:8765"
 	@echo "API docs at http://localhost:8765/docs"
 	@echo ""
-	cd backend && uv run uvicorn main:app --reload --reload-dir . --reload-dir ../session_db --host 0.0.0.0 --port 8765
+	cd backend && PYTHONPATH=src uv run uvicorn main:app --reload --reload-dir src --host 0.0.0.0 --port 8765
 
 dev-frontend: ## Run frontend locally with hot reload - run in Terminal 3
 	@echo "Starting Next.js frontend on http://localhost:3456"

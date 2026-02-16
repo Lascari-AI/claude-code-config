@@ -1,9 +1,9 @@
 # Backend Dockerfile - FastAPI with uv
 #
-# Builds from apps/core context (for access to session_db).
-# session_db is installed as a pip package from sibling directory.
+# Builds from apps/core/backend context.
+# All database code is now included in backend/src/database.
 #
-# Build context: apps/core
+# Build context: apps/core/backend
 # Dockerfile location: apps/core/backend/Dockerfile
 
 FROM python:3.12-slim
@@ -22,21 +22,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Add uv to PATH
 ENV PATH="/root/.local/bin:$PATH"
 
-# Copy session_db package (with src layout)
-COPY session_db /app/session_db
-
 # Copy backend package
-COPY backend/pyproject.toml /app/backend/
+COPY pyproject.toml /app/backend/
 WORKDIR /app/backend
 
 # Install dependencies with uv
 RUN uv sync --frozen --no-dev 2>/dev/null || uv sync --no-dev
 
 # Copy backend source code
-COPY backend /app/backend
+COPY src /app/backend/src
 
-# Set Python path to include session_db src
-ENV PYTHONPATH=/app/backend:/app/session_db/src
+# Set Python path to include backend src
+ENV PYTHONPATH=/app/backend/src
+
+# Set working directory to src for uvicorn
+WORKDIR /app/backend/src
 
 # Expose port
 EXPOSE 8000
