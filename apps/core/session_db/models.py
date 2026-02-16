@@ -205,13 +205,34 @@ class Session(SQLModel, table=True):
 
     # ─── Workflow State ─────────────────────────────────────────────────────────
     status: str = Field(
-        default="created",
+        default="active",
         index=True,
-        description="Current workflow phase",
+        description="Session execution status: active, paused, complete, failed",
+    )
+    current_phase: str = Field(
+        default="spec",
+        index=True,
+        description="Current workflow phase: spec, plan, build, docs, complete",
     )
     session_type: str = Field(
         default="full",
         description="Session type: full, quick, or research",
+    )
+
+    # ─── Phase History (v2: timestamps for phase transitions) ──────────────────
+    phase_history: dict[str, Any] = Field(
+        default_factory=lambda: {
+            "spec_started_at": None,
+            "spec_completed_at": None,
+            "plan_started_at": None,
+            "plan_completed_at": None,
+            "build_started_at": None,
+            "build_completed_at": None,
+            "docs_started_at": None,
+            "docs_completed_at": None,
+        },
+        sa_column=Column(JSON),
+        description="Timestamps for each phase transition",
     )
 
     # ─── Filesystem References ──────────────────────────────────────────────────
@@ -230,6 +251,10 @@ class Session(SQLModel, table=True):
         default=None,
         description="Git branch name for this session",
     )
+    git_base_branch: Optional[str] = Field(
+        default=None,
+        description="Base branch for PR (e.g., main)",
+    )
 
     # ─── Artifact Status ────────────────────────────────────────────────────────
     spec_exists: bool = Field(
@@ -246,7 +271,16 @@ class Session(SQLModel, table=True):
     )
     checkpoints_completed: int = Field(
         default=0,
-        description="Number of completed checkpoints",
+        description="Number of completed checkpoints (count for UI display)",
+    )
+    checkpoints_completed_list: list[int] = Field(
+        default_factory=list,
+        sa_column=Column(JSON),
+        description="List of completed checkpoint IDs (v2: matches state.json build_progress)",
+    )
+    current_checkpoint: Optional[int] = Field(
+        default=None,
+        description="Currently active checkpoint ID",
     )
 
     # ─── Aggregated Stats ───────────────────────────────────────────────────────
@@ -272,6 +306,24 @@ class Session(SQLModel, table=True):
     error_phase: Optional[str] = Field(
         default=None,
         description="Phase where error occurred",
+    )
+
+    # ─── Commits (v2: tracked for session portability) ───────────────────────────
+    commits_list: list[dict[str, Any]] = Field(
+        default_factory=list,
+        sa_column=Column(JSON),
+        description="Git commits made during session [{sha, message, checkpoint, created_at}]",
+    )
+
+    # ─── Artifacts (v2: paths to session artifacts) ─────────────────────────────
+    artifacts: dict[str, str] = Field(
+        default_factory=lambda: {
+            "spec": "spec.md",
+            "plan": "plan.json",
+            "plan_readable": "plan.md",
+        },
+        sa_column=Column(JSON),
+        description="Paths to session artifacts relative to session directory",
     )
 
     # ─── Metadata ───────────────────────────────────────────────────────────────
@@ -602,10 +654,12 @@ class SessionSummary(SQLModel):
     session_slug: str
     title: Optional[str]
     status: str
+    current_phase: str
     session_type: str
     project_id: Optional[UUID] = None
     checkpoints_completed: int
     checkpoints_total: int
+    current_checkpoint: Optional[int] = None
     total_cost: float
     created_at: datetime
     updated_at: datetime
@@ -652,9 +706,25 @@ class SessionCreate(SQLModel):
     description: Optional[str] = None
     session_type: str = "full"
     working_dir: str
+    session_dir: Optional[str] = None
     project_id: Optional[UUID] = None
+    # Git context (v2)
     git_worktree: Optional[str] = None
     git_branch: Optional[str] = None
+    git_base_branch: Optional[str] = None
+    # Phase tracking (v2)
+    current_phase: str = "spec"
+    status: str = "active"
+    phase_history: dict[str, Any] = Field(default_factory=dict)
+    # Build progress (v2)
+    checkpoints_total: int = 0
+    checkpoints_completed_list: list[int] = Field(default_factory=list)
+    current_checkpoint: Optional[int] = None
+    # Commits and artifacts (v2)
+    commits_list: list[dict[str, Any]] = Field(default_factory=list)
+    artifacts: dict[str, str] = Field(
+        default_factory=lambda: {"spec": "spec.md", "plan": "plan.json", "plan_readable": "plan.md"}
+    )
     metadata_: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -664,16 +734,33 @@ class SessionUpdate(SQLModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
+    current_phase: Optional[str] = None
     project_id: Optional[UUID] = None
+    # Git context (v2)
+    git_branch: Optional[str] = None
+    git_worktree: Optional[str] = None
+    git_base_branch: Optional[str] = None
+    # Artifact status
     spec_exists: Optional[bool] = None
     plan_exists: Optional[bool] = None
+    # Build progress (v2)
     checkpoints_total: Optional[int] = None
     checkpoints_completed: Optional[int] = None
+    checkpoints_completed_list: Optional[list[int]] = None
+    current_checkpoint: Optional[int] = None
+    # Phase history (v2)
+    phase_history: Optional[dict[str, Any]] = None
+    # Commits and artifacts (v2)
+    commits_list: Optional[list[dict[str, Any]]] = None
+    artifacts: Optional[dict[str, str]] = None
+    # Error tracking
     error_message: Optional[str] = None
     error_phase: Optional[str] = None
+    # Stats
     total_input_tokens: Optional[int] = None
     total_output_tokens: Optional[int] = None
     total_cost: Optional[float] = None
+    # Timestamps
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     metadata_: Optional[dict[str, Any]] = None

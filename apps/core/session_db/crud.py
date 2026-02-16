@@ -239,9 +239,24 @@ async def create_session(db: AsyncSession, data: SessionCreate) -> Session:
         description=data.description,
         session_type=data.session_type,
         working_dir=data.working_dir,
+        session_dir=data.session_dir,
         project_id=data.project_id,
+        # Git context (v2)
         git_worktree=data.git_worktree,
         git_branch=data.git_branch,
+        git_base_branch=data.git_base_branch,
+        # Phase tracking (v2)
+        current_phase=data.current_phase,
+        status=data.status,
+        phase_history=data.phase_history,
+        # Build progress (v2)
+        checkpoints_total=data.checkpoints_total,
+        checkpoints_completed=len(data.checkpoints_completed_list),
+        checkpoints_completed_list=data.checkpoints_completed_list,
+        current_checkpoint=data.current_checkpoint,
+        # Commits and artifacts (v2)
+        commits_list=data.commits_list,
+        artifacts=data.artifacts,
         metadata_=data.metadata_,
     )
     db.add(session)
@@ -353,10 +368,12 @@ async def list_session_summaries(
             session_slug=s.session_slug,
             title=s.title,
             status=s.status,
+            current_phase=s.current_phase,
             session_type=s.session_type,
             project_id=s.project_id,
             checkpoints_completed=s.checkpoints_completed,
             checkpoints_total=s.checkpoints_total,
+            current_checkpoint=s.current_checkpoint,
             total_cost=s.total_cost,
             created_at=s.created_at,
             updated_at=s.updated_at,
@@ -488,11 +505,7 @@ async def list_agents_for_session(
     Returns:
         List of agents
     """
-    query = (
-        select(Agent)
-        .where(Agent.session_id == session_id)
-        .order_by(Agent.created_at.asc())
-    )
+    query = select(Agent).where(Agent.session_id == session_id).order_by(Agent.created_at.asc())
 
     if agent_type:
         query = query.where(Agent.agent_type == agent_type)
@@ -666,11 +679,7 @@ async def list_logs_for_agent(
     Returns:
         List of log entries
     """
-    query = (
-        select(AgentLog)
-        .where(AgentLog.agent_id == agent_id)
-        .order_by(AgentLog.timestamp.asc())
-    )
+    query = select(AgentLog).where(AgentLog.agent_id == agent_id).order_by(AgentLog.timestamp.asc())
 
     if event_category:
         query = query.where(AgentLog.event_category == event_category)
@@ -706,9 +715,7 @@ async def list_logs_for_session(
         List of log entries
     """
     query = (
-        select(AgentLog)
-        .where(AgentLog.session_id == session_id)
-        .order_by(AgentLog.timestamp.asc())
+        select(AgentLog).where(AgentLog.session_id == session_id).order_by(AgentLog.timestamp.asc())
     )
 
     if event_category:
