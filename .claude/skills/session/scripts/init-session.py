@@ -19,6 +19,7 @@ Examples:
 
 import argparse
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -60,6 +61,20 @@ def get_project_root() -> Path:
     raise RuntimeError("Could not find project root (.claude directory)")
 
 
+def get_git_branch() -> str | None:
+    """Get current git branch name, or None if not in a git repo."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return result.stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
 def load_template() -> dict:
     """Load the state.json template."""
     if not TEMPLATE_PATH.exists():
@@ -99,8 +114,10 @@ def init_state_json(
         .replace("{{DESCRIPTION}}", description or "")
     )
 
-    # Remove the example key_decisions entry
-    state["key_decisions"] = []
+    # Detect git branch if in a git repo
+    git_branch = get_git_branch()
+    if git_branch:
+        state["git"]["branch"] = git_branch
 
     # Write state.json
     state_path = session_path / "state.json"

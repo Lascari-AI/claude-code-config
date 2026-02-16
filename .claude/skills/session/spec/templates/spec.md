@@ -46,9 +46,13 @@
 
 *Capture the WHY behind decisions, not just the WHAT. Include user's reasoning and preferences.*
 
-| Decision | Rationale | Date |
-|----------|-----------|------|
-|          |           |      |
+<!-- Add decisions as they are made using this format:
+
+### [Decision Title]
+**Rationale**: [Why this decision was made]
+**Made**: [YYYY-MM-DD]
+
+-->
 
 ## Open Questions
 

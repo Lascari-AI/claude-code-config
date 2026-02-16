@@ -1,72 +1,45 @@
 {
-  "$schema": "Session state schema for session skill",
+  "$schema": "Session state manifest v2 - programmatic updates only",
 
   "session_id": "{{SESSION_ID}}",
-  "created_at": "{{CREATED_AT}}",
-  "updated_at": "{{UPDATED_AT}}",
   "topic": "{{TOPIC}}",
   "description": "{{DESCRIPTION}}",
+  "session_type": "full",
 
-  "granularity": "feature",
-  "parent_session": null,
+  "created_at": "{{CREATED_AT}}",
+  "updated_at": "{{UPDATED_AT}}",
 
   "current_phase": "spec",
-  "phases": {
-    "spec": {
-      "_status_values": ["draft", "finalized", "finalized_complete"],
-      "_status_notes": {
-        "draft": "Spec in progress, not yet complete",
-        "finalized": "Spec complete, ready for plan phase",
-        "finalized_complete": "Spec complete, no plan needed - session done (exploration revealed no changes required)"
-      },
-      "status": "draft",
-      "started_at": "{{CREATED_AT}}",
-      "finalized_at": null
-    },
-    "plan": {
-      "status": null,
-      "started_at": null,
-      "finalized_at": null
-    },
-    "build": {
-      "status": null,
-      "started_at": null,
-      "completed_at": null
-    }
+  "status": "active",
+
+  "phase_history": {
+    "spec_started_at": "{{CREATED_AT}}",
+    "spec_completed_at": null,
+    "plan_started_at": null,
+    "plan_completed_at": null,
+    "build_started_at": null,
+    "build_completed_at": null,
+    "docs_started_at": null,
+    "docs_completed_at": null
   },
 
-  "goals": {
-    "high_level": [],
-    "mid_level": [],
-    "low_level": []
-  },
-
-  "open_questions": [],
-
-  "key_decisions": [
-    {
-      "_example": true,
-      "decision": "Example: Use REST API instead of GraphQL",
-      "rationale": "Team familiarity and existing patterns",
-      "made_at": "2025-12-23T10:30:00Z"
-    }
-  ],
-
-  "plan_state": {
-    "status": "not_started",
+  "build_progress": {
     "checkpoints_total": null,
-    "checkpoints_detailed": null,
     "checkpoints_completed": [],
-    "current_checkpoint": null,
-    "current_task_group": null,
-    "current_task": null,
-    "last_updated": null,
-    "summary": null
+    "current_checkpoint": null
+  },
+
+  "git": {
+    "branch": null,
+    "worktree": null,
+    "base_branch": null
   },
 
   "commits": [],
 
-  "research_artifacts": [],
-
-  "doc_updates": []
+  "artifacts": {
+    "spec": "spec.md",
+    "plan": "plan.json",
+    "plan_readable": "plan.md"
+  }
 }
