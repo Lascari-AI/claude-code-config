@@ -14,7 +14,7 @@ from .exceptions import (
     SessionNotFoundError,
     StateValidationError,
 )
-from .models import Phase, SessionState
+from .models import Phase, SessionState, Status
 
 
 class SessionStateManager:
@@ -175,4 +175,149 @@ class SessionStateManager:
         self._state.current_phase = new_phase_enum
 
         # Save changes
+        self.save()
+
+    # ─── Checkpoint Tracking ──────────────────────────────────────────────────
+
+    def init_build_progress(self, checkpoints_total: int) -> None:
+        """Initialize build progress for build phase.
+
+        Should be called when transitioning to build phase or when
+        the plan is finalized with checkpoint count.
+
+        Args:
+            checkpoints_total: Total number of checkpoints in the plan
+
+        Raises:
+            ValueError: If checkpoints_total is not positive
+            RuntimeError: If no state has been loaded
+        """
+        if checkpoints_total < 1:
+            raise ValueError("checkpoints_total must be at least 1")
+
+        self.state.build_progress.checkpoints_total = checkpoints_total
+        self.state.build_progress.checkpoints_completed = []
+        self.state.build_progress.current_checkpoint = 1
+        self.save()
+
+    def start_checkpoint(self, checkpoint_id: int) -> None:
+        """Set the current active checkpoint.
+
+        Args:
+            checkpoint_id: The checkpoint ID to start (1-indexed)
+
+        Raises:
+            ValueError: If checkpoint_id is invalid
+            RuntimeError: If no state has been loaded
+        """
+        total = self.state.build_progress.checkpoints_total
+        if total is None:
+            raise ValueError("build_progress not initialized. Call init_build_progress first.")
+        if checkpoint_id < 1 or checkpoint_id > total:
+            raise ValueError(f"checkpoint_id must be between 1 and {total}")
+
+        self.state.build_progress.current_checkpoint = checkpoint_id
+        self.save()
+
+    def complete_checkpoint(self, checkpoint_id: int) -> None:
+        """Mark a checkpoint as completed.
+
+        Adds checkpoint to completed list and advances current_checkpoint.
+        Does not modify current_checkpoint if this is the last checkpoint.
+
+        Args:
+            checkpoint_id: The checkpoint ID that was completed
+
+        Raises:
+            ValueError: If checkpoint is invalid or already completed
+            RuntimeError: If no state has been loaded
+        """
+        total = self.state.build_progress.checkpoints_total
+        if total is None:
+            raise ValueError("build_progress not initialized. Call init_build_progress first.")
+        if checkpoint_id < 1 or checkpoint_id > total:
+            raise ValueError(f"checkpoint_id must be between 1 and {total}")
+
+        completed = self.state.build_progress.checkpoints_completed
+        if checkpoint_id in completed:
+            raise ValueError(f"Checkpoint {checkpoint_id} is already completed")
+
+        completed.append(checkpoint_id)
+        completed.sort()  # Keep list sorted
+
+        # Advance current_checkpoint if not at the end
+        if checkpoint_id < total:
+            self.state.build_progress.current_checkpoint = checkpoint_id + 1
+        else:
+            # Last checkpoint - set to None to indicate completion
+            self.state.build_progress.current_checkpoint = None
+
+        self.save()
+
+    # ─── Commit Tracking ──────────────────────────────────────────────────────
+
+    def add_commit(
+        self,
+        sha: str,
+        message: str,
+        checkpoint: Optional[int] = None,
+    ) -> None:
+        """Record a git commit made during the session.
+
+        Args:
+            sha: The commit SHA (short or full)
+            message: The commit message
+            checkpoint: Optional checkpoint ID this commit relates to
+
+        Raises:
+            RuntimeError: If no state has been loaded
+        """
+        from .models import Commit
+
+        commit = Commit(
+            sha=sha,
+            message=message,
+            checkpoint=checkpoint,
+            created_at=datetime.now(timezone.utc),
+        )
+        self.state.commits.append(commit)
+        self.save()
+
+    # ─── Status and Git Context ───────────────────────────────────────────────
+
+    def set_status(self, status: Status) -> None:
+        """Set the session execution status.
+
+        Args:
+            status: The new status (active, paused, complete, failed)
+
+        Raises:
+            RuntimeError: If no state has been loaded
+        """
+        status_enum = Status(status) if isinstance(status, str) else status
+        self.state.status = status_enum
+        self.save()
+
+    def set_git_branch(self, branch: str) -> None:
+        """Set the git branch for this session.
+
+        Args:
+            branch: The branch name
+
+        Raises:
+            RuntimeError: If no state has been loaded
+        """
+        self.state.git.branch = branch
+        self.save()
+
+    def set_git_worktree(self, worktree: Optional[str]) -> None:
+        """Set the git worktree path for this session.
+
+        Args:
+            worktree: The worktree path, or None if not using a worktree
+
+        Raises:
+            RuntimeError: If no state has been loaded
+        """
+        self.state.git.worktree = worktree
         self.save()
