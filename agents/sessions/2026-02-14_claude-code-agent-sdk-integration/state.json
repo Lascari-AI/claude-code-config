@@ -1,0 +1,122 @@
+{
+  "$schema": "Session state schema for session skill",
+  "session_id": "2026-02-14_claude-code-agent-sdk-integration",
+  "created_at": "2026-02-14T13:44:34+00:00",
+  "updated_at": "2026-02-16T12:00:00+00:00",
+  "topic": "Session Data Architecture",
+  "description": "Full process to integrate current Claude code, config and agents into a cohesive structure for using the Agent SDK with UI for syncing the system",
+  "granularity": "feature",
+  "parent_session": null,
+  "current_phase": "plan",
+  "phases": {
+    "spec": {
+      "_status_values": [
+        "draft",
+        "finalized",
+        "finalized_complete"
+      ],
+      "_status_notes": {
+        "draft": "Spec in progress, not yet complete",
+        "finalized": "Spec complete, ready for plan phase",
+        "finalized_complete": "Spec complete, no plan needed - session done (exploration revealed no changes required)"
+      },
+      "status": "finalized",
+      "started_at": "2026-02-14T13:44:34+00:00",
+      "finalized_at": "2026-02-16T12:00:00+00:00"
+    },
+    "plan": {
+      "status": "finalized",
+      "started_at": "2026-02-16T18:00:00+00:00",
+      "finalized_at": "2026-02-16T18:35:00+00:00"
+    },
+    "build": {
+      "status": null,
+      "started_at": null,
+      "completed_at": null
+    }
+  },
+  "goals": {
+    "high_level": [
+      "Define clear data ownership: what lives where and why",
+      "Design sync strategy between filesystem and database",
+      "Enable UI visibility without breaking agent workflows",
+      "Support multi-project session tracking"
+    ],
+    "mid_level": [
+      "Map state.json fields to database Session model",
+      "Define sync triggers and mechanisms",
+      "Clarify source-of-truth for each data type",
+      "Design project ↔ session ↔ codebase relationships"
+    ],
+    "low_level": []
+  },
+  "open_questions": [],
+  "key_decisions": [
+    {
+      "decision": "Artifacts stay on filesystem, metadata syncs to DB",
+      "rationale": "Agents need direct file access to spec.md, plan.json, etc. Database handles visibility and tracking.",
+      "source": "SESSION_SYNC_ISSUE.md - prior refactor session"
+    },
+    {
+      "decision": "Agent SDK = Headless Claude Code",
+      "rationale": "Same capabilities, programmatic. Backend uses SDK to spawn agents that use the same .claude/ config.",
+      "source": "User clarification + reference implementation"
+    },
+    {
+      "decision": "Filesystem is source of truth, database is reconstructable index",
+      "rationale": "Sessions should be portable - clone a repo, onboard sessions into any system. No dependency on original database.",
+      "source": "2026-02-16 spec discussion"
+    },
+    {
+      "decision": "state.json becomes minimal manifest with programmatic updates only",
+      "rationale": "Goals, questions, decisions move to spec.md. state.json is tracking-only: phase, progress, commits, timestamps. Updates via hooks (auto) and MCP tools (explicit).",
+      "source": "2026-02-16 spec discussion"
+    },
+    {
+      "decision": "Database stores session index + agent execution tracking (agents/logs)",
+      "rationale": "No bidirectional sync needed. Onboarding = scan filesystem → populate database. Agents/logs are ephemeral execution data.",
+      "source": "2026-02-16 spec discussion"
+    },
+    {
+      "decision": "Hooks for auto updates (updated_at), MCP tools for explicit state changes",
+      "rationale": "Semantic transitions (plan→build) can't be detected by hooks. AI calls MCP tool when transitioning. Python StateManager handles state.json updates.",
+      "source": "2026-02-16 spec discussion"
+    },
+    {
+      "decision": "StateManager validates state transitions",
+      "rationale": "Reducer-style methods with validation prevent invalid states. Can't skip from spec to build.",
+      "source": "2026-02-16 spec discussion"
+    },
+    {
+      "decision": "Commits tracked in state.json via StateManager",
+      "rationale": "When commits happen, StateManager.add_commit() updates state. Keeps commit history with session for portability.",
+      "source": "2026-02-16 spec discussion"
+    }
+  ],
+  "plan_state": {
+    "status": "in_progress",
+    "checkpoints_total": 7,
+    "checkpoints_detailed": 7,
+    "checkpoints_completed": [1],
+    "current_checkpoint": 2,
+    "current_task_group": null,
+    "current_task": null,
+    "last_updated": "2026-02-16T19:45:00+00:00",
+    "summary": "Plan finalized with 7 checkpoints, 21 task groups, 36 tasks. Ready for build."
+  },
+  "commits": [
+    {
+      "checkpoint_id": 1,
+      "sha": "9a529cc",
+      "message": "feat(state-manager): add StateManager with validated phase transitions",
+      "created_at": "2026-02-16T16:45:00+00:00"
+    }
+  ],
+  "research_artifacts": [
+    {
+      "path": "docs/.drafts/agent-architecture/85-session-data-architecture.md",
+      "description": "Draft documentation for session data architecture - ownership model, sync strategy, filesystem vs database"
+    }
+  ],
+  "doc_updates": []
+}

@@ -17,6 +17,9 @@ dependencies = [
 
     # Environment
     "python-dotenv>=1.0.0",
+
+    # Agent SDK
+    "claude-agent-sdk>=0.1.36",
 ]
 
 [project.optional-dependencies]
