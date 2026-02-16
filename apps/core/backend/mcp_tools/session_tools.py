@@ -19,6 +19,31 @@ from state_manager import (
     SessionStateManager,
     StateValidationError,
 )
+from task_pool import make_pooled_sync_callback
+
+
+def _derive_working_dir(session_dir: str | Path) -> str:
+    """Derive the project working directory from a session directory path.
+
+    Session directories follow the structure:
+        {working_dir}/agents/sessions/{session_slug}
+
+    So we go up 3 levels to get the project root.
+    """
+    session_path = Path(session_dir)
+    return str(session_path.parent.parent.parent)
+
+
+def _create_manager(session_dir: str | Path) -> SessionStateManager:
+    """Create a SessionStateManager with sync callback injected.
+
+    This is the standard way to create managers in MCP tools - ensures
+    all state changes trigger async database sync.
+    """
+    session_path = Path(session_dir)
+    working_dir = _derive_working_dir(session_path)
+    callback = make_pooled_sync_callback(working_dir)
+    return SessionStateManager(session_path, on_save_callback=callback)
 
 
 @tool(
@@ -59,7 +84,7 @@ async def session_transition_phase(args: dict[str, Any]) -> dict[str, Any]:
             }
 
         # Load state and transition
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         state = manager.load()
         current_phase = state.current_phase
 
@@ -146,7 +171,7 @@ async def session_init_build(args: dict[str, Any]) -> dict[str, Any]:
     checkpoints_total = args["checkpoints_total"]
 
     try:
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         manager.load()
         manager.init_build_progress(checkpoints_total)
 
@@ -200,7 +225,7 @@ async def session_start_checkpoint(args: dict[str, Any]) -> dict[str, Any]:
     checkpoint_id = args["checkpoint_id"]
 
     try:
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         manager.load()
         manager.start_checkpoint(checkpoint_id)
 
@@ -253,7 +278,7 @@ async def session_complete_checkpoint(args: dict[str, Any]) -> dict[str, Any]:
     checkpoint_id = args["checkpoint_id"]
 
     try:
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         manager.load()
         manager.complete_checkpoint(checkpoint_id)
 
@@ -324,7 +349,7 @@ async def session_add_commit(args: dict[str, Any]) -> dict[str, Any]:
     checkpoint = args.get("checkpoint")  # Optional
 
     try:
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         manager.load()
         manager.add_commit(sha=sha, message=message, checkpoint=checkpoint)
 
@@ -397,7 +422,7 @@ async def session_set_status(args: dict[str, Any]) -> dict[str, Any]:
                 ]
             }
 
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         manager.load()
         old_status = manager.state.status
         manager.set_status(status)
@@ -451,7 +476,7 @@ async def session_set_git(args: dict[str, Any]) -> dict[str, Any]:
     worktree = args.get("worktree")
 
     try:
-        manager = SessionStateManager(Path(session_dir))
+        manager = _create_manager(session_dir)
         manager.load()
 
         changes = []
