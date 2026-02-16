@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 from pydantic import ValidationError
 
@@ -15,6 +16,11 @@ from .exceptions import (
     StateValidationError,
 )
 from .models import Phase, SessionState, Status
+
+# Type alias for save callback - receives session directory path after save completes
+SaveCallback = Callable[[Path], None] | None
+
+logger = logging.getLogger(__name__)
 
 
 class SessionStateManager:
@@ -44,14 +50,22 @@ class SessionStateManager:
         Phase.complete: [],
     }
 
-    def __init__(self, session_dir: Path | str) -> None:
+    def __init__(
+        self,
+        session_dir: Path | str,
+        on_save_callback: SaveCallback = None,
+    ) -> None:
         """Initialize StateManager for a session directory.
 
         Args:
             session_dir: Path to session directory (contains state.json)
+            on_save_callback: Optional callback invoked after successful save().
+                Receives the session directory path. Exceptions are logged
+                but do not break the save operation (fire-and-forget).
         """
         self.session_dir = Path(session_dir)
         self._state: Optional[SessionState] = None
+        self._on_save_callback = on_save_callback
 
     @property
     def state_file(self) -> Path:
@@ -120,6 +134,17 @@ class SessionStateManager:
             f.write("\n")  # Trailing newline
 
         temp_file.rename(self.state_file)
+
+        # Fire-and-forget callback invocation
+        if self._on_save_callback is not None:
+            try:
+                self._on_save_callback(self.session_dir)
+            except Exception as e:
+                logger.exception(
+                    "on_save_callback failed for session %s: %s",
+                    self.session_dir.name,
+                    e,
+                )
 
     def _validate_transition(self, from_phase: Phase, to_phase: Phase) -> bool:
         """Check if a phase transition is valid.

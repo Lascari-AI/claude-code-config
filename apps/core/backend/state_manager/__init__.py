@@ -33,11 +33,13 @@ from .models import (
     SessionType,
     Status,
 )
-from .state_manager import SessionStateManager
+from .state_manager import SaveCallback, SessionStateManager
 
 __all__ = [
     # Main interface
     "SessionStateManager",
+    # Type aliases
+    "SaveCallback",
     # Root model
     "SessionState",
     # Enums

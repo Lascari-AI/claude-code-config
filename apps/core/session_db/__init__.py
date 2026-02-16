@@ -46,6 +46,11 @@ from .database import (
     close_db,
 )
 
+from .async_sync import (
+    make_sync_callback,
+    queue_sync_task,
+)
+
 from .crud import (
     # Project CRUD
     create_project,
@@ -106,6 +111,9 @@ __all__ = [
     "AgentCreate",
     "AgentUpdate",
     "AgentLogCreate",
+    # Async sync
+    "make_sync_callback",
+    "queue_sync_task",
     # Database
     "get_engine",
     "get_async_session",
