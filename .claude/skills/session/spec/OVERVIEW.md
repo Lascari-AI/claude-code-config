@@ -60,7 +60,7 @@ This enables building on prior work without duplicating context. The prior spec 
 3. **WHAT not HOW**: Focus on outcomes, not implementation
 4. **Persistent exploration**: Continue interviewing until the spec is truly complete
 5. **Capture the why & user taste**: Don't just record requirements - capture reasoning, mental models, and preferences. Verbose input gets condensed, but nuance must survive.
-6. **Atomic persistence**: After EVERY exchange, update spec.md AND state.json. Never batch updates. This prevents losing work.
+6. **Atomic persistence**: After EVERY exchange, update spec.md. Never batch updates. This prevents losing work. State tracking (phase, timestamps) is handled via MCP tools when transitioning phases.
 
 ## Spec Document Sections
 
@@ -87,10 +87,13 @@ This enables building on prior work without duplicating context. The prior spec 
 
 ## Outputs
 
-- `spec.md` - Specification document
-- `state.json` - Session state with fields including:
+- `spec.md` - Specification document containing:
+  - Goals (High/Mid/Implementation levels)
+  - Open Questions (checkbox format)
+  - Key Decisions (with rationale and date)
+- `state.json` - Session tracking (managed by MCP tools):
+  - `current_phase`, `phases`, `phase_history` timestamps
   - `prior_session` - ID of linked prior spec session (if any)
-  - `current_phase`, `phases`, `open_questions`, `key_decisions`
 - `research/` - Any research artifacts gathered
 
 ## Finalization Criteria
@@ -102,6 +105,25 @@ Before finalizing, ensure:
 - [ ] Success criteria are testable
 - [ ] No critical open questions remain
 - [ ] Key decisions are documented
+
+## Finalizing the Spec
+
+When spec is complete and approved by user:
+
+1. Verify all finalization criteria are met
+2. Use the MCP tool to transition to plan phase:
+   ```
+   mcp__session_state__session_transition_phase(
+     session_dir="agents/sessions/<session-id>",
+     new_phase="plan"
+   )
+   ```
+3. This updates `state.json` with:
+   - `current_phase: "plan"`
+   - `phase_history.spec_completed_at` timestamp
+   - `phase_history.plan_started_at` timestamp
+
+**Note**: The MCP tools are available when running via Claude Agent SDK with the session_state MCP server configured.
 
 ## Templates
 

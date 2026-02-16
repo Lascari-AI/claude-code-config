@@ -153,40 +153,50 @@ This creates a clear commit history aligned with the plan structure.
 
 ### Commit Tracking
 
-After each checkpoint commit, update state.json `commits` array:
+After each checkpoint commit, use the MCP tool to record it:
 
-```json
-{
-  "commits": [
-    {
-      "checkpoint_id": 1,
-      "sha": "abc123def...",
-      "message": "checkpoint-1: Session directory structure",
-      "created_at": "2026-01-14T01:00:00Z"
-    }
-  ]
-}
+```
+mcp__session_state__session_add_commit(
+  session_dir="agents/sessions/<session-id>",
+  sha="abc123def...",
+  message="checkpoint-1: Session directory structure",
+  checkpoint=1
+)
 ```
 
-This enables traceability from commits back to plan checkpoints.
+This automatically updates `state.json` with the commit, enabling traceability from commits back to plan checkpoints.
+
+### Checkpoint Completion
+
+After verification passes and commit is recorded, mark the checkpoint complete:
+
+```
+mcp__session_state__session_complete_checkpoint(
+  session_dir="agents/sessions/<session-id>",
+  checkpoint_id=1
+)
+```
+
+This updates `build_progress.checkpoints_completed` and advances `build_progress.current_checkpoint`.
 
 ## State Tracking
 
-The `plan_state` in state.json tracks progress:
+The `plan_state` and `build_progress` in state.json track progress. These are managed via MCP tools rather than direct editing:
 
 ```json
 {
-  "plan_state": {
-    "status": "in_progress",
-    "current_checkpoint": 2,
-    "current_task_group": "2.1",
-    "current_task": "2.1.3",
+  "build_progress": {
+    "checkpoints_total": 5,
     "checkpoints_completed": [1],
-    "last_updated": "2025-12-24T12:00:00Z",
-    "summary": "Completed checkpoint 1. Working on checkpoint 2, task 2.1.3."
+    "current_checkpoint": 2
   }
 }
 ```
+
+**Note**: State updates happen automatically through MCP tools:
+- `session_complete_checkpoint` → updates checkpoints_completed and current_checkpoint
+- `session_add_commit` → appends to commits array
+- `session_transition_phase` → transitions to next phase when build is done
 
 ## DevNotes
 
@@ -279,8 +289,23 @@ When verification fails:
 Session is complete when:
 - [x] All checkpoints executed
 - [x] All verification steps pass (or overridden)
-- [x] `phases.build.status` set to "completed"
-- [x] `current_phase` set to "complete"
+- [x] Final checkpoint committed and tracked
+
+When the final checkpoint is done, use MCP tool to transition:
+
+```
+mcp__session_state__session_transition_phase(
+  session_dir="agents/sessions/<session-id>",
+  new_phase="docs"  # or "complete" if no docs phase needed
+)
+```
+
+This updates `state.json` with:
+- `current_phase: "docs"` or `"complete"`
+- `phase_history.build_completed_at` timestamp
+- If docs phase: `phase_history.docs_started_at` timestamp
+
+**Note**: The MCP tools are available when running via Claude Agent SDK with the session_state MCP server configured.
 
 ## Outputs
 

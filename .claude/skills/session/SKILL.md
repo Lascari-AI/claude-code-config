@@ -260,3 +260,33 @@ Child sessions can reference parent sessions via `parent_session` in state.json.
 3. **Track Decisions** - Document why, not just what
 4. **Update Incrementally** - Don't wait to update documents
 5. **Use Diagrams** - Visual aids clarify understanding
+
+## SDK MCP Tools for State Updates
+
+When running via Claude Agent SDK with the `session_state` MCP server configured, agents use MCP tools for all state.json updates. **Do not edit state.json directly** — use these tools:
+
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| `mcp__session_state__session_transition_phase` | Change session phase (spec→plan→build→docs→complete) | Finalizing spec, finalizing plan, completing build |
+| `mcp__session_state__session_init_build` | Initialize build progress tracking | When finalizing plan, sets checkpoints_total |
+| `mcp__session_state__session_start_checkpoint` | Mark checkpoint as started | Beginning work on a checkpoint |
+| `mcp__session_state__session_complete_checkpoint` | Mark checkpoint as completed | After verification passes |
+| `mcp__session_state__session_add_commit` | Record git commit | After each checkpoint commit |
+| `mcp__session_state__session_set_status` | Set session status (active/paused/complete/failed) | When session state changes |
+| `mcp__session_state__session_set_git` | Set git context (branch/worktree) | When working on branches or worktrees |
+
+### Why MCP Tools?
+
+1. **Validation**: StateManager validates all transitions (can't skip from spec to build)
+2. **Consistency**: Automatic timestamps, field updates handled correctly
+3. **Atomicity**: Changes are persisted atomically
+4. **Portability**: State format controlled by StateManager, not ad-hoc edits
+
+### state.json v2 Schema
+
+The state.json file follows the v2 schema:
+- **Tracking only**: Phase, timestamps, build progress, commits, git context
+- **No content**: Goals, questions, decisions live in `spec.md`, not state.json
+- **Programmatic updates**: MCP tools or hooks only, never direct editing
+
+See individual phase overviews for specific MCP tool usage patterns.

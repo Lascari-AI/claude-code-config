@@ -60,7 +60,7 @@ The plan phase builds the **bridge** from current state to desired state:
 
 ### State Tracking
 
-The `plan_state` in state.json tracks progress for resumability:
+The `plan_state` in state.json tracks progress for resumability. This is managed via MCP tools rather than direct editing:
 
 ```json
 {
@@ -73,6 +73,8 @@ The `plan_state` in state.json tracks progress for resumability:
   }
 }
 ```
+
+**Note**: State updates happen automatically through MCP tools during phase transitions.
 
 ## Key Concepts
 
@@ -281,8 +283,37 @@ Each checkpoint includes verification approach:
 ## Outputs
 
 - `plan.json` - Structured plan (source of truth)
-- `plan.md` - Human-readable plan (generated)
-- `state.json` - Updated with `plan_state`
+- `plan.md` - Human-readable plan (generated from plan.json)
+- `state.json` - Session tracking (managed by MCP tools):
+  - `current_phase`, `phase_history` timestamps
+  - `build_progress` (initialized on finalization)
+
+## Finalizing the Plan
+
+When plan is complete and all checkpoints are detailed:
+
+1. Count total checkpoints from plan.json
+2. Use MCP tools to initialize build tracking and transition:
+   ```
+   # Initialize build progress tracking
+   mcp__session_state__session_init_build(
+     session_dir="agents/sessions/<session-id>",
+     checkpoints_total=<count>
+   )
+
+   # Transition to build phase
+   mcp__session_state__session_transition_phase(
+     session_dir="agents/sessions/<session-id>",
+     new_phase="build"
+   )
+   ```
+3. This updates `state.json` with:
+   - `current_phase: "build"`
+   - `phase_history.plan_completed_at` timestamp
+   - `phase_history.build_started_at` timestamp
+   - `build_progress.checkpoints_total` initialized
+
+**Note**: The MCP tools are available when running via Claude Agent SDK with the session_state MCP server configured.
 
 ## Templates
 

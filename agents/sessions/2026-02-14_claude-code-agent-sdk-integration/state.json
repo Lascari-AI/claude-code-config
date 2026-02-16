@@ -97,11 +97,11 @@
     "status": "in_progress",
     "checkpoints_total": 7,
     "checkpoints_detailed": 7,
-    "checkpoints_completed": [1],
-    "current_checkpoint": 2,
-    "current_task_group": null,
-    "current_task": null,
-    "last_updated": "2026-02-16T19:45:00+00:00",
+    "checkpoints_completed": [1, 2, 3, 4],
+    "current_checkpoint": 5,
+    "current_task_group": "5.4",
+    "current_task": "5.4.1",
+    "last_updated": "2026-02-16T23:00:00+00:00",
     "summary": "Plan finalized with 7 checkpoints, 21 task groups, 36 tasks. Ready for build."
   },
   "commits": [
@@ -110,6 +110,24 @@
       "sha": "9a529cc",
       "message": "feat(state-manager): add StateManager with validated phase transitions",
       "created_at": "2026-02-16T16:45:00+00:00"
+    },
+    {
+      "checkpoint_id": 2,
+      "sha": "7108d2e",
+      "message": "feat(mcp-tools): add SDK MCP server for session state transitions",
+      "created_at": "2026-02-16T19:50:00+00:00"
+    },
+    {
+      "checkpoint_id": 3,
+      "sha": "67722dc",
+      "message": "feat(state-manager): add complete StateManager API - checkpoints, commits, status, git",
+      "created_at": "2026-02-16T21:30:00+00:00"
+    },
+    {
+      "checkpoint_id": 4,
+      "sha": "9d0193d",
+      "message": "feat(mcp-tools): add complete SDK MCP tool suite for session state",
+      "created_at": "2026-02-16T22:15:00+00:00"
     }
   ],
   "research_artifacts": [
