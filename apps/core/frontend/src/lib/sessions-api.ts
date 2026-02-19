@@ -166,6 +166,7 @@ export async function createSession(
 export interface SpecContent {
   content: string;
   exists: boolean;
+  content_hash?: string;
 }
 
 /**

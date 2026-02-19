@@ -8,12 +8,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { createHash } from "crypto";
 import { db, sessions } from "@/db";
 import { eq } from "drizzle-orm";
 
 interface SpecContent {
   content: string;
   exists: boolean;
+  content_hash: string;
 }
 
 /**
@@ -77,9 +79,11 @@ export async function GET(
 
     try {
       const content = await readFile(specPath, "utf-8");
+      const content_hash = createHash("sha256").update(content).digest("hex");
       return NextResponse.json<SpecContent>({
         content,
         exists: true,
+        content_hash,
       });
     } catch (fileError) {
       // File doesn't exist or can't be read

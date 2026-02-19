@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 import { getSessionSpec } from "@/lib/sessions-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CodeBlock } from "@/components/markdown/CodeBlock";
 import { cn } from "@/lib/utils";
 
 interface SpecViewProps {
@@ -21,23 +24,41 @@ export function SpecView({ sessionSlug, className }: SpecViewProps) {
   const [content, setContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const lastHashRef = useRef<string | null>(null);
 
   useEffect(() => {
-    async function fetchSpec() {
-      setIsLoading(true);
-      setError(null);
+    let isMounted = true;
 
+    async function fetchSpec() {
       try {
         const result = await getSessionSpec(sessionSlug);
+        if (!isMounted) return;
+
+        // Only update content if hash changed (or first load)
+        if (result.content_hash && result.content_hash === lastHashRef.current) {
+          return; // No change, skip re-render
+        }
+
+        lastHashRef.current = result.content_hash ?? null;
         setContent(result.content);
+        setError(null);
       } catch (err) {
+        if (!isMounted) return;
         setError(err instanceof Error ? err.message : "Failed to load spec");
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    fetchSpec();
+    fetchSpec(); // Initial load
+    const interval = setInterval(fetchSpec, 5000); // Poll every 5s
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [sessionSlug]);
 
   if (isLoading) {
@@ -77,6 +98,8 @@ export function SpecView({ sessionSlug, className }: SpecViewProps) {
   return (
     <div className={cn("prose prose-sm max-w-none dark:prose-invert", className)}>
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeHighlight]}
         components={{
           // Style headings
           h1: ({ children }) => (
@@ -88,25 +111,8 @@ export function SpecView({ sessionSlug, className }: SpecViewProps) {
           h3: ({ children }) => (
             <h3 className="text-lg font-medium mt-4 mb-2">{children}</h3>
           ),
-          // Style code blocks
-          code: ({ className, children, ...props }) => {
-            const isInline = !className?.includes("language-");
-            if (isInline) {
-              return (
-                <code
-                  className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono"
-                  {...props}
-                >
-                  {children}
-                </code>
-              );
-            }
-            return (
-              <code className={cn("block p-4 rounded-lg bg-muted overflow-x-auto", className)} {...props}>
-                {children}
-              </code>
-            );
-          },
+          // Enhanced code blocks with syntax highlighting and mermaid support
+          code: CodeBlock,
           // Style lists
           ul: ({ children }) => (
             <ul className="list-disc pl-6 my-2 space-y-1">{children}</ul>
@@ -114,11 +120,42 @@ export function SpecView({ sessionSlug, className }: SpecViewProps) {
           ol: ({ children }) => (
             <ol className="list-decimal pl-6 my-2 space-y-1">{children}</ol>
           ),
+          // Style task list items (GFM checkboxes)
+          input: ({ type, checked, ...props }) => {
+            if (type === "checkbox") {
+              return (
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  disabled
+                  className="mr-2 h-4 w-4 rounded border-border accent-primary"
+                  {...props}
+                />
+              );
+            }
+            return <input type={type} {...props} />;
+          },
           // Style blockquotes
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-muted pl-4 italic my-4">
+            <blockquote className="border-l-4 border-primary/30 bg-muted/30 pl-4 py-2 italic my-4 rounded-r">
               {children}
             </blockquote>
+          ),
+          // Style tables (GFM)
+          table: ({ children }) => (
+            <div className="my-4 overflow-x-auto">
+              <table className="min-w-full border-collapse border border-border rounded-lg">
+                {children}
+              </table>
+            </div>
+          ),
+          th: ({ children }) => (
+            <th className="border border-border bg-muted px-4 py-2 text-left font-semibold">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="border border-border px-4 py-2">{children}</td>
           ),
           // Style horizontal rules
           hr: () => <hr className="my-6 border-muted" />,

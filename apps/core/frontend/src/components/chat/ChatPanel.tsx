@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { MessageBubble } from "./MessageBubble";
+import { ToolActivity } from "./ToolActivity";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -19,6 +21,8 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: string;
+  block_type: "text" | "tool_use" | "tool_result" | "thinking";
+  tool_name: string | null;
 }
 
 interface ChatPanelProps {
@@ -32,17 +36,19 @@ interface ChatPanelProps {
 
 /**
  * Map history messages to renderable ChatMessages.
- * Filters to text blocks only (user + assistant).
+ * Includes all block types for block-type-aware rendering.
  */
 function historyToMessages(history: ChatHistoryMessage[]): ChatMessage[] {
   return history
-    .filter((msg) => msg.block_type === "text" && msg.content)
+    .filter((msg) => msg.content) // skip empty blocks
     .map((msg) => ({
       role: (msg.role === "user" ? "user" : "assistant") as
         | "user"
         | "assistant",
       content: msg.content!,
       timestamp: msg.timestamp,
+      block_type: (msg.block_type as ChatMessage["block_type"]) || "text",
+      tool_name: msg.tool_name ?? null,
     }));
 }
 
@@ -119,6 +125,8 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
       role: "user",
       content: trimmed,
       timestamp: new Date().toISOString(),
+      block_type: "text",
+      tool_name: null,
     };
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
@@ -128,13 +136,15 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
     try {
       const response = await sendMessage(sessionSlug, trimmed);
 
-      // Extract text blocks from response as assistant messages
+      // Map all response blocks for block-type-aware rendering
       const assistantMessages: ChatMessage[] = response.blocks
-        .filter((block: ChatBlock) => block.block_type === "text" && block.content)
+        .filter((block: ChatBlock) => block.content)
         .map((block: ChatBlock) => ({
           role: "assistant" as const,
           content: block.content!,
           timestamp: new Date().toISOString(),
+          block_type: (block.block_type as ChatMessage["block_type"]) || "text",
+          tool_name: block.tool_name ?? null,
         }));
 
       setMessages((prev) => [...prev, ...assistantMessages]);
@@ -167,26 +177,31 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
           </div>
         )}
 
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex",
-              msg.role === "user" ? "justify-end" : "justify-start"
-            )}
-          >
-            <div
-              className={cn(
-                "max-w-[80%] rounded-lg px-4 py-2 text-sm",
-                msg.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-foreground"
-              )}
-            >
-              <p className="whitespace-pre-wrap">{msg.content}</p>
-            </div>
-          </div>
-        ))}
+        {messages.map((msg, i) => {
+          // Hide thinking blocks
+          if (msg.block_type === "thinking") return null;
+
+          // Tool use/result blocks
+          if (msg.block_type === "tool_use" || msg.block_type === "tool_result") {
+            return (
+              <ToolActivity
+                key={i}
+                toolName={msg.tool_name ?? "unknown"}
+                content={msg.content}
+                blockType={msg.block_type}
+              />
+            );
+          }
+
+          // Text blocks (default)
+          return (
+            <MessageBubble
+              key={i}
+              role={msg.role}
+              content={msg.content}
+            />
+          );
+        })}
 
         {/* Loading indicator */}
         {isLoading && (
