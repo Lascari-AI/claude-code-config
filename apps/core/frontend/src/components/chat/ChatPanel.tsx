@@ -1,7 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { sendMessage, type ChatBlock } from "@/lib/chat-api";
+import { useEffect, useRef, useState } from "react";
+import {
+  sendMessage,
+  getChatHistory,
+  type ChatBlock,
+  type ChatHistoryMessage,
+} from "@/lib/chat-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -22,34 +27,94 @@ interface ChatPanelProps {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Map history messages to renderable ChatMessages.
+ * Filters to text blocks only (user + assistant).
+ */
+function historyToMessages(history: ChatHistoryMessage[]): ChatMessage[] {
+  return history
+    .filter((msg) => msg.block_type === "text" && msg.content)
+    .map((msg) => ({
+      role: (msg.role === "user" ? "user" : "assistant") as
+        | "user"
+        | "assistant",
+      content: msg.content!,
+      timestamp: msg.timestamp,
+    }));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Minimal chat panel for spec interview conversations.
+ * Chat panel for spec interview conversations.
  *
- * CP1 (tracer bullet): Basic input + message list.
- * CP2 will add: chat history loading, multi-turn, scroll-to-bottom.
- * CP3 will add: three-column layout integration.
+ * Loads persisted chat history on mount and supports multi-turn
+ * conversation with auto-scroll to bottom on new messages.
  */
 export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [turnIndex, setTurnIndex] = useState(0);
+  const scrollEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // ─── Load chat history on mount ──────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
 
+    async function loadHistory() {
+      try {
+        const response = await getChatHistory(sessionSlug);
+        if (cancelled) return;
+
+        const loadedMessages = historyToMessages(response.messages);
+        setMessages(loadedMessages);
+
+        // Derive turnIndex from max turn_index in history
+        if (response.messages.length > 0) {
+          const maxTurn = Math.max(
+            ...response.messages.map((m) => m.turn_index)
+          );
+          setTurnIndex(maxTurn + 1);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Failed to load chat history:", err);
+          // Non-fatal: empty chat is fine for new sessions
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingHistory(false);
+        }
+      }
+    }
+
+    loadHistory();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionSlug]);
+
+  // ─── Auto-scroll to bottom on new messages ───────────────────────────────
+  useEffect(() => {
+    scrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // ─── Send handler ────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmed = inputValue.trim();
     if (!trimmed || isLoading) return;
 
-    // Add user message
+    // Add user message optimistically
     const userMessage: ChatMessage = {
       role: "user",
       content: trimmed,
@@ -73,7 +138,7 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
         }));
 
       setMessages((prev) => [...prev, ...assistantMessages]);
-      setTimeout(scrollToBottom, 100);
+      setTurnIndex((prev) => prev + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send message");
     } finally {
@@ -85,7 +150,18 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
     <div className={cn("flex flex-col h-[500px] border rounded-lg", className)}>
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.length === 0 && !isLoading && (
+        {/* Loading history spinner */}
+        {isLoadingHistory && (
+          <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+              Loading chat history...
+            </div>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoadingHistory && messages.length === 0 && !isLoading && (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
             Start the spec interview by sending a message.
           </div>
@@ -133,7 +209,7 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
           </div>
         )}
 
-        <div ref={messagesEndRef} />
+        <div ref={scrollEndRef} />
       </div>
 
       {/* Input area */}

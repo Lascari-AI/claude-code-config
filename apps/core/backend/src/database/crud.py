@@ -825,6 +825,28 @@ async def create_interactive_message(
     return message
 
 
+async def get_max_turn_index(db: AsyncSession, session_id: UUID) -> int:
+    """
+    Get the maximum turn_index from interactive messages for a session.
+
+    Args:
+        db: Database session
+        session_id: Session UUID
+
+    Returns:
+        Maximum turn_index, or -1 if no messages exist
+    """
+    from sqlalchemy import func
+
+    result = await db.exec(
+        select(func.max(InteractiveMessage.turn_index)).where(
+            InteractiveMessage.session_id == session_id
+        )
+    )
+    max_val = result.one()
+    return max_val if max_val is not None else -1
+
+
 async def list_messages_for_session(
     db: AsyncSession,
     session_id: UUID,
