@@ -9,7 +9,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from database.connection import init_db, close_db
+from database.connection import close_db, init_db
+from routers.chat import router as chat_router
 
 
 @asynccontextmanager
@@ -63,3 +64,10 @@ async def health_check() -> dict:
     Returns status: healthy if the API is running.
     """
     return {"status": "healthy"}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ROUTERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+app.include_router(chat_router, prefix="/chat", tags=["chat"])

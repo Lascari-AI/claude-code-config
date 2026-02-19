@@ -30,6 +30,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .models import (  # noqa: F401 - needed for table creation
     Agent,
     AgentLog,
+    InteractiveMessage,
     Project,
     Session,
 )

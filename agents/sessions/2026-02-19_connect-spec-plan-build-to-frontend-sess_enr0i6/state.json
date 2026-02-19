@@ -1,0 +1,135 @@
+{
+  "$schema": "Session state manifest v2 - programmatic updates only",
+  "session_id": "2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6",
+  "topic": "Connect Spec/Plan/Build Flow to Frontend Sessions",
+  "description": "Enable users to drive the spec/plan/build workflow from the frontend UI with interactive chat, real-time streaming, and message tracking",
+  "granularity": "feature",
+  "prior_session": null,
+  "goals": {
+    "high_level": [
+      "Enable spec interview workflow from frontend UI via interactive chat, establishing UX groundwork for full session lifecycle"
+    ],
+    "mid_level": [
+      "Backend spec agent service (ClaudeSDKClient, skill loading, hooks, session resume)",
+      "Interactive chat data layer (block-level messages table)",
+      "Frontend three-column layout with chat panel + artifact polling",
+      "End-to-end flow: New Session → spec interview → Continue to Plan"
+    ],
+    "detailed": [
+      "New Session button → immediate spec interview start",
+      "Block-level message streaming and persistence",
+      "Artifact polling with content hash comparison",
+      "SDK session resume for mid-session continuation",
+      "AskUserQuestion structured UI rendering",
+      "AgentLog integration via hooks",
+      "Continue to Plan button on spec finalization"
+    ]
+  },
+  "open_questions": [
+    "Exact SDK mechanism for intercepting AskUserQuestion and deferring until user responds (implementation detail for plan phase)",
+    "Delivery mechanism for streaming blocks to frontend — WebSocket vs SSE vs polling (implementation detail for plan phase)"
+  ],
+  "key_decisions": [
+    {
+      "title": "Chat-based interaction model",
+      "rationale": "Spec phase is fundamentally conversational, maps to chat UI like orchestrator pattern",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Agent SDK as execution engine",
+      "rationale": "SDK multi-turn model supports back-and-forth; messages sent to SDK, agent updates artifacts",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Separate interactive chat table (not AgentLog)",
+      "rationale": "Interactive phases (spec, plan) need persistent conversation thread; AgentLog stays for execution observability and background agents",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Phase-dependent interaction modes",
+      "rationale": "Spec/plan = interactive chat; build/docs = autonomous with monitoring via agent timeline",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Three-column layout: sidebar | artifacts | chat",
+      "rationale": "Artifacts are primary focus (center), chat is secondary companion (right). Sessions sidebar stays left. All panels always visible.",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "SDK session persistence for multi-turn chat",
+      "rationale": "First message creates Agent SDK session, sdk_session_id saved for resuming conversation across messages in same phase",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Block-level streaming, not per-token",
+      "rationale": "Response blocks streamed as they complete. Delivery mechanism (WebSocket vs other) TBD.",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Polling-based artifact refresh with content hashing",
+      "rationale": "Frontend polls artifact files, compares hash/content, only re-renders on change. Decoupled from chat stream.",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "ClaudeSDKClient with Skill loading (not custom system prompt)",
+      "rationale": "SDK loads skills from filesystem via setting_sources=['project']. Agent uses existing SKILL.md logic — no need to replicate interview behavior in a custom prompt.",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "Block-level granularity for interactive chat table",
+      "rationale": "Each block (TextBlock, ToolUseBlock, etc.) is a separate row. Double-stored alongside AgentLog. Chat table serves rendering; AgentLog serves observability. Different query patterns, different purposes.",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "New ClaudeSDKClient per phase",
+      "rationale": "Fresh context window per phase. Agent reads artifacts, not prior conversation. Mirrors current CLI flow. Spec client disconnects, plan client connects fresh.",
+      "date": "2026-02-19"
+    },
+    {
+      "title": "SDK session resume for mid-phase continuation",
+      "rationale": "SDK resume parameter + stored sdk_session_id on Agent model enables picking up exactly where left off within a phase. Chat table provides UI rendering; SDK manages conversation state.",
+      "date": "2026-02-19"
+    }
+  ],
+  "session_type": "full",
+  "created_at": "2026-02-19T13:41:49+00:00",
+  "updated_at": "2026-02-19T16:15:00+00:00",
+  "current_phase": "build",
+  "status": "active",
+  "phase_history": {
+    "spec_started_at": "2026-02-19T13:41:49+00:00",
+    "spec_completed_at": "2026-02-19T14:55:00+00:00",
+    "plan_started_at": "2026-02-19T15:30:00+00:00",
+    "plan_completed_at": "2026-02-19T16:15:00+00:00",
+    "build_started_at": "2026-02-19T16:15:00+00:00",
+    "build_completed_at": null,
+    "docs_started_at": null,
+    "docs_completed_at": null
+  },
+  "build_progress": {
+    "checkpoints_total": 5,
+    "checkpoints_completed": [],
+    "current_checkpoint": null
+  },
+  "git": {
+    "branch": "main",
+    "worktree": null,
+    "base_branch": null
+  },
+  "plan_state": {
+    "status": "in_progress",
+    "checkpoints_total": 5,
+    "checkpoints_detailed": 5,
+    "checkpoints_completed": [],
+    "current_checkpoint": 1,
+    "current_task_group": "1.4",
+    "current_task": "1.4.3",
+    "last_updated": "2026-02-19T17:45:00+00:00"
+  },
+  "commits": [],
+  "artifacts": {
+    "spec": "spec.md",
+    "plan": "plan.json",
+    "plan_readable": "plan.md"
+  }
+}

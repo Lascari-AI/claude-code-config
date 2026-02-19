@@ -6,6 +6,7 @@ These models define the database schema for tracking:
 - Sessions: Workflow containers (spec -> plan -> build -> docs)
 - Agents: Individual agent invocations with Claude SDK session tracking
 - AgentLogs: Execution events for observability
+- InteractiveMessages: Block-level chat storage for interactive phases
 
 Architecture:
 - Session artifacts (spec.md, plan.json) live in the filesystem
@@ -39,6 +40,15 @@ from .agent_log import (
     AgentLogCreate,
     AgentLogSummary,
     EventCategory,
+)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INTERACTIVE MESSAGE
+# ═══════════════════════════════════════════════════════════════════════════════
+from .interactive_message import (
+    InteractiveMessage,
+    InteractiveMessageCreate,
+    InteractiveMessageSummary,
 )
 from .project import (
     Project,
@@ -90,4 +100,8 @@ __all__ = [
     "AgentLogCreate",
     "AgentLogSummary",
     "EventCategory",
+    # InteractiveMessage
+    "InteractiveMessage",
+    "InteractiveMessageCreate",
+    "InteractiveMessageSummary",
 ]

@@ -27,6 +27,8 @@ from .models import (
     AgentLogCreate,
     AgentSummary,
     AgentUpdate,
+    InteractiveMessage,
+    InteractiveMessageCreate,
     Project,
     ProjectCreate,
     ProjectSummary,
@@ -785,3 +787,75 @@ async def update_session_stats(db: AsyncSession, session_id: UUID) -> Session | 
     await db.flush()
     await db.refresh(session)
     return session
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INTERACTIVE MESSAGE CRUD
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+async def create_interactive_message(
+    db: AsyncSession, data: InteractiveMessageCreate
+) -> InteractiveMessage:
+    """
+    Create a new interactive message block.
+
+    Args:
+        db: Database session
+        data: Message block data
+
+    Returns:
+        The created message block
+    """
+    message = InteractiveMessage(
+        session_id=data.session_id,
+        agent_id=data.agent_id,
+        phase=data.phase,
+        role=data.role,
+        block_type=data.block_type,
+        content=data.content,
+        tool_name=data.tool_name,
+        turn_index=data.turn_index,
+        block_index=data.block_index,
+    )
+
+    db.add(message)
+    await db.flush()
+    await db.refresh(message)
+    return message
+
+
+async def list_messages_for_session(
+    db: AsyncSession,
+    session_id: UUID,
+    *,
+    phase: str | None = None,
+    limit: int = 1000,
+) -> Sequence[InteractiveMessage]:
+    """
+    List interactive messages for a session, ordered for chat rendering.
+
+    Args:
+        db: Database session
+        session_id: Session UUID
+        phase: Optional filter by phase (spec, plan)
+        limit: Maximum number of results
+
+    Returns:
+        List of message blocks ordered by turn_index, block_index
+    """
+    query = (
+        select(InteractiveMessage)
+        .where(InteractiveMessage.session_id == session_id)
+        .order_by(
+            InteractiveMessage.turn_index.asc(),
+            InteractiveMessage.block_index.asc(),
+        )
+    )
+
+    if phase:
+        query = query.where(InteractiveMessage.phase == phase)
+
+    query = query.limit(limit)
+    result = await db.exec(query)
+    return result.all()

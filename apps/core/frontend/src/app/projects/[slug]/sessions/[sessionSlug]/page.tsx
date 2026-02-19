@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { SpecView, PlanView, BuildView, DocsView } from "@/components/phases";
+import { ChatPanel } from "@/components/chat";
 import { Breadcrumbs, LoadingSpinner, ErrorMessage } from "@/components/shared";
 import { getSessionBySlug } from "@/lib/sessions-api";
 import { cn, getSessionStatusColor, getPhaseStatusColor } from "@/lib/utils";
@@ -178,6 +179,12 @@ export default function SessionDetailPage() {
           </TabsContent>
         </div>
       </Tabs>
+
+      {/* Spec Interview Chat (CP1: tracer bullet) */}
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold mb-4">Spec Interview</h2>
+        <ChatPanel sessionSlug={sessionSlug} />
+      </section>
     </div>
   );
 }

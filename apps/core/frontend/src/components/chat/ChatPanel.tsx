@@ -1,0 +1,157 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { sendMessage, type ChatBlock } from "@/lib/chat-api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TYPES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: string;
+}
+
+interface ChatPanelProps {
+  sessionSlug: string;
+  className?: string;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Minimal chat panel for spec interview conversations.
+ *
+ * CP1 (tracer bullet): Basic input + message list.
+ * CP2 will add: chat history loading, multi-turn, scroll-to-bottom.
+ * CP3 will add: three-column layout integration.
+ */
+export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const trimmed = inputValue.trim();
+    if (!trimmed || isLoading) return;
+
+    // Add user message
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: trimmed,
+      timestamp: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await sendMessage(sessionSlug, trimmed);
+
+      // Extract text blocks from response as assistant messages
+      const assistantMessages: ChatMessage[] = response.blocks
+        .filter((block: ChatBlock) => block.block_type === "text" && block.content)
+        .map((block: ChatBlock) => ({
+          role: "assistant" as const,
+          content: block.content!,
+          timestamp: new Date().toISOString(),
+        }));
+
+      setMessages((prev) => [...prev, ...assistantMessages]);
+      setTimeout(scrollToBottom, 100);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className={cn("flex flex-col h-[500px] border rounded-lg", className)}>
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {messages.length === 0 && !isLoading && (
+          <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+            Start the spec interview by sending a message.
+          </div>
+        )}
+
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex",
+              msg.role === "user" ? "justify-end" : "justify-start"
+            )}
+          >
+            <div
+              className={cn(
+                "max-w-[80%] rounded-lg px-4 py-2 text-sm",
+                msg.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-foreground"
+              )}
+            >
+              <p className="whitespace-pre-wrap">{msg.content}</p>
+            </div>
+          </div>
+        ))}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+                Thinking...
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error display */}
+        {error && (
+          <div className="flex justify-center">
+            <div className="bg-destructive/10 text-destructive rounded-lg px-4 py-2 text-sm">
+              {error}
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input area */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-2 p-4 border-t bg-background"
+      >
+        <Input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Type a message..."
+          disabled={isLoading}
+          className="flex-1"
+        />
+        <Button type="submit" disabled={isLoading || !inputValue.trim()}>
+          Send
+        </Button>
+      </form>
+    </div>
+  );
+}
