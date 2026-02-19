@@ -143,48 +143,52 @@ export default function SessionDetailPage() {
         </div>
       </div>
 
-      {/* Phase tabs */}
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          {phases.map((phase) => {
-            const status = getPhaseStatus(phase, session.status);
-            return (
-              <TabsTrigger
-                key={phase}
-                value={phase}
-                className="flex items-center gap-2"
-              >
-                <PhaseStatusDot status={status} />
-                <span className="uppercase">{phase}</span>
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
+      {/* Three-column content: artifacts (center) | chat (right) */}
+      <div className="flex gap-6">
+        {/* Artifact tabs — takes remaining space */}
+        <div className="flex-1 min-w-0">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              {phases.map((phase) => {
+                const status = getPhaseStatus(phase, session.status);
+                return (
+                  <TabsTrigger
+                    key={phase}
+                    value={phase}
+                    className="flex items-center gap-2"
+                  >
+                    <PhaseStatusDot status={status} />
+                    <span className="uppercase">{phase}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
 
-        <div className="mt-6">
-          <TabsContent value="spec" className="mt-0">
-            <SpecView sessionSlug={sessionSlug} />
-          </TabsContent>
+            <div className="mt-6">
+              <TabsContent value="spec" className="mt-0">
+                <SpecView sessionSlug={sessionSlug} />
+              </TabsContent>
 
-          <TabsContent value="plan" className="mt-0">
-            <PlanView sessionSlug={sessionSlug} />
-          </TabsContent>
+              <TabsContent value="plan" className="mt-0">
+                <PlanView sessionSlug={sessionSlug} />
+              </TabsContent>
 
-          <TabsContent value="build" className="mt-0">
-            <BuildView sessionId={session.id} />
-          </TabsContent>
+              <TabsContent value="build" className="mt-0">
+                <BuildView sessionId={session.id} />
+              </TabsContent>
 
-          <TabsContent value="docs" className="mt-0">
-            <DocsView sessionSlug={sessionSlug} />
-          </TabsContent>
+              <TabsContent value="docs" className="mt-0">
+                <DocsView sessionSlug={sessionSlug} />
+              </TabsContent>
+            </div>
+          </Tabs>
         </div>
-      </Tabs>
 
-      {/* Spec Interview Chat (CP1: tracer bullet) */}
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold mb-4">Spec Interview</h2>
-        <ChatPanel sessionSlug={sessionSlug} />
-      </section>
+        {/* Chat panel — fixed width, sticky positioning */}
+        <div className="w-[400px] shrink-0 sticky top-24 self-start max-h-[calc(100vh-8rem)] overflow-hidden border-l border-border/50 pl-6">
+          <ChatPanel sessionSlug={sessionSlug} />
+        </div>
+      </div>
     </div>
   );
 }

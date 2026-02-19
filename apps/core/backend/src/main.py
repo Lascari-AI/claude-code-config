@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database.connection import close_db, init_db
 from routers.chat import router as chat_router
+from routers.sessions import router as sessions_router
 
 
 @asynccontextmanager
@@ -71,3 +72,4 @@ async def health_check() -> dict:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 app.include_router(chat_router, prefix="/chat", tags=["chat"])
+app.include_router(sessions_router, prefix="/sessions", tags=["sessions"])

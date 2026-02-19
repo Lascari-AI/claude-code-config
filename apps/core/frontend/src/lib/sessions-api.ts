@@ -9,6 +9,7 @@ import type { Session, SessionSummary, SessionStatus, SessionType } from "@/type
 import type { Plan } from "@/types/plan";
 import type { SessionState } from "@/types/session-state";
 import type { AgentSummary } from "@/types/agent";
+import { fetchApi } from "./api";
 
 /**
  * Filter options for listing sessions.
@@ -40,7 +41,9 @@ export async function getSessions(
   params.set("offset", String(filters.offset ?? 0));
 
   // Use local Next.js API route (runs on Node.js server with Drizzle)
-  const response = await fetch(`/api/sessions?${params.toString()}`);
+  const response = await fetch(`/api/sessions?${params.toString()}`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch sessions: ${response.statusText}`);
@@ -107,13 +110,49 @@ export async function getProjectSessions(
   params.set("offset", String(filters.offset ?? 0));
 
   // Use local Next.js API route (runs on Node.js server with Drizzle)
-  const response = await fetch(`/api/sessions?${params.toString()}`);
+  const response = await fetch(`/api/sessions?${params.toString()}`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch project sessions: ${response.statusText}`);
   }
 
   return response.json();
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SESSION CREATION (FastAPI backend)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Response from session creation endpoint.
+ */
+export interface CreateSessionResponse {
+  session_slug: string;
+  session_id: string;
+  session_dir: string;
+}
+
+/**
+ * Create a new session via the FastAPI backend.
+ *
+ * Creates filesystem directory + state.json and database record.
+ * Uses the FastAPI backend (not Next.js API route).
+ *
+ * @param projectPath - Absolute path to the project root
+ * @param topic - Optional session topic/title
+ * @returns Session slug, ID, and directory path
+ */
+export async function createSession(
+  projectPath: string,
+  topic?: string
+): Promise<CreateSessionResponse> {
+  return fetchApi<CreateSessionResponse>("/sessions/create", {
+    method: "POST",
+    body: JSON.stringify({ project_path: projectPath, topic }),
+  });
 }
 
 
