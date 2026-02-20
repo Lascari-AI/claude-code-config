@@ -93,7 +93,7 @@
   ],
   "session_type": "full",
   "created_at": "2026-02-19T13:41:49+00:00",
-  "updated_at": "2026-02-19T20:30:00+00:00",
+  "updated_at": "2026-02-19T21:45:00+00:00",
   "current_phase": "build",
   "status": "active",
   "phase_history": {
@@ -108,8 +108,8 @@
   },
   "build_progress": {
     "checkpoints_total": 5,
-    "checkpoints_completed": [1, 2, 3],
-    "current_checkpoint": 4
+    "checkpoints_completed": [1, 2, 3, 4],
+    "current_checkpoint": 5
   },
   "git": {
     "branch": "main",
@@ -120,11 +120,11 @@
     "status": "in_progress",
     "checkpoints_total": 5,
     "checkpoints_detailed": 5,
-    "checkpoints_completed": [1, 2, 3],
-    "current_checkpoint": 4,
-    "current_task_group": "4.3",
-    "current_task": "4.3.3",
-    "last_updated": "2026-02-19T21:30:00+00:00"
+    "checkpoints_completed": [1, 2, 3, 4],
+    "current_checkpoint": 5,
+    "current_task_group": "5.4",
+    "current_task": "5.4.3",
+    "last_updated": "2026-02-19T23:00:00+00:00"
   },
   "commits": [
     {
@@ -144,6 +144,12 @@
       "sha": "6836938",
       "message": "checkpoint-3: session creation flow + three-column layout",
       "created_at": "2026-02-19T20:30:00+00:00"
+    },
+    {
+      "checkpoint_id": 4,
+      "sha": "a0aa52e",
+      "message": "checkpoint-4: artifact polling + block-type chat rendering",
+      "created_at": "2026-02-19T21:45:00+00:00"
     }
   ],
   "artifacts": {

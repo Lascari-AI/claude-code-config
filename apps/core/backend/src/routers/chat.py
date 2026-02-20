@@ -13,7 +13,6 @@ maintains conversation context across requests.
 from __future__ import annotations
 
 import logging
-
 from datetime import datetime
 from typing import Optional
 
@@ -50,6 +49,15 @@ class ChatSendResponse(BaseModel):
 
     blocks: list[dict]
     turn_index: int
+    pending_question: Optional[dict] = None  # {tool_use_id, questions[]}
+
+
+class ChatAnswerRequest(BaseModel):
+    """Request body for answering an AskUserQuestion."""
+
+    session_slug: str
+    tool_use_id: str
+    answers: dict[str, str]  # {question_text: selected_option}
 
 
 class ChatHistoryMessage(BaseModel):
@@ -117,7 +125,7 @@ async def send_message(request: ChatSendRequest) -> ChatSendResponse:
             working_dir=session.working_dir,
             session_id=session.id,
         )
-        blocks = await service.send_message(request.message, turn_index=turn_index)
+        result = await service.send_message(request.message, turn_index=turn_index)
     except Exception as e:
         logger.exception("Chat send failed: session=%s", request.session_slug)
         # Clean up on error — remove from registry
@@ -130,7 +138,68 @@ async def send_message(request: ChatSendRequest) -> ChatSendResponse:
             detail=f"Agent error: {str(e)}",
         ) from e
 
-    return ChatSendResponse(blocks=blocks, turn_index=turn_index)
+    return ChatSendResponse(
+        blocks=result["blocks"],
+        turn_index=turn_index,
+        pending_question=result["pending_question"],
+    )
+
+
+@router.post("/answer", response_model=ChatSendResponse)
+async def answer_question(request: ChatAnswerRequest) -> ChatSendResponse:
+    """
+    Submit user's answer to an AskUserQuestion tool call.
+
+    Retrieves the cached service for the session, sends the tool result
+    back to the SDK, and returns the agent's continued response.
+
+    Args:
+        request: Session slug, tool_use_id, and answer selections
+
+    Returns:
+        Agent response blocks (may contain another pending_question)
+
+    Raises:
+        HTTPException 404: Session not found
+        HTTPException 500: Agent SDK error
+    """
+    async with get_async_session() as db:
+        session = await get_session_by_slug(db, request.session_slug)
+
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Session not found: {request.session_slug}",
+        )
+
+    # Determine turn_index
+    async with get_async_session() as db:
+        max_turn = await get_max_turn_index(db, session.id)
+    turn_index = max_turn + 1
+
+    try:
+        service = await get_or_create_service(
+            session_slug=request.session_slug,
+            working_dir=session.working_dir,
+            session_id=session.id,
+        )
+        result = await service.send_tool_result(
+            tool_use_id=request.tool_use_id,
+            result=request.answers,
+            turn_index=turn_index,
+        )
+    except Exception as e:
+        logger.exception("Chat answer failed: session=%s", request.session_slug)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Agent error: {str(e)}",
+        ) from e
+
+    return ChatSendResponse(
+        blocks=result["blocks"],
+        turn_index=turn_index,
+        pending_question=result["pending_question"],
+    )
 
 
 @router.get("/history/{session_slug}", response_model=ChatHistoryResponse)

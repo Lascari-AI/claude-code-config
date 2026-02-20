@@ -3,15 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import {
   sendMessage,
+  sendAnswer,
   getChatHistory,
   type ChatBlock,
   type ChatHistoryMessage,
+  type PendingQuestion,
 } from "@/lib/chat-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { MessageBubble } from "./MessageBubble";
 import { ToolActivity } from "./ToolActivity";
+import { AskUserQuestion } from "./AskUserQuestion";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -28,6 +31,10 @@ interface ChatMessage {
 interface ChatPanelProps {
   sessionSlug: string;
   className?: string;
+  /** Current session phase — shows "Continue to Plan" when spec is done */
+  currentPhase?: string;
+  /** Callback when user clicks "Continue to Plan" */
+  onContinueToPlan?: () => void;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -62,13 +69,19 @@ function historyToMessages(history: ChatHistoryMessage[]): ChatMessage[] {
  * Loads persisted chat history on mount and supports multi-turn
  * conversation with auto-scroll to bottom on new messages.
  */
-export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
+export function ChatPanel({
+  sessionSlug,
+  className,
+  currentPhase,
+  onContinueToPlan,
+}: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [turnIndex, setTurnIndex] = useState(0);
+  const [pendingQuestion, setPendingQuestion] = useState<PendingQuestion | null>(null);
   const scrollEndRef = useRef<HTMLDivElement>(null);
 
   // ─── Load chat history on mount ──────────────────────────────────────────
@@ -149,8 +162,53 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
 
       setMessages((prev) => [...prev, ...assistantMessages]);
       setTurnIndex((prev) => prev + 1);
+
+      // Check for pending AskUserQuestion
+      if (response.pending_question) {
+        setPendingQuestion(response.pending_question);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send message");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ─── AskUserQuestion answer handler ─────────────────────────────────────
+  const handleAnswer = async (questionText: string, answer: string) => {
+    if (!pendingQuestion || isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await sendAnswer(
+        sessionSlug,
+        pendingQuestion.tool_use_id,
+        { [questionText]: answer }
+      );
+
+      // Add response blocks to messages
+      const assistantMessages: ChatMessage[] = result.blocks
+        .filter((block: ChatBlock) => block.content)
+        .map((block: ChatBlock) => ({
+          role: "assistant" as const,
+          content: block.content!,
+          timestamp: new Date().toISOString(),
+          block_type: (block.block_type as ChatMessage["block_type"]) || "text",
+          tool_name: block.tool_name ?? null,
+        }));
+
+      setMessages((prev) => [...prev, ...assistantMessages]);
+      setTurnIndex((prev) => prev + 1);
+      setPendingQuestion(null);
+
+      // Check for another pending question (chained questions)
+      if (result.pending_question) {
+        setPendingQuestion(result.pending_question);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send answer");
     } finally {
       setIsLoading(false);
     }
@@ -227,22 +285,51 @@ export function ChatPanel({ sessionSlug, className }: ChatPanelProps) {
         <div ref={scrollEndRef} />
       </div>
 
-      {/* Input area */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex gap-2 p-4 border-t bg-background"
-      >
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Type a message..."
-          disabled={isLoading}
-          className="flex-1"
-        />
-        <Button type="submit" disabled={isLoading || !inputValue.trim()}>
-          Send
-        </Button>
-      </form>
+      {/* Input area — switches between text input and AskUserQuestion */}
+      {pendingQuestion ? (
+        <div className="p-4 border-t bg-background space-y-4">
+          {pendingQuestion.questions.map((q, idx) => (
+            <AskUserQuestion
+              key={`${pendingQuestion.tool_use_id}-${idx}`}
+              question={q.question}
+              header={q.header}
+              options={q.options}
+              multiSelect={q.multiSelect}
+              onAnswer={(answer) => handleAnswer(q.question, answer)}
+              disabled={isLoading}
+            />
+          ))}
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-2 p-4 border-t bg-background"
+        >
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Type a message..."
+            disabled={isLoading}
+            className="flex-1"
+          />
+          <Button type="submit" disabled={isLoading || !inputValue.trim()}>
+            Send
+          </Button>
+        </form>
+      )}
+
+      {/* Continue to Plan — shown when spec phase is finalized */}
+      {currentPhase === "plan" && onContinueToPlan && (
+        <div className="p-4 border-t bg-primary/5">
+          <Button
+            onClick={onContinueToPlan}
+            className="w-full"
+            size="lg"
+          >
+            Continue to Plan
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

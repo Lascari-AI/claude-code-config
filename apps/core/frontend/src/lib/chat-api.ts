@@ -22,11 +22,25 @@ export interface ChatBlock {
 }
 
 /**
- * Response from the send-message endpoint.
+ * Structured question from AskUserQuestion tool call.
+ */
+export interface PendingQuestion {
+  tool_use_id: string;
+  questions: Array<{
+    question: string;
+    header: string;
+    options: Array<{ label: string; description: string }>;
+    multiSelect: boolean;
+  }>;
+}
+
+/**
+ * Response from the send-message and answer endpoints.
  */
 export interface ChatSendResponse {
   blocks: ChatBlock[];
   turn_index: number;
+  pending_question: PendingQuestion | null;
 }
 
 /**
@@ -98,4 +112,30 @@ export async function getChatHistory(
   const endpoint = `/chat/history/${sessionSlug}${query ? `?${query}` : ""}`;
 
   return fetchApi<ChatHistoryResponse>(endpoint);
+}
+
+/**
+ * Submit user's answer to an AskUserQuestion tool call.
+ *
+ * Posts the user's selection(s) to the backend /chat/answer endpoint,
+ * which routes the tool result back to the SDK agent.
+ *
+ * @param sessionSlug - Session identifier
+ * @param toolUseId - The tool_use_id from the pending question
+ * @param answers - Answer selections {question_text: selected_option}
+ * @returns Agent response blocks (may contain another pending_question)
+ */
+export async function sendAnswer(
+  sessionSlug: string,
+  toolUseId: string,
+  answers: Record<string, string>
+): Promise<ChatSendResponse> {
+  return fetchApi<ChatSendResponse>("/chat/answer", {
+    method: "POST",
+    body: JSON.stringify({
+      session_slug: sessionSlug,
+      tool_use_id: toolUseId,
+      answers,
+    }),
+  });
 }
