@@ -2,7 +2,7 @@
 Sessions Router - Endpoints for session lifecycle management.
 
 Provides session creation endpoint that:
-- Creates filesystem directory + state.json
+- Creates filesystem directory + state.json + spec.md
 - Creates database record via CRUD
 - Returns session info for frontend navigation
 """
@@ -11,9 +11,9 @@ from __future__ import annotations
 
 import json
 import logging
+import random
 import re
 import string
-import random
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -23,7 +23,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from database.connection import get_async_session
-from database.crud import create_session, get_project_by_slug
+from database.crud import create_session
 from database.models import SessionCreate
 
 logger = logging.getLogger(__name__)
@@ -71,6 +71,23 @@ def _generate_session_slug(topic: Optional[str]) -> str:
     topic_part = _slugify(topic) if topic else "session"
     random_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=6))
     return f"{date_prefix}_{topic_part}_{random_suffix}"
+
+
+_SPEC_TEMPLATE_REL = Path(".claude/skills/session/spec/templates/spec.md")
+
+
+def _build_initial_spec(project_path: Path, session_slug: str, topic: Optional[str]) -> str:
+    """Read the spec template and substitute placeholders."""
+    template_path = project_path / _SPEC_TEMPLATE_REL
+    template = template_path.read_text()
+
+    date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return (
+        template.replace("{{TOPIC}}", topic or "New Session")
+        .replace("{{SESSION_ID}}", session_slug)
+        .replace("{{DATE}}", date_str)
+        .replace("{{INITIAL_UNDERSTANDING}}", "*Describe what we're building and why.*")
+    )
 
 
 def _build_initial_state(session_slug: str, topic: Optional[str]) -> dict:
@@ -127,7 +144,8 @@ async def create_new_session(request: SessionCreateRequest) -> SessionCreateResp
     Create a new session with filesystem directory and database record.
 
     Generates a unique session slug, creates the directory structure with
-    an initial state.json, and persists a DB record for frontend queries.
+    an initial state.json and spec.md (from template), and persists a DB
+    record for frontend queries.
 
     Args:
         request: Project path and optional topic
@@ -172,6 +190,11 @@ async def create_new_session(request: SessionCreateRequest) -> SessionCreateResp
     state_file = session_dir / "state.json"
     state_file.write_text(json.dumps(state, indent=2) + "\n")
 
+    # Write initial spec.md from template
+    spec_content = _build_initial_spec(project_path, session_slug, request.topic)
+    spec_file = session_dir / "spec.md"
+    spec_file.write_text(spec_content)
+
     logger.info("Created session directory: %s", session_dir)
 
     # Look up project in DB by path to get project_id
@@ -179,6 +202,7 @@ async def create_new_session(request: SessionCreateRequest) -> SessionCreateResp
     async with get_async_session() as db:
         # Find project by path match
         from sqlmodel import select
+
         from database.models import Project
 
         result = await db.exec(select(Project).where(Project.path == str(project_path)))
@@ -197,6 +221,7 @@ async def create_new_session(request: SessionCreateRequest) -> SessionCreateResp
         project_id=project_id,
         current_phase="spec",
         status="active",
+        spec_exists=True,
         phase_history={
             "spec_started_at": now_str,
         },

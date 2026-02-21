@@ -1,13 +1,14 @@
 /**
  * Project Sync API Route
  *
- * POST: Trigger background sync for all sessions in this project.
- * Returns 202 Accepted immediately - sync runs asynchronously.
+ * POST: Sync all sessions in this project from filesystem to database.
+ * Reads state.json from agents/sessions/{slug}/ and upserts to database.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { db, projects } from "@/db";
 import { eq } from "drizzle-orm";
+import { syncAllSessionsInProject } from "@/lib/session-sync";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -16,14 +17,14 @@ interface RouteParams {
 /**
  * POST /api/projects/[id]/sync
  *
- * Trigger background batch sync for all sessions in the project.
- * Returns 202 Accepted immediately - actual sync happens asynchronously.
+ * Sync all sessions from filesystem to database.
+ * Returns sync results with success/failure counts.
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
 
   try {
-    // Verify project exists
+    // Verify project exists and get path
     const result = await db
       .select({ id: projects.id, path: projects.path })
       .from(projects)
@@ -39,23 +40,22 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const project = result[0];
 
-    // TODO: Call Python backend's batch sync function
-    // For now, return 202 to establish the endpoint contract
-    // Integration with session_db.async_sync.queue_batch_sync_task
-    // will be added in Task 2.1.2
+    // Perform sync
+    const syncResult = await syncAllSessionsInProject(project.path, project.id);
 
+    return NextResponse.json({
+      status: "completed",
+      message: `Synced ${syncResult.synced.length} sessions`,
+      project_id: project.id,
+      ...syncResult,
+    });
+  } catch (error) {
+    console.error("Error syncing project sessions:", error);
     return NextResponse.json(
       {
-        status: "accepted",
-        message: "Session sync triggered",
-        project_id: project.id
+        error: "Failed to sync project sessions",
+        details: error instanceof Error ? error.message : String(error),
       },
-      { status: 202 }
-    );
-  } catch (error) {
-    console.error("Error triggering project sync:", error);
-    return NextResponse.json(
-      { error: "Failed to trigger project sync" },
       { status: 500 }
     );
   }

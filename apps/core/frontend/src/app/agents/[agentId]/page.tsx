@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn, getAgentStatusColorUtil } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Breadcrumbs, LoadingSpinner, ErrorMessage } from "@/components/shared";
 import { EventTimeline } from "@/components/agents/EventTimeline";
 import { getAgent } from "@/lib/agents-api";
@@ -46,7 +46,7 @@ export default function AgentDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="py-8">
         <LoadingSpinner size="lg" centered text="Loading agent..." />
       </div>
     );
@@ -55,7 +55,7 @@ export default function AgentDetailPage() {
   // Error state
   if (error || !agent) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="py-8">
         <ErrorMessage
           title="Error"
           message={error || "Agent not found"}
@@ -66,21 +66,21 @@ export default function AgentDetailPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="space-y-4 py-2">
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
           { label: "Session", href: "#" }, // Will go back
           { label: agent.name || getAgentTypeLabel(agent.agent_type) },
         ]}
-        className="mb-4"
+        className="mb-1"
       />
 
       {/* Back navigation */}
       <Button
         variant="ghost"
         size="sm"
-        className="mb-4"
+        className="mb-1"
         onClick={() => router.back()}
       >
         ← Back to Session

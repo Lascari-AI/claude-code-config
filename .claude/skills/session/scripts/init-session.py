@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Path to state.json template (relative to this script)
-TEMPLATE_PATH = Path(__file__).parent.parent / "spec" / "templates" / "state.json"
+TEMPLATE_PATH = Path(__file__).parent.parent / "templates" / "state.json"
 
 # Session base directory (relative to project root)
 SESSIONS_DIR = "agents/sessions"

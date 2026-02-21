@@ -1,31 +1,31 @@
 """
 SpecAgentService - Service class for spec interview chat via Claude Agent SDK.
 
-Wraps the Claude Agent SDK query() for spec phase conversations. Handles:
+Wraps the Claude Agent SDK ClaudeSDKClient for spec phase conversations. Handles:
 - Configuring the agent with session MCP tools and skill loading
 - Sending user messages and collecting response blocks
 - Persisting both user and agent messages to interactive_messages table
 - Managing the Agent DB record lifecycle
 - Client registry for multi-turn conversation support
 
-Uses query() with ClaudeAgentOptions.resume for multi-turn conversation
-continuity. The SDK session ID is captured from ResultMessage after the first
-query and passed via resume on subsequent calls.
+Uses ClaudeSDKClient for multi-turn conversation continuity with hook support.
+The SDK session ID is captured from ResultMessage after the first query and
+stored for resume across server restarts.
 """
 
 from __future__ import annotations
 
 import json
 import logging
-from dataclasses import replace
 from typing import Optional, TypedDict
 from uuid import UUID
 
 from claude_agent_sdk import (
     AssistantMessage,
     ClaudeAgentOptions,
+    ClaudeSDKClient,
+    HookMatcher,
     ResultMessage,
-    query,
 )
 
 from database.connection import get_async_session
@@ -91,7 +91,7 @@ async def get_or_create_service(
     """
     if session_slug in _active_services:
         service = _active_services[session_slug]
-        if service._options is not None:  # Still connected
+        if service._client is not None:  # Still connected
             return service
 
     # Check DB for existing spec agent that can be resumed
@@ -140,10 +140,12 @@ class SpecAgentService:
     """
     Service for spec interview conversations via Claude Agent SDK.
 
+    Uses ClaudeSDKClient for multi-turn conversation with hook support.
+
     Lifecycle (multi-turn via registry):
         service = await get_or_create_service(slug, working_dir, session_id)
         blocks = await service.send_message(prompt, turn_index=0)
-        # ... subsequent calls reuse the same service instance
+        # ... subsequent calls reuse the same client instance
         blocks = await service.send_message(prompt, turn_index=1)
         await remove_service(slug)  # When phase complete
     """
@@ -154,7 +156,7 @@ class SpecAgentService:
         self._agent_id: Optional[UUID] = None
         self._session_id: Optional[UUID] = None
         self._sdk_session_id: Optional[str] = None
-        self._options: Optional[ClaudeAgentOptions] = None
+        self._client: Optional[ClaudeSDKClient] = None
 
     async def connect(
         self,
@@ -163,10 +165,10 @@ class SpecAgentService:
         existing_agent_id: UUID | None = None,
     ) -> None:
         """
-        Prepare the agent: create or reuse DB record and configure SDK options.
+        Prepare the agent: create or reuse DB record, configure SDK client.
 
         When resume_session_id is provided, reuses the existing Agent record
-        and configures the SDK to resume the prior conversation.
+        and configures the SDK client to resume the prior conversation.
 
         Args:
             session_id: Parent session UUID for FK relationships
@@ -204,8 +206,26 @@ class SpecAgentService:
                 self._agent_id = agent.id
                 await update_agent(db, agent.id, AgentUpdate(status="executing"))
 
-        # Configure SDK options with observability hooks
-        self._options = ClaudeAgentOptions(
+        # Configure SDK options with Claude Code preset + spec interview instructions
+        options = ClaudeAgentOptions(
+            system_prompt={
+                "type": "preset",
+                "preset": "claude_code",
+                "append": (
+                    "\n\n# Spec Interview Mode\n\n"
+                    "You are conducting a spec interview for a development session. "
+                    "Your role is to help the user define WHAT they want to build before planning HOW.\n\n"
+                    "Principles:\n"
+                    "- Ask ONE focused question at a time\n"
+                    "- Be in-depth — ask about technical details, UI/UX, concerns, tradeoffs, edge cases\n"
+                    "- Dig into non-obvious aspects and explain WHY you're asking\n"
+                    "- Capture the user's mental model, reasoning, and preferences\n"
+                    "- After each answer, update the spec.md document in the session directory\n"
+                    "- Continue until the spec is comprehensive"
+                ),
+            },
+            setting_sources=["project"],
+            cwd=self.working_dir,
             mcp_servers={SERVER_NAME: get_session_mcp_server()},
             allowed_tools=[
                 f"mcp__{SERVER_NAME}__*",  # Session state tools
@@ -218,9 +238,18 @@ class SpecAgentService:
                 "Bash",
             ],
             max_turns=10,
-            pre_tool_use=self._pre_tool_hook,
-            post_tool_use=self._post_tool_hook,
+            permission_mode="acceptEdits",
+            hooks={
+                "PreToolUse": [HookMatcher(hooks=[self._pre_tool_hook])],
+                "PostToolUse": [HookMatcher(hooks=[self._post_tool_hook])],
+            },
+            # Resume prior SDK session if available (e.g. after server restart)
+            resume=resume_session_id,
         )
+
+        # Create and connect the SDK client
+        self._client = ClaudeSDKClient(options=options)
+        await self._client.connect()
 
         logger.info(
             "SpecAgentService connected: session=%s agent=%s resume=%s",
@@ -236,7 +265,7 @@ class SpecAgentService:
         Persists both the user message and agent response blocks to the
         interactive_messages table. On first call, captures sdk_session_id
         from ResultMessage and stores it in the Agent record for resume.
-        Subsequent calls use resume to maintain conversation context.
+        The ClaudeSDKClient maintains conversation context across calls.
 
         If the agent calls AskUserQuestion, execution pauses and returns
         the pending question. Call send_tool_result() with the user's
@@ -249,7 +278,7 @@ class SpecAgentService:
         Returns:
             SendMessageResult with blocks and optional pending_question
         """
-        if self._options is None or self._session_id is None:
+        if self._client is None or self._session_id is None:
             raise RuntimeError("SpecAgentService not connected. Call connect() first.")
 
         # Persist user message
@@ -268,12 +297,31 @@ class SpecAgentService:
                 ),
             )
 
-        # Build options with resume if we have a prior sdk_session_id
-        opts = self._options
-        if self._sdk_session_id:
-            opts = replace(self._options, resume=self._sdk_session_id)
+        return await self._run_query(prompt, turn_index)
 
-        return await self._run_query(prompt, opts, turn_index)
+    async def start_interview(self, turn_index: int) -> SendMessageResult:
+        """
+        Kick off the spec interview — agent sends the opening message.
+
+        Sends an init prompt to the agent without persisting a user message.
+        Only the agent's response blocks are persisted via _run_query().
+        This gives us the "agent speaks first" UX with no fake user bubble.
+
+        Args:
+            turn_index: Conversation turn number (typically 0)
+
+        Returns:
+            SendMessageResult with agent greeting blocks
+        """
+        if self._client is None or self._session_id is None:
+            raise RuntimeError("SpecAgentService not connected. Call connect() first.")
+
+        init_prompt = (
+            "A new session has been created. Begin the spec interview by greeting "
+            "the user warmly but briefly, and asking what they want to build. "
+            "Be conversational and curious."
+        )
+        return await self._run_query(init_prompt, turn_index)
 
     async def send_tool_result(
         self, tool_use_id: str, result: dict, turn_index: int
@@ -281,9 +329,9 @@ class SpecAgentService:
         """
         Send user's answer to an AskUserQuestion tool call back to the SDK.
 
-        Persists the user's answer as an interactive message, then resumes
-        the SDK query. The answer is formatted as {answers: {question: answer}}
-        and sent as a new prompt via resume to continue the conversation.
+        Persists the user's answer as an interactive message, then sends
+        a follow-up query to the client. The client maintains conversation
+        context, so the answer is carried forward automatically.
 
         Args:
             tool_use_id: The tool_use_id from the pending question
@@ -293,7 +341,7 @@ class SpecAgentService:
         Returns:
             SendMessageResult with new response blocks and optional pending_question
         """
-        if self._options is None or self._session_id is None:
+        if self._client is None or self._session_id is None:
             raise RuntimeError("SpecAgentService not connected. Call connect() first.")
 
         # Persist user's answer as interactive message
@@ -314,29 +362,19 @@ class SpecAgentService:
                 ),
             )
 
-        # Resume query with the user's answer
-        # The SDK resume restores conversation context; the prompt carries
-        # the formatted answer so the agent can continue.
-        opts = self._options
-        if self._sdk_session_id:
-            opts = replace(self._options, resume=self._sdk_session_id)
-
         answer_prompt = json.dumps({"answers": result})
-        return await self._run_query(answer_prompt, opts, turn_index)
+        return await self._run_query(answer_prompt, turn_index)
 
-    async def _run_query(
-        self, prompt: str, opts: ClaudeAgentOptions, turn_index: int
-    ) -> SendMessageResult:
+    async def _run_query(self, prompt: str, turn_index: int) -> SendMessageResult:
         """
-        Execute SDK query and process response blocks.
+        Execute SDK query via ClaudeSDKClient and process response blocks.
 
-        Shared between send_message and send_tool_result. Detects
-        AskUserQuestion tool calls and returns them as pending questions
-        instead of letting the SDK auto-execute.
+        Sends the prompt via client.query(), then iterates client.receive_response()
+        to collect AssistantMessage blocks and the final ResultMessage.
+        Detects AskUserQuestion tool calls and returns them as pending questions.
 
         Args:
             prompt: Message to send to the agent
-            opts: SDK options (with or without resume)
             turn_index: Conversation turn number
 
         Returns:
@@ -346,7 +384,11 @@ class SpecAgentService:
         pending_question: PendingQuestion | None = None
         block_index = 0
 
-        async for message in query(prompt=prompt, options=opts):
+        # Send prompt to the client
+        await self._client.query(prompt)
+
+        # Collect response messages until ResultMessage
+        async for message in self._client.receive_response():
             if isinstance(message, AssistantMessage):
                 for block in message.content:
                     block_dict: dict = {}
@@ -431,13 +473,17 @@ class SpecAgentService:
 
     # ─── Observability Hooks ────────────────────────────────────────────────────
 
-    async def _pre_tool_hook(self, tool_name: str, tool_input: dict) -> None:
+    async def _pre_tool_hook(self, input_data: dict, tool_use_id, context) -> dict:
         """
         PreToolUse hook — logs tool invocation to AgentLog before execution.
 
         Called by the SDK before each tool is executed. Creates an AgentLog
         entry for real-time execution timeline visibility.
+
+        Follows SDK hook callback signature: (input_data, tool_use_id, context).
         """
+        tool_name = input_data.get("tool_name", "unknown")
+        tool_input = input_data.get("tool_input", {})
         try:
             async with get_async_session() as db:
                 await create_agent_log(
@@ -455,14 +501,19 @@ class SpecAgentService:
         except Exception:
             # Hooks must not break the agent execution pipeline
             logger.exception("Failed to log PreToolUse for tool=%s", tool_name)
+        return {}
 
-    async def _post_tool_hook(self, tool_name: str, tool_output: str, duration_ms: int) -> None:
+    async def _post_tool_hook(self, input_data: dict, tool_use_id, context) -> dict:
         """
         PostToolUse hook — logs tool completion to AgentLog after execution.
 
         Called by the SDK after each tool completes. Records output and
         duration for cost tracking and debugging.
+
+        Follows SDK hook callback signature: (input_data, tool_use_id, context).
         """
+        tool_name = input_data.get("tool_name", "unknown")
+        tool_output = str(input_data.get("tool_response", ""))
         try:
             async with get_async_session() as db:
                 await create_agent_log(
@@ -475,17 +526,24 @@ class SpecAgentService:
                         event_type="PostToolUse",
                         tool_name=tool_name,
                         tool_output=tool_output,
-                        duration_ms=duration_ms,
                     ),
                 )
         except Exception:
             # Hooks must not break the agent execution pipeline
             logger.exception("Failed to log PostToolUse for tool=%s", tool_name)
+        return {}
 
     async def disconnect(self) -> None:
         """
-        Clean up: mark Agent DB record as complete.
+        Clean up: disconnect SDK client and mark Agent DB record as complete.
         """
+        if self._client:
+            try:
+                await self._client.disconnect()
+            except Exception:
+                logger.exception("Error disconnecting SDK client: agent=%s", self._agent_id)
+            self._client = None
+
         if self._agent_id:
             async with get_async_session() as db:
                 await update_agent(
@@ -495,5 +553,3 @@ class SpecAgentService:
                 )
 
             logger.info("SpecAgentService disconnected: agent=%s", self._agent_id)
-
-        self._options = None

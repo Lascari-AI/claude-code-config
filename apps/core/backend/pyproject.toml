@@ -16,6 +16,9 @@ dependencies = [
     "greenlet>=3.0.0",
     "python-dotenv>=1.0.0",
 
+    # Migrations
+    "alembic>=1.13.0",
+
     # Agent SDK
     "claude-agent-sdk>=0.1.36",
 ]

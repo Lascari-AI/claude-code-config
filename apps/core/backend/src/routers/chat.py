@@ -37,6 +37,12 @@ router = APIRouter()
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
+class ChatStartRequest(BaseModel):
+    """Request body for starting the auto-interview (agent speaks first)."""
+
+    session_slug: str
+
+
 class ChatSendRequest(BaseModel):
     """Request body for sending a chat message."""
 
@@ -82,6 +88,67 @@ class ChatHistoryResponse(BaseModel):
 # ═══════════════════════════════════════════════════════════════════════════════
 # ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════════════════
+
+
+@router.post("/start", response_model=ChatSendResponse)
+async def start_chat(request: ChatStartRequest) -> ChatSendResponse:
+    """
+    Start the spec interview — agent sends the opening message.
+
+    Idempotent: if any messages already exist for this session,
+    returns an empty response (prevents double-start on page refresh).
+
+    Args:
+        request: Session slug
+
+    Returns:
+        Agent greeting blocks and turn index
+
+    Raises:
+        HTTPException 404: Session not found
+        HTTPException 500: Agent SDK error
+    """
+    # Look up session by slug
+    async with get_async_session() as db:
+        session = await get_session_by_slug(db, request.session_slug)
+
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Session not found: {request.session_slug}",
+        )
+
+    # Idempotency check: if any messages exist, skip (already started)
+    async with get_async_session() as db:
+        existing = await list_messages_for_session(db, session.id, limit=1)
+    if existing:
+        logger.info("Chat already started, skipping: session=%s", request.session_slug)
+        return ChatSendResponse(blocks=[], turn_index=0, pending_question=None)
+
+    # Start the interview (agent speaks first, no user message persisted)
+    try:
+        service = await get_or_create_service(
+            session_slug=request.session_slug,
+            working_dir=session.working_dir,
+            session_id=session.id,
+        )
+        result = await service.start_interview(turn_index=0)
+    except Exception as e:
+        logger.exception("Chat start failed: session=%s", request.session_slug)
+        try:
+            await remove_service(request.session_slug)
+        except Exception:
+            pass
+        raise HTTPException(
+            status_code=500,
+            detail=f"Agent error: {str(e)}",
+        ) from e
+
+    return ChatSendResponse(
+        blocks=result["blocks"],
+        turn_index=0,
+        pending_question=result["pending_question"],
+    )
 
 
 @router.post("/send", response_model=ChatSendResponse)

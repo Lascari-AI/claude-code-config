@@ -1,0 +1,1625 @@
+{
+  "$schema": "Plan schema for session checkpoint-based planning (v2)",
+
+  "session_id": "2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6",
+  "spec_reference": "./spec.md",
+  "created_at": "2026-02-19T15:30:00+00:00",
+  "updated_at": "2026-02-19T16:15:00+00:00",
+  "status": "complete",
+
+  "checkpoints": [
+    {
+      "id": 1,
+      "title": "Tracer Bullet - Single Chat Round-Trip with Claude SDK",
+      "goal": "User sends one message on a session detail page, backend routes it through ClaudeSDKClient, response displays in a basic chat panel. Proves the full pipeline works end-to-end: frontend → FastAPI → Claude SDK → InteractiveMessage DB → chat panel rendering.",
+      "prerequisites": [],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            { "path": "apps/core/backend/src/main.py", "status": "exists", "description": "FastAPI app with no chat routes" },
+            { "path": "apps/core/backend/src/agent/session_agent.py", "status": "exists", "description": "Example SDK agent script (CLI only)" },
+            { "path": "apps/core/backend/src/database/models/", "status": "exists", "description": "Session, Agent, AgentLog models (no interactive messages)" },
+            { "path": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx", "status": "exists", "description": "Session detail page with phase tabs only" },
+            { "path": "apps/core/frontend/src/db/schema.ts", "status": "exists", "description": "Drizzle schema without interactive_messages" }
+          ]
+        },
+        "ending": {
+          "files": [
+            { "path": "apps/core/backend/src/database/models/interactive_message.py", "status": "new", "description": "InteractiveMessage SQLModel for block-level chat storage" },
+            { "path": "apps/core/backend/src/routers/chat.py", "status": "new", "description": "FastAPI chat router with send-message endpoint" },
+            { "path": "apps/core/backend/src/agent/spec_agent_service.py", "status": "new", "description": "SpecAgentService wrapping ClaudeSDKClient for spec interviews" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "new", "description": "Minimal chat panel with input and message display" },
+            { "path": "apps/core/frontend/src/db/schema.ts", "status": "modified", "description": "Drizzle schema with interactive_messages table added" }
+          ]
+        }
+      },
+      "testing_strategy": {
+        "approach": "Manual end-to-end test + type checking",
+        "verification_steps": [
+          "Backend starts without errors (uvicorn)",
+          "POST to /api/chat/send with session_slug and message returns agent response",
+          "InteractiveMessage rows created in database for both user message and agent response",
+          "Frontend chat panel renders the exchange",
+          "TypeScript compiles without errors (npx tsc --noEmit)"
+        ]
+      },
+      "task_groups": [
+        {
+          "id": "1.1",
+          "title": "Data Layer — InteractiveMessage model & table",
+          "objective": "Create the InteractiveMessage SQLModel for block-level chat storage with DTOs and CRUD functions. Table created via SQLModel.metadata.create_all on backend startup.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.1.1",
+              "title": "Create InteractiveMessage SQLModel",
+              "file_path": "apps/core/backend/src/database/models/interactive_message.py",
+              "description": "Create the InteractiveMessage table model with block-level granularity for chat storage. Each row represents one block (TextBlock, ToolUseBlock, etc.) from either the user or the agent. Include InteractiveMessageCreate and InteractiveMessageSummary DTOs. MIRROR patterns from agent_log.py for imports, field definitions, and DTO structure.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/database/models/agent_log.py",
+                    "lines": "1-200",
+                    "purpose": "Reference model pattern: imports, field definitions, Column types, DTOs, relationships"
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6/spec.md",
+                    "lines": "261-312",
+                    "purpose": "Interactive chat table schema direction from spec"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/database/models/session.py",
+                  "apps/core/backend/src/database/models/agent.py"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.1.1.1",
+                  "command": "CREATE FILE apps/core/backend/src/database/models/interactive_message.py — Module docstring, imports from datetime, UUID, sqlalchemy, sqlmodel. MIRROR import pattern from agent_log.py.",
+                  "file": "apps/core/backend/src/database/models/interactive_message.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.1.2",
+                  "command": "CREATE CLASS InteractiveMessage(SQLModel, table=True) — __tablename__='interactive_messages'. Fields: id (UUID PK default uuid4), session_id (FK sessions, indexed), agent_id (FK agents, nullable, indexed), phase (varchar, indexed, 'spec'|'plan'), role (varchar, 'user'|'assistant'|'tool_use'|'tool_result'), block_type (varchar, 'text'|'tool_use'|'tool_result'|'thinking'), content (Text, nullable), tool_name (varchar, nullable, indexed), turn_index (int), block_index (int), timestamp (datetime, indexed, default utcnow). Relationships: session (Optional[Session]), agent (Optional[Agent]).",
+                  "file": "apps/core/backend/src/database/models/interactive_message.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.1.3",
+                  "command": "CREATE TYPE InteractiveMessageCreate(SQLModel) — DTO with fields: session_id (UUID), agent_id (Optional UUID), phase (str), role (str), block_type (str), content (Optional str), tool_name (Optional str), turn_index (int), block_index (int).",
+                  "file": "apps/core/backend/src/database/models/interactive_message.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.1.4",
+                  "command": "CREATE TYPE InteractiveMessageSummary(SQLModel) — Lightweight DTO: id (UUID), session_id (UUID), role (str), block_type (str), content (Optional str), tool_name (Optional str), turn_index (int), block_index (int), timestamp (datetime).",
+                  "file": "apps/core/backend/src/database/models/interactive_message.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.2",
+              "title": "Register InteractiveMessage in model exports",
+              "file_path": "apps/core/backend/src/database/models/__init__.py",
+              "description": "Add imports for InteractiveMessage, InteractiveMessageCreate, InteractiveMessageSummary and add them to __all__ list. Follow existing import section pattern.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/database/models/__init__.py",
+                    "lines": "1-94",
+                    "purpose": "Existing import pattern and __all__ list structure"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/database/models/interactive_message.py"
+                ]
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {
+                  "id": "1.1.2.1",
+                  "command": "UPDATE apps/core/backend/src/database/models/__init__.py — ADD import section: from .interactive_message import (InteractiveMessage, InteractiveMessageCreate, InteractiveMessageSummary). Place after AgentLog imports.",
+                  "file": "apps/core/backend/src/database/models/__init__.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.2.2",
+                  "command": "UPDATE apps/core/backend/src/database/models/__init__.py — ADD 'InteractiveMessage', 'InteractiveMessageCreate', 'InteractiveMessageSummary' to __all__ list under a new '# InteractiveMessage' comment section.",
+                  "file": "apps/core/backend/src/database/models/__init__.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.3",
+              "title": "Register model in database connection for table creation",
+              "file_path": "apps/core/backend/src/database/connection.py",
+              "description": "Add InteractiveMessage to the model imports in connection.py so SQLModel.metadata.create_all discovers and creates the table on backend startup.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/database/connection.py",
+                    "lines": "28-36",
+                    "purpose": "Existing model imports for table creation (noqa: F401 pattern)"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["1.1.1"],
+              "actions": [
+                {
+                  "id": "1.1.3.1",
+                  "command": "UPDATE apps/core/backend/src/database/connection.py — ADD 'InteractiveMessage,' to the imports from .models block (line ~30-35). Follow existing noqa: F401 comment pattern.",
+                  "file": "apps/core/backend/src/database/connection.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.1.4",
+              "title": "Add InteractiveMessage CRUD functions",
+              "file_path": "apps/core/backend/src/database/crud.py",
+              "description": "Add create_interactive_message() and list_messages_for_session() functions following existing CRUD patterns with AsyncSession and DTOs.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "607-690",
+                    "purpose": "Existing CRUD pattern for AgentLog (create_agent_log, list_logs_for_session)"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/database/models/interactive_message.py"
+                ]
+              },
+              "depends_on": ["1.1.1", "1.1.2"],
+              "actions": [
+                {
+                  "id": "1.1.4.1",
+                  "command": "UPDATE apps/core/backend/src/database/crud.py — ADD imports for InteractiveMessage, InteractiveMessageCreate, InteractiveMessageSummary to the import block from .models.",
+                  "file": "apps/core/backend/src/database/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.4.2",
+                  "command": "CREATE FUNCTION create_interactive_message(db: AsyncSession, data: InteractiveMessageCreate) -> InteractiveMessage — MIRROR pattern from create_agent_log. Build InteractiveMessage from DTO fields, db.add, flush, refresh, return.",
+                  "file": "apps/core/backend/src/database/crud.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.1.4.3",
+                  "command": "CREATE FUNCTION list_messages_for_session(db: AsyncSession, session_id: UUID, *, phase: str | None = None, limit: int = 1000) -> Sequence[InteractiveMessage] — Query interactive_messages WHERE session_id, optional phase filter, ORDER BY turn_index ASC, block_index ASC.",
+                  "file": "apps/core/backend/src/database/crud.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "Agent Service — SpecAgentService with ClaudeSDKClient",
+          "objective": "Create a service class that wraps ClaudeSDKClient for spec interview chat. Handles connecting to SDK, sending a message, receiving response blocks, and persisting them to the interactive_messages table.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.2.1",
+              "title": "Create SpecAgentService class",
+              "file_path": "apps/core/backend/src/agent/spec_agent_service.py",
+              "description": "Service class wrapping ClaudeSDKClient for spec interview chat. Configures the client with session MCP tools, skill loading via setting_sources=['project'], allowed tools list. Provides connect() to initialize the client, send_message(prompt) to query and collect response blocks, and disconnect() to clean up. Persists response blocks to interactive_messages table via CRUD functions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/agent/session_agent.py",
+                    "lines": "1-135",
+                    "purpose": "Existing SDK usage pattern: ClaudeAgentOptions, query(), message types (AssistantMessage, ResultMessage, SystemMessage)"
+                  },
+                  {
+                    "file": "apps/core/backend/src/mcp_tools/server.py",
+                    "lines": "1-88",
+                    "purpose": "MCP server configuration: get_session_mcp_server(), SERVER_NAME, tool registration pattern"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "607-690",
+                    "purpose": "create_interactive_message and list_messages_for_session CRUD functions (created in TG 1.1)"
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6/spec.md",
+                    "lines": "106-117",
+                    "purpose": "ClaudeSDKClient configuration requirements: setting_sources, allowed_tools, mcp_servers, hooks, cwd"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/mcp_tools/__init__.py",
+                  "apps/core/backend/src/database/models/interactive_message.py",
+                  "apps/core/backend/src/database/models/agent.py"
+                ]
+              },
+              "depends_on": ["1.1.4"],
+              "actions": [
+                {
+                  "id": "1.2.1.1",
+                  "command": "CREATE FILE apps/core/backend/src/agent/spec_agent_service.py — Module docstring, imports: ClaudeSDKClient and ClaudeAgentOptions from claude_agent_sdk, message types (AssistantMessage, ResultMessage, SystemMessage, ToolUseBlock, TextBlock), get_session_mcp_server and SERVER_NAME from mcp_tools, database CRUD functions and connection, Agent/AgentCreate models.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.2",
+                  "command": "CREATE CLASS SpecAgentService — Init with session_slug (str), working_dir (str). Private fields: _client (Optional[ClaudeSDKClient] = None), _agent_id (Optional[UUID] = None), _sdk_session_id (Optional[str] = None), _session_id (Optional[UUID] = None).",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.3",
+                  "command": "CREATE FUNCTION SpecAgentService.connect(self, session_id: UUID) -> None — Create ClaudeAgentOptions with: mcp_servers={SERVER_NAME: get_session_mcp_server()}, allowed_tools=['mcp__session_state__*', 'Read', 'Write', 'Edit', 'Glob', 'Grep', 'Skill', 'Bash'], setting_sources=['project'], cwd=self.working_dir, max_turns=10. Create Agent DB record via create_agent(AgentCreate(session_id, agent_type='spec', model='claude-sonnet-4-5-20250929')). Create ClaudeSDKClient, call connect(). Store _client, _agent_id, _session_id.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.4",
+                  "command": "CREATE FUNCTION SpecAgentService.send_message(self, prompt: str, turn_index: int) -> list[dict] — Persist user message as InteractiveMessage (role='user', block_type='text', content=prompt). Call self._client.query(prompt). Iterate receive_response() to collect blocks. For each AssistantMessage: extract content blocks, for each TextBlock persist as InteractiveMessage (role='assistant', block_type='text'). For each ToolUseBlock persist as (role='tool_use', block_type='tool_use', tool_name=block.name). Return list of block dicts [{role, block_type, content, tool_name}] for API response.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.2.1.5",
+                  "command": "CREATE FUNCTION SpecAgentService.disconnect(self) -> None — If _client is not None, disconnect the ClaudeSDKClient. Update Agent DB record status to 'complete'. Reset _client to None.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.3",
+          "title": "API Router — Chat send endpoint",
+          "objective": "FastAPI router with POST /chat/send endpoint that accepts session slug + user message, routes through SpecAgentService, persists blocks, returns response. Register router in main.py.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.3.1",
+              "title": "Create chat router with Pydantic models",
+              "file_path": "apps/core/backend/src/routers/chat.py",
+              "description": "FastAPI router with POST /chat/send endpoint. Accepts session_slug and message in request body. Creates or retrieves SpecAgentService for the session. Sends message through agent, returns response blocks. Includes Pydantic request/response models. For CP1 (tracer bullet), a new SpecAgentService is created per request (no instance caching yet — that comes in CP2).",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/main.py",
+                    "lines": "1-66",
+                    "purpose": "FastAPI app structure, middleware config, existing endpoint pattern"
+                  },
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-100",
+                    "purpose": "SpecAgentService interface: connect(), send_message(), disconnect()"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "266-293",
+                    "purpose": "get_session_by_slug pattern for session lookup"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/database/connection.py"
+                ]
+              },
+              "depends_on": ["1.2.1"],
+              "actions": [
+                {
+                  "id": "1.3.1.1",
+                  "command": "CREATE FILE apps/core/backend/src/routers/chat.py — Imports: FastAPI APIRouter, HTTPException, Pydantic BaseModel, SpecAgentService, get_async_session from database.connection, get_session_by_slug from database.crud.",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.2",
+                  "command": "CREATE TYPE ChatSendRequest(BaseModel) — Fields: session_slug (str), message (str).",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.3",
+                  "command": "CREATE TYPE ChatSendResponse(BaseModel) — Fields: blocks (list[dict]), turn_index (int).",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.1.4",
+                  "command": "CREATE FUNCTION POST /chat/send — Route handler: parse ChatSendRequest. Look up session by slug via get_session_by_slug (404 if not found). Derive working_dir from session. Create SpecAgentService(session_slug, working_dir). Call connect(session_id). Call send_message(request.message, turn_index=0). Call disconnect(). Return ChatSendResponse with blocks and turn_index.",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.3.2",
+              "title": "Register chat router in main.py",
+              "file_path": "apps/core/backend/src/main.py",
+              "description": "Import chat router and register with app.include_router(). This makes the /chat/send endpoint available on the FastAPI application.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/main.py",
+                    "lines": "1-66",
+                    "purpose": "Current app structure — import section and endpoint registration"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/routers/chat.py"
+                ]
+              },
+              "depends_on": ["1.3.1"],
+              "actions": [
+                {
+                  "id": "1.3.2.1",
+                  "command": "UPDATE apps/core/backend/src/main.py — ADD import: from routers.chat import router as chat_router.",
+                  "file": "apps/core/backend/src/main.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.3.2.2",
+                  "command": "UPDATE apps/core/backend/src/main.py — ADD app.include_router(chat_router, prefix='/chat', tags=['chat']) after the health check endpoint section.",
+                  "file": "apps/core/backend/src/main.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.4",
+          "title": "Frontend — Minimal chat panel + API integration",
+          "objective": "Create basic ChatPanel component with text input and message display. Create chat API client that calls backend. Wire into session detail page alongside existing tabs.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "1.4.1",
+              "title": "Create chat API client",
+              "file_path": "apps/core/frontend/src/lib/chat-api.ts",
+              "description": "TypeScript API client for the backend chat endpoint. Provides sendMessage(sessionSlug, message) that POSTs to the FastAPI backend /chat/send and returns response blocks. Includes ChatBlock response type definition. Backend URL defaults to localhost:8000 for development.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/lib/sessions-api.ts",
+                    "lines": "1-50",
+                    "purpose": "Existing API client pattern: fetch usage, error handling, type definitions"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/routers/chat.py"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "1.4.1.1",
+                  "command": "CREATE FILE apps/core/frontend/src/lib/chat-api.ts — Module docstring. VAR BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'.",
+                  "file": "apps/core/frontend/src/lib/chat-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.1.2",
+                  "command": "CREATE TYPE ChatBlock — { role: string; block_type: string; content: string | null; tool_name: string | null }. CREATE TYPE ChatSendResponse — { blocks: ChatBlock[]; turn_index: number }.",
+                  "file": "apps/core/frontend/src/lib/chat-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.1.3",
+                  "command": "CREATE FUNCTION sendMessage(sessionSlug: string, message: string): Promise<ChatSendResponse> — POST to `${BACKEND_URL}/chat/send` with JSON body { session_slug: sessionSlug, message }. Headers: Content-Type application/json. Check response.ok, throw on error. Parse and return JSON as ChatSendResponse.",
+                  "file": "apps/core/frontend/src/lib/chat-api.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.4.2",
+              "title": "Create ChatPanel component",
+              "file_path": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+              "description": "Minimal chat panel with text input, send button, and message list. Renders user messages and agent text responses as simple bubbles (user right-aligned, assistant left-aligned). Uses sendMessage API client. Manages local messages state. Shows loading indicator during agent response.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/phases/SpecView.tsx",
+                    "lines": "1-150",
+                    "purpose": "Existing component pattern: 'use client', useState, useEffect, loading/error states, Card component usage"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/chat-api.ts",
+                    "lines": "1-50",
+                    "purpose": "sendMessage function interface and ChatBlock type"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/frontend/src/components/ui/button.tsx",
+                  "apps/core/frontend/src/components/ui/input.tsx",
+                  "apps/core/frontend/src/components/ui/card.tsx",
+                  "apps/core/frontend/src/lib/utils.ts"
+                ]
+              },
+              "depends_on": ["1.4.1"],
+              "actions": [
+                {
+                  "id": "1.4.2.1",
+                  "command": "CREATE FILE apps/core/frontend/src/components/chat/ChatPanel.tsx — 'use client' directive. Imports: useState from react, sendMessage and ChatBlock from '@/lib/chat-api', Button from '@/components/ui/button', Input from '@/components/ui/input', Card/CardContent from '@/components/ui/card', cn from '@/lib/utils'.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.2.2",
+                  "command": "CREATE TYPE ChatMessage — Local state type: { role: 'user' | 'assistant'; content: string; timestamp: string }.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.2.3",
+                  "command": "CREATE FUNCTION ChatPanel({ sessionSlug }: { sessionSlug: string }) — State: messages (ChatMessage[]), inputValue (string), isLoading (boolean), error (string | null). Render: scrollable message list area with user messages right-aligned (bg-primary text-white) and assistant messages left-aligned (bg-muted). Bottom: form with Input and Button ('Send'). On submit: add user message to state, set isLoading, call sendMessage(), extract text blocks from response, add as assistant messages, clear input. Handle errors with error state display.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.2.4",
+                  "command": "CREATE FILE apps/core/frontend/src/components/chat/index.ts — export { ChatPanel } from './ChatPanel'.",
+                  "file": "apps/core/frontend/src/components/chat/index.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "1.4.3",
+              "title": "Integrate ChatPanel into session detail page",
+              "file_path": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+              "description": "Add ChatPanel alongside the existing phase tabs on the session detail page. For CP1 (tracer bullet), render it below the tabs as a separate section. The three-column layout restructuring comes in CP3.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                    "lines": "1-203",
+                    "purpose": "Current session detail page layout — understand where to add ChatPanel"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/frontend/src/components/chat/index.ts"
+                ]
+              },
+              "depends_on": ["1.4.2"],
+              "actions": [
+                {
+                  "id": "1.4.3.1",
+                  "command": "UPDATE apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx — ADD import { ChatPanel } from '@/components/chat'.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "1.4.3.2",
+                  "command": "UPDATE apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx — ADD after the closing </Tabs> component: <section className='mt-8'><h2 className='text-lg font-semibold mb-4'>Spec Interview</h2><ChatPanel sessionSlug={sessionSlug} /></section>.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Multi-Turn Conversation with Persistence",
+      "goal": "Enable full back-and-forth chat that persists across page loads. SDK session continuity via sdk_session_id, chat history loading, and multi-turn message rendering.",
+      "prerequisites": [1],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            { "path": "apps/core/backend/src/routers/chat.py", "status": "exists", "description": "Chat router with single send-message endpoint" },
+            { "path": "apps/core/backend/src/agent/spec_agent_service.py", "status": "exists", "description": "Basic SpecAgentService" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "exists", "description": "Minimal chat panel" }
+          ]
+        },
+        "ending": {
+          "files": [
+            { "path": "apps/core/backend/src/routers/chat.py", "status": "modified", "description": "Added GET /api/chat/history endpoint" },
+            { "path": "apps/core/backend/src/agent/spec_agent_service.py", "status": "modified", "description": "Client lifecycle management, sdk_session_id persistence, multi-turn support" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "modified", "description": "Chat history loading, multi-turn rendering, scroll-to-bottom" },
+            { "path": "apps/core/frontend/src/lib/chat-api.ts", "status": "new", "description": "Chat API client functions" }
+          ]
+        }
+      },
+      "testing_strategy": {
+        "approach": "Multi-turn conversation verification",
+        "verification_steps": [
+          "Send multiple messages in sequence, agent maintains context",
+          "Refresh page, chat history loads from database",
+          "sdk_session_id stored in Agent model, reused across messages",
+          "All blocks persisted with correct turn_index and block_index ordering"
+        ]
+      },
+      "task_groups": [
+        {
+          "id": "2.1",
+          "title": "Backend — Client lifecycle & session management",
+          "objective": "Manage SpecAgentService instances across requests. Cache active clients per session. Store sdk_session_id in Agent model for conversation continuity. Handle client reuse for subsequent messages in the same session.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.1.1",
+              "title": "Add client registry for active SpecAgentService instances",
+              "file_path": "apps/core/backend/src/agent/spec_agent_service.py",
+              "description": "Add a module-level dict for caching active clients by session_slug. Add get_or_create_service() and remove_service() helper functions. Update connect() to store sdk_session_id on the Agent model after SDK connect.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-100",
+                    "purpose": "Current SpecAgentService implementation from CP1"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/models/agent.py",
+                    "lines": "85-92",
+                    "purpose": "Agent model sdk_session_id field for persistence"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "550-580",
+                    "purpose": "update_agent() function for updating Agent records"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.1.1.1",
+                  "command": "ADD VAR _active_services: dict[str, SpecAgentService] = {} — Module-level client registry keyed by session_slug.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.2",
+                  "command": "CREATE FUNCTION get_or_create_service(session_slug: str, working_dir: str, session_id: UUID) -> SpecAgentService — Check _active_services for existing client by session_slug. If found and _client is not None, return it. Otherwise create new SpecAgentService, call connect(session_id), store in _active_services, return.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.3",
+                  "command": "CREATE FUNCTION remove_service(session_slug: str) -> None — Pop session_slug from _active_services. If service found, call disconnect().",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.1.1.4",
+                  "command": "UPDATE FUNCTION SpecAgentService.connect() — After SDK client.connect(), retrieve sdk_session_id from client session. Call update_agent(db, agent_id, AgentUpdate(sdk_session_id=sdk_session_id)). Store in self._sdk_session_id.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.1.2",
+              "title": "Update chat router for multi-turn support",
+              "file_path": "apps/core/backend/src/routers/chat.py",
+              "description": "Replace per-request service creation with get_or_create_service(). Track turn_index by querying max turn_index from existing messages. Increment for each new send.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/routers/chat.py",
+                    "lines": "1-60",
+                    "purpose": "Current chat router from CP1"
+                  },
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-20",
+                    "purpose": "get_or_create_service() function added in 2.1.1"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.1.1"],
+              "actions": [
+                {
+                  "id": "2.1.2.1",
+                  "command": "UPDATE FUNCTION POST /chat/send — REPLACE direct SpecAgentService creation with get_or_create_service(session_slug, working_dir, session_id). Query get_max_turn_index(db, session_id) for current max. Use max+1 as turn_index. Pass to send_message(). Remove disconnect() call (client stays alive for subsequent messages). Return incremented turn_index in response.",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Backend — Chat history API",
+          "objective": "Add GET /chat/history endpoint that returns persisted messages for a session, ordered by turn_index/block_index. Support phase filtering.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.2.1",
+              "title": "Add chat history endpoint",
+              "file_path": "apps/core/backend/src/routers/chat.py",
+              "description": "Add GET /chat/history/{session_slug} endpoint that returns all persisted interactive_messages for a session, ordered by turn_index then block_index. Support optional phase query param.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/routers/chat.py",
+                    "lines": "1-60",
+                    "purpose": "Existing router structure, session lookup pattern"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "690-730",
+                    "purpose": "list_messages_for_session() function"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.2.1.1",
+                  "command": "CREATE TYPE ChatHistoryResponse(BaseModel) — Fields: messages (list[dict] with keys: role, block_type, content, tool_name, turn_index, block_index, timestamp), total (int).",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.2.1.2",
+                  "command": "CREATE FUNCTION GET /chat/history/{session_slug} — Route handler with optional Query param phase (str | None). Validate session by slug. Call list_messages_for_session(db, session_id, phase=phase). Map InteractiveMessage objects to dicts. Return ChatHistoryResponse with messages and total count.",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.2.2",
+              "title": "Add CRUD function for max turn_index",
+              "file_path": "apps/core/backend/src/database/crud.py",
+              "description": "Add get_max_turn_index(db, session_id) that returns the maximum turn_index from interactive_messages for a session, or -1 if no messages exist.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "729-755",
+                    "purpose": "count_logs_for_session pattern using sqlalchemy func"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/database/models/interactive_message.py"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.2.2.1",
+                  "command": "CREATE FUNCTION get_max_turn_index(db: AsyncSession, session_id: UUID) -> int — from sqlalchemy import func. SELECT func.max(InteractiveMessage.turn_index) WHERE session_id. Return result or -1 if None.",
+                  "file": "apps/core/backend/src/database/crud.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Frontend — Chat history loading & multi-turn UX",
+          "objective": "Load chat history on page mount. Support multi-turn conversation with proper scroll-to-bottom behavior. Maintain turn_index across sends.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "2.3.1",
+              "title": "Update chat API client for history",
+              "file_path": "apps/core/frontend/src/lib/chat-api.ts",
+              "description": "Add getChatHistory(sessionSlug) function that fetches persisted messages from the backend history endpoint.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/lib/chat-api.ts",
+                    "lines": "1-50",
+                    "purpose": "Existing chat-api client from CP1"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "2.3.1.1",
+                  "command": "CREATE FUNCTION getChatHistory(sessionSlug: string, phase?: string): Promise<{ messages: ChatBlock[]; total: number }> — GET ${BACKEND_URL}/chat/history/${sessionSlug} with optional ?phase= param. Parse and return JSON.",
+                  "file": "apps/core/frontend/src/lib/chat-api.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "2.3.2",
+              "title": "Update ChatPanel for history loading and multi-turn",
+              "file_path": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+              "description": "On mount, load chat history from backend and populate messages state. Track turn_index locally (incrementing from last loaded turn). Add useRef for scroll container with auto-scroll to bottom on new messages.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                    "lines": "1-100",
+                    "purpose": "Current ChatPanel implementation from CP1"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/chat-api.ts",
+                    "lines": "1-60",
+                    "purpose": "getChatHistory function added in 2.3.1"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["2.3.1"],
+              "actions": [
+                {
+                  "id": "2.3.2.1",
+                  "command": "ADD useEffect for initial chat history loading — On mount (sessionSlug dependency), call getChatHistory(sessionSlug). Map response messages to ChatMessage[] and set as initial messages state. Derive initial turnIndex from max turn_index in loaded history (+1 for next send).",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.2.2",
+                  "command": "ADD useRef<HTMLDivElement>(null) as scrollEndRef — Attach to an empty div at the bottom of the messages container. ADD useEffect that calls scrollEndRef.current?.scrollIntoView({ behavior: 'smooth' }) whenever messages array changes.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "2.3.2.3",
+                  "command": "UPDATE send handler — ADD turnIndex to component state (useState<number>(0)). After getChatHistory, set turnIndex from max. On send: use current turnIndex, increment after successful response. Append all assistant response blocks from response.blocks to messages array.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Session Creation Flow + Three-Column Layout",
+      "goal": "New Session button creates session directory + state.json and immediately starts spec interview. Session detail page restructured into three-column layout: sidebar | artifact tabs | chat panel.",
+      "prerequisites": [2],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            { "path": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx", "status": "exists", "description": "Session detail page with full-width phase tabs" },
+            { "path": "apps/core/frontend/src/components/layout/AppShell.tsx", "status": "exists", "description": "Two-column layout (sidebar + main)" }
+          ]
+        },
+        "ending": {
+          "files": [
+            { "path": "apps/core/backend/src/routers/sessions.py", "status": "new", "description": "Session creation endpoint" },
+            { "path": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx", "status": "modified", "description": "Three-column layout with chat panel" },
+            { "path": "apps/core/frontend/src/app/projects/[slug]/page.tsx", "status": "modified", "description": "New Session button added" }
+          ]
+        }
+      },
+      "testing_strategy": {
+        "approach": "End-to-end session creation and layout verification",
+        "verification_steps": [
+          "Click New Session, verify session directory + state.json created",
+          "Agent starts spec interview automatically, first question appears in chat",
+          "Three-column layout renders: sidebar, artifact center, chat right",
+          "New session appears in sidebar immediately"
+        ]
+      },
+      "task_groups": [
+        {
+          "id": "3.1",
+          "title": "Backend — Session creation endpoint",
+          "objective": "API endpoint to create a new session (filesystem directory + state.json + database record) and return the new session info.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.1.1",
+              "title": "Create session creation endpoint",
+              "file_path": "apps/core/backend/src/routers/sessions.py",
+              "description": "FastAPI router with POST /sessions/create endpoint. Creates session directory under agents/sessions/, writes initial state.json, creates DB record via sync, and returns the new session info. Also register this router in main.py.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/state_manager/state_manager.py",
+                    "lines": "1-50",
+                    "purpose": "SessionStateManager pattern for creating state.json"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/session-sync.ts",
+                    "lines": "84-161",
+                    "purpose": "mapStateToSession — how state.json maps to DB record (reference for fields needed)"
+                  },
+                  {
+                    "file": "apps/core/backend/src/routers/chat.py",
+                    "lines": "1-30",
+                    "purpose": "Existing router pattern from CP1"
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6/state.json",
+                    "lines": "1-30",
+                    "purpose": "Example state.json structure for reference"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/backend/src/database/crud.py",
+                  "apps/core/backend/src/main.py"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.1.1.1",
+                  "command": "CREATE FILE apps/core/backend/src/routers/sessions.py — Imports: FastAPI APIRouter, HTTPException, BaseModel, Path, json, datetime, random, string. Database imports.",
+                  "file": "apps/core/backend/src/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.2",
+                  "command": "CREATE TYPE SessionCreateRequest(BaseModel) — Fields: project_path (str, the absolute path to the project root), topic (Optional[str] = None).",
+                  "file": "apps/core/backend/src/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.3",
+                  "command": "CREATE FUNCTION POST /sessions/create — Generate session_slug: YYYY-MM-DD_{slugified_topic or 'session'}_{6-char-random}. Create directory at {project_path}/agents/sessions/{slug}/. Write initial state.json with: session_id=slug, current_phase='spec', status='active', created_at/updated_at=now, phase_history with spec_started_at=now. Create DB session record via create_session(). Return { session_slug, session_id (UUID), session_dir }.",
+                  "file": "apps/core/backend/src/routers/sessions.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.1.1.4",
+                  "command": "UPDATE apps/core/backend/src/main.py — ADD import: from routers.sessions import router as sessions_router. ADD app.include_router(sessions_router, prefix='/sessions', tags=['sessions']).",
+                  "file": "apps/core/backend/src/main.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Frontend — New Session button & creation flow",
+          "objective": "'New Session' button on project page that creates a session and navigates to the session detail page.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.2.1",
+              "title": "Add sessions API client function for creation",
+              "file_path": "apps/core/frontend/src/lib/sessions-api.ts",
+              "description": "Add createSession() function that calls the backend session creation endpoint. Uses BACKEND_URL from chat-api pattern.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/lib/chat-api.ts",
+                    "lines": "1-10",
+                    "purpose": "BACKEND_URL pattern for calling FastAPI backend"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/sessions-api.ts",
+                    "lines": "1-50",
+                    "purpose": "Existing sessions API client structure"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.2.1.1",
+                  "command": "CREATE FUNCTION createSession(projectPath: string, topic?: string): Promise<{ session_slug: string; session_id: string; session_dir: string }> — POST to ${BACKEND_URL}/sessions/create with JSON body { project_path: projectPath, topic }. Parse and return response.",
+                  "file": "apps/core/frontend/src/lib/sessions-api.ts",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "3.2.2",
+              "title": "Add New Session button to project page",
+              "file_path": "apps/core/frontend/src/app/projects/[slug]/page.tsx",
+              "description": "Add 'New Session' button in the project header area. On click, call createSession with project path and navigate to the new session detail page.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/projects/[slug]/page.tsx",
+                    "lines": "1-100",
+                    "purpose": "Current project page layout — where to place the button"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/sessions-api.ts",
+                    "lines": "1-30",
+                    "purpose": "createSession function from 3.2.1"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/frontend/src/components/ui/button.tsx"
+                ]
+              },
+              "depends_on": ["3.2.1"],
+              "actions": [
+                {
+                  "id": "3.2.2.1",
+                  "command": "ADD 'New Session' Button — In the project header/actions area. Import Button, Plus icon. Render <Button onClick={handleNewSession}><Plus /> New Session</Button>.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.2.2.2",
+                  "command": "CREATE FUNCTION handleNewSession — Use window.prompt or a simple input for optional topic. Call createSession(project.path, topic). On success, router.push(`/projects/${projectSlug}/sessions/${result.session_slug}`). Handle errors with alert or error state.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Frontend — Three-column layout restructuring",
+          "objective": "Restructure session detail page into three-column layout: AppShell sidebar (left, existing) | artifact tabs (center) | chat panel (right). All three always visible.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "3.3.1",
+              "title": "Restructure session detail page to three-column layout",
+              "file_path": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+              "description": "Replace current single-column layout with a flex container splitting artifact tabs (center, ~60%) and chat panel (right, ~40%). The AppShell sidebar is already handled in the layout. Make chat panel sticky for scroll independence. Remove the temporary section wrapper from CP1.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                    "lines": "1-203",
+                    "purpose": "Current session detail page — understand full layout structure"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/components/layout/AppShell.tsx",
+                    "lines": "112-254",
+                    "purpose": "AppShell provides sidebar (w-80) and main content area. Session page renders inside main."
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6/spec.md",
+                    "lines": "176-200",
+                    "purpose": "Three-column layout spec: sidebar | artifact tabs | chat panel"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/frontend/src/components/chat/ChatPanel.tsx"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "3.3.1.1",
+                  "command": "REFACTOR session detail page layout — Wrap the Tabs component and ChatPanel in a flex row container: <div className='flex gap-6'>. Tabs wrapper gets className='flex-1 min-w-0' (takes remaining space). ChatPanel wrapper gets className='w-[400px] shrink-0 sticky top-24 self-start max-h-[calc(100vh-8rem)] overflow-hidden'.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.1.2",
+                  "command": "REMOVE the temporary <section className='mt-8'> wrapper around ChatPanel — This was added in CP1 task 1.4.3.2. ChatPanel now lives directly in the flex layout.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "3.3.1.3",
+                  "command": "ADD sticky positioning to ChatPanel container — The ChatPanel's outer div should be position: sticky with top offset matching the header height. Add border-l border-border/50 for visual separation from artifact area.",
+                  "file": "apps/core/frontend/src/app/projects/[slug]/sessions/[sessionSlug]/page.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Artifact Polling + Block-Type Rendering",
+      "goal": "Artifact view polls for spec.md changes using content hashing, only re-renders when content changes. Chat panel renders blocks by type: text as bubbles, tool_use/tool_result as collapsible activity indicators, thinking blocks hidden.",
+      "prerequisites": [3],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            { "path": "apps/core/frontend/src/components/phases/SpecView.tsx", "status": "exists", "description": "One-shot spec.md fetch" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "exists", "description": "Basic message rendering" }
+          ]
+        },
+        "ending": {
+          "files": [
+            { "path": "apps/core/frontend/src/app/api/sessions/[slug]/spec/route.ts", "status": "modified", "description": "Added content hash in response" },
+            { "path": "apps/core/frontend/src/components/phases/SpecView.tsx", "status": "modified", "description": "Polling with hash comparison" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "modified", "description": "Block-type-aware rendering" },
+            { "path": "apps/core/frontend/src/components/chat/MessageBubble.tsx", "status": "new", "description": "Text block rendering" },
+            { "path": "apps/core/frontend/src/components/chat/ToolActivity.tsx", "status": "new", "description": "Collapsible tool use/result indicators" }
+          ]
+        }
+      },
+      "testing_strategy": {
+        "approach": "Polling verification and visual block rendering",
+        "verification_steps": [
+          "Agent updates spec.md during conversation, artifact view refreshes automatically",
+          "No re-render when content hash unchanged",
+          "TextBlocks render as chat bubbles with proper styling",
+          "ToolUseBlocks render as collapsible activity indicators",
+          "ThinkingBlocks are hidden from chat panel"
+        ]
+      },
+      "task_groups": [
+        {
+          "id": "4.1",
+          "title": "Backend — Artifact hash endpoint",
+          "objective": "Add content hash to spec artifact response so frontend can poll efficiently with hash comparison.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.1.1",
+              "title": "Add content hash to spec endpoint",
+              "file_path": "apps/core/frontend/src/app/api/sessions/[slug]/spec/route.ts",
+              "description": "Add a content_hash field (SHA256 of spec content) to the spec endpoint response. Frontend uses this to detect content changes without full re-parsing.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/app/api/sessions/[slug]/spec/route.ts",
+                    "lines": "1-50",
+                    "purpose": "Current spec endpoint implementation — understand response shape and file reading logic"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.1.1.1",
+                  "command": "UPDATE GET /api/sessions/[slug]/spec — Import { createHash } from 'crypto'. After reading spec.md content, compute hash: createHash('sha256').update(content).digest('hex'). Add content_hash field to JSON response alongside content and exists.",
+                  "file": "apps/core/frontend/src/app/api/sessions/[slug]/spec/route.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Frontend — Artifact polling with hash comparison",
+          "objective": "SpecView polls for spec.md changes at regular intervals and only re-renders when content hash changes.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.2.1",
+              "title": "Add polling to SpecView",
+              "file_path": "apps/core/frontend/src/components/phases/SpecView.tsx",
+              "description": "Add polling interval (5 seconds) that re-fetches spec content. Compare content_hash from response against last known hash. Only update content state if hash changed. Use useRef for hash tracking, useEffect with setInterval for polling.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/phases/SpecView.tsx",
+                    "lines": "1-150",
+                    "purpose": "Current SpecView — one-shot fetch on mount, no polling"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/sessions-api.ts",
+                    "lines": "127-152",
+                    "purpose": "getSessionSpec function and SpecContent type"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.1.1"],
+              "actions": [
+                {
+                  "id": "4.2.1.1",
+                  "command": "UPDATE SpecContent interface in sessions-api.ts — ADD content_hash?: string field to SpecContent interface.",
+                  "file": "apps/core/frontend/src/lib/sessions-api.ts",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.2.1.2",
+                  "command": "ADD useRef<string | null>(null) as lastHashRef — Track last known content hash in SpecView component.",
+                  "file": "apps/core/frontend/src/components/phases/SpecView.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.2.1.3",
+                  "command": "ADD useEffect with setInterval(5000) for polling — On each tick: call getSessionSpec(sessionSlug). If response.content_hash differs from lastHashRef.current, update content state and set lastHashRef.current = response.content_hash. On initial load, also set lastHashRef. Clear interval on unmount via cleanup return.",
+                  "file": "apps/core/frontend/src/components/phases/SpecView.tsx",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Frontend — Block-type-aware chat rendering",
+          "objective": "Chat panel renders blocks by type: text as bubbles, tool_use/tool_result as collapsible activity indicators, thinking blocks hidden.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "4.3.1",
+              "title": "Create MessageBubble component",
+              "file_path": "apps/core/frontend/src/components/chat/MessageBubble.tsx",
+              "description": "Renders a single text block as a styled chat bubble. User messages right-aligned with primary color, assistant messages left-aligned with muted background. Supports markdown rendering for assistant messages.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                    "lines": "1-30",
+                    "purpose": "Current inline message rendering to understand what to extract"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/utils.ts",
+                    "lines": "1-20",
+                    "purpose": "cn() utility for className merging"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.3.1.1",
+                  "command": "CREATE FILE apps/core/frontend/src/components/chat/MessageBubble.tsx — Props: { role: 'user' | 'assistant'; content: string }. User messages: ml-auto bg-primary text-primary-foreground rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%]. Assistant messages: mr-auto bg-muted rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%]. Render content as text (or ReactMarkdown for assistant).",
+                  "file": "apps/core/frontend/src/components/chat/MessageBubble.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.3.2",
+              "title": "Create ToolActivity component",
+              "file_path": "apps/core/frontend/src/components/chat/ToolActivity.tsx",
+              "description": "Renders tool_use and tool_result blocks as collapsible activity indicators. Shows tool name with an icon, initially collapsed. Click to expand and show content/details.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/agents/EventItem.tsx",
+                    "lines": "1-50",
+                    "purpose": "Existing event rendering pattern for reference"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/frontend/src/components/ui/badge.tsx"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "4.3.2.1",
+                  "command": "CREATE FILE apps/core/frontend/src/components/chat/ToolActivity.tsx — Props: { toolName: string; content: string | null; blockType: 'tool_use' | 'tool_result' }. Render as a small, muted row with wrench/gear icon + tool name. useState for isExpanded. On click toggle expanded. When expanded show content in a pre/code block. Style: text-xs text-muted-foreground border-l-2 border-muted pl-3 py-1.",
+                  "file": "apps/core/frontend/src/components/chat/ToolActivity.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "4.3.3",
+              "title": "Update ChatPanel for block-type rendering",
+              "file_path": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+              "description": "Replace simple message rendering with block-type-aware rendering. Text blocks use MessageBubble, tool blocks use ToolActivity, thinking blocks are hidden. Update message state type to include block_type and tool_name.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                    "lines": "1-100",
+                    "purpose": "Current ChatPanel with basic rendering"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/components/chat/MessageBubble.tsx",
+                    "lines": "1-30",
+                    "purpose": "MessageBubble component interface"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/components/chat/ToolActivity.tsx",
+                    "lines": "1-30",
+                    "purpose": "ToolActivity component interface"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["4.3.1", "4.3.2"],
+              "actions": [
+                {
+                  "id": "4.3.3.1",
+                  "command": "UPDATE ChatMessage type — ADD block_type: 'text' | 'tool_use' | 'tool_result' | 'thinking' field. ADD tool_name: string | null field. DEFAULT block_type to 'text' for user messages.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.3.2",
+                  "command": "UPDATE message rendering in ChatPanel — REPLACE inline message divs with block-type switch: if block_type === 'text' render <MessageBubble role={msg.role} content={msg.content} />. If block_type === 'tool_use' or 'tool_result' render <ToolActivity toolName={msg.tool_name} content={msg.content} blockType={msg.block_type} />. If block_type === 'thinking' return null (hidden).",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "4.3.3.3",
+                  "command": "UPDATE exports in apps/core/frontend/src/components/chat/index.ts — ADD export { MessageBubble } from './MessageBubble'. ADD export { ToolActivity } from './ToolActivity'.",
+                  "file": "apps/core/frontend/src/components/chat/index.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "AskUserQuestion UI + AgentLog Hooks + Phase Transition",
+      "goal": "AskUserQuestion renders as structured select/multi-select UI with Other option. PreToolUse/PostToolUse hooks write to AgentLog for observability. Continue to Plan button appears on spec finalization. SDK session resume enables mid-session return.",
+      "prerequisites": [4],
+      "status": "pending",
+      "file_context": {
+        "beginning": {
+          "files": [
+            { "path": "apps/core/backend/src/agent/spec_agent_service.py", "status": "exists", "description": "SpecAgentService without hooks or AskUserQuestion handling" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "exists", "description": "Chat panel without AskUserQuestion rendering" }
+          ]
+        },
+        "ending": {
+          "files": [
+            { "path": "apps/core/backend/src/agent/spec_agent_service.py", "status": "modified", "description": "Added hooks, AskUserQuestion interception, session resume" },
+            { "path": "apps/core/frontend/src/components/chat/AskUserQuestion.tsx", "status": "new", "description": "Structured select/multi-select UI component" },
+            { "path": "apps/core/frontend/src/components/chat/ChatPanel.tsx", "status": "modified", "description": "AskUserQuestion detection and rendering, Continue to Plan button" }
+          ]
+        }
+      },
+      "testing_strategy": {
+        "approach": "Interactive feature verification",
+        "verification_steps": [
+          "AskUserQuestion renders as select UI with options and Other field",
+          "User selection sent back as tool result, agent continues",
+          "AgentLog entries created for all tool calls during conversation",
+          "Continue to Plan button appears when spec is finalized",
+          "Leave session and return, conversation resumes via sdk_session_id"
+        ]
+      },
+      "task_groups": [
+        {
+          "id": "5.1",
+          "title": "Backend — AskUserQuestion interception",
+          "objective": "Detect AskUserQuestion tool calls in agent response, pause execution, return structured question to frontend, accept user's answer and route back to SDK.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.1.1",
+              "title": "Add AskUserQuestion handling to SpecAgentService",
+              "file_path": "apps/core/backend/src/agent/spec_agent_service.py",
+              "description": "When processing response blocks, detect ToolUseBlock with name='AskUserQuestion'. Capture the input (questions, options) and return it to the caller as a pending question. Add send_tool_result() method for routing the user's answer back to the SDK.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-150",
+                    "purpose": "Current SpecAgentService with send_message and block processing"
+                  },
+                  {
+                    "file": "agents/sessions/2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6/spec.md",
+                    "lines": "272-294",
+                    "purpose": "AskUserQuestion spec: detection, rendering, response format"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.1.1.1",
+                  "command": "UPDATE FUNCTION send_message() — When iterating response blocks, check for ToolUseBlock where block.name == 'AskUserQuestion'. If found: persist as interactive_message with block_type='tool_use' and tool_name='AskUserQuestion'. Extract question data from block.input. Return dict with pending_question={tool_use_id: block.id, questions: block.input['questions']} and the blocks collected so far. Stop processing further blocks.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.1.2",
+                  "command": "CREATE FUNCTION send_tool_result(self, tool_use_id: str, result: dict) -> list[dict] — Create a tool result message with the user's answer formatted as {answers: {question: selected_option}}. Send to SDK via client. Continue processing response blocks from receive_response(). Persist new blocks to interactive_messages. Return block dicts.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.1.1.3",
+                  "command": "ADD TYPE PendingQuestion — Dict structure: { tool_use_id: str, questions: list[{question: str, header: str, options: list[{label: str, description: str}], multiSelect: bool}] }.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Backend — AgentLog hooks",
+          "objective": "Wire PreToolUse/PostToolUse hooks into SpecAgentService that write to AgentLog table for observability.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.2.1",
+              "title": "Add hook callbacks to SpecAgentService",
+              "file_path": "apps/core/backend/src/agent/spec_agent_service.py",
+              "description": "Add PreToolUse and PostToolUse hook functions that create AgentLog entries. Wire hooks into ClaudeAgentOptions configuration.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-50",
+                    "purpose": "connect() method where ClaudeAgentOptions is configured"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/models/agent_log.py",
+                    "lines": "1-100",
+                    "purpose": "AgentLog model and AgentLogCreate DTO structure"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "607-641",
+                    "purpose": "create_agent_log() function"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.2.1.1",
+                  "command": "CREATE FUNCTION _pre_tool_hook(self, tool_name: str, tool_input: dict) — Create AgentLogCreate with agent_id=self._agent_id, session_id=self._session_id, event_category='hook', event_type='PreToolUse', tool_name=tool_name, tool_input=tool_input. Call create_agent_log() via database session.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.1.2",
+                  "command": "CREATE FUNCTION _post_tool_hook(self, tool_name: str, tool_output: str, duration_ms: int) — Create AgentLogCreate with event_category='hook', event_type='PostToolUse', tool_name=tool_name, tool_output=tool_output, duration_ms=duration_ms. Call create_agent_log().",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.2.1.3",
+                  "command": "UPDATE connect() — Add hooks parameter to ClaudeAgentOptions with pre_tool_use=self._pre_tool_hook and post_tool_use=self._post_tool_hook.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.3",
+          "title": "Backend — Session resume",
+          "objective": "Support resuming an SDK session when user returns to an in-progress spec conversation.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.3.1",
+              "title": "Add resume support to SpecAgentService",
+              "file_path": "apps/core/backend/src/agent/spec_agent_service.py",
+              "description": "When get_or_create_service() is called for a session that has an existing Agent with sdk_session_id, create the ClaudeSDKClient with resume=sdk_session_id parameter. This enables picking up exactly where the conversation left off.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-80",
+                    "purpose": "get_or_create_service() and connect() methods"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/models/agent.py",
+                    "lines": "85-92",
+                    "purpose": "Agent model sdk_session_id field"
+                  },
+                  {
+                    "file": "apps/core/backend/src/database/crud.py",
+                    "lines": "487-515",
+                    "purpose": "list_agents_for_session() for finding existing spec agent"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.3.1.1",
+                  "command": "UPDATE FUNCTION get_or_create_service() — Before creating a new service, query list_agents_for_session(db, session_id, agent_type='spec', status='executing' or 'waiting'). If found and agent.sdk_session_id is not None, pass resume_session_id=agent.sdk_session_id to service.connect().",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.3.1.2",
+                  "command": "UPDATE FUNCTION SpecAgentService.connect() — Accept optional resume_session_id: str | None = None parameter. If provided, pass resume=resume_session_id to ClaudeSDKClient constructor. Reuse existing Agent record instead of creating new one.",
+                  "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5.4",
+          "title": "Frontend — AskUserQuestion UI + chat router updates + phase transition",
+          "objective": "Structured AskUserQuestion rendering in chat panel. Chat answer endpoint. Continue to Plan button on spec finalization.",
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "5.4.1",
+              "title": "Update chat router for AskUserQuestion flow",
+              "file_path": "apps/core/backend/src/routers/chat.py",
+              "description": "Update POST /chat/send response to include pending_question when AskUserQuestion is detected. Add POST /chat/answer endpoint for submitting user answers to pending questions.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/backend/src/routers/chat.py",
+                    "lines": "1-80",
+                    "purpose": "Current chat router with send and history endpoints"
+                  },
+                  {
+                    "file": "apps/core/backend/src/agent/spec_agent_service.py",
+                    "lines": "1-50",
+                    "purpose": "send_tool_result() method added in 5.1.1"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["5.1.1"],
+              "actions": [
+                {
+                  "id": "5.4.1.1",
+                  "command": "UPDATE ChatSendResponse — ADD Optional field: pending_question (Optional[dict] with tool_use_id, questions list). DEFAULT None.",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.4.1.2",
+                  "command": "CREATE TYPE ChatAnswerRequest(BaseModel) — Fields: session_slug (str), tool_use_id (str), answers (dict[str, str]).",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.4.1.3",
+                  "command": "CREATE FUNCTION POST /chat/answer — Route handler: get_or_create_service for session. Call service.send_tool_result(tool_use_id, answers). Return ChatSendResponse with new blocks (may contain another pending_question).",
+                  "file": "apps/core/backend/src/routers/chat.py",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.4.2",
+              "title": "Create AskUserQuestion component",
+              "file_path": "apps/core/frontend/src/components/chat/AskUserQuestion.tsx",
+              "description": "Renders structured question UI from AskUserQuestion tool call. Single-select as selectable chips, multi-select as checkboxes. Always includes 'Other' free-text option. On submit, formats answer and calls onAnswer callback.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "agents/sessions/2026-02-19_connect-spec-plan-build-to-frontend-sess_enr0i6/spec.md",
+                    "lines": "272-294",
+                    "purpose": "AskUserQuestion spec: rendering rules, answer format"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/components/ui/button.tsx",
+                    "lines": "1-30",
+                    "purpose": "Button component variants for option rendering"
+                  }
+                ],
+                "related_files": [
+                  "apps/core/frontend/src/components/ui/input.tsx",
+                  "apps/core/frontend/src/components/ui/label.tsx"
+                ]
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.4.2.1",
+                  "command": "CREATE FILE apps/core/frontend/src/components/chat/AskUserQuestion.tsx — Props: { question: string; header: string; options: Array<{label: string; description: string}>; multiSelect: boolean; onAnswer: (answer: string) => void }. State: selectedOptions (string[] for multi, string for single), otherText (string), showOther (boolean). Render: header as label, options as clickable chips/cards with selected state styling (outline vs filled), 'Other' option with text input, Submit button. On submit: format selected option(s) as comma-separated string (or otherText), call onAnswer.",
+                  "file": "apps/core/frontend/src/components/chat/AskUserQuestion.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.4.3",
+              "title": "Update ChatPanel for AskUserQuestion and phase transition",
+              "file_path": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+              "description": "When response contains pending_question, render AskUserQuestion component instead of text input. On answer, call /chat/answer endpoint. Add 'Continue to Plan' button when spec phase is finalized.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                    "lines": "1-120",
+                    "purpose": "Current ChatPanel with send handler and message rendering"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/components/chat/AskUserQuestion.tsx",
+                    "lines": "1-50",
+                    "purpose": "AskUserQuestion component interface"
+                  },
+                  {
+                    "file": "apps/core/frontend/src/lib/chat-api.ts",
+                    "lines": "1-70",
+                    "purpose": "sendAnswer function (added in 5.4.4)"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": ["5.4.2", "5.4.4"],
+              "actions": [
+                {
+                  "id": "5.4.3.1",
+                  "command": "ADD pendingQuestion state — useState<{tool_use_id: string, questions: any[]} | null>(null). After sendMessage response, check if response.pending_question exists. If so, set pendingQuestion state.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.4.3.2",
+                  "command": "ADD AskUserQuestion rendering — When pendingQuestion is not null, render AskUserQuestion component in the input area (replacing the text input). For each question in pendingQuestion.questions, render an AskUserQuestion. OnAnswer callback: call sendAnswer(sessionSlug, pendingQuestion.tool_use_id, {question: answer}). Clear pendingQuestion. Add response blocks to messages. Check for new pending_question in response.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                },
+                {
+                  "id": "5.4.3.3",
+                  "command": "ADD Continue to Plan button — Accept session prop or poll session state. When session.current_phase changes from 'spec' to 'plan' (or spec is finalized), show a prominent 'Continue to Plan' button at the bottom of the chat panel. On click: navigate to ?phase=plan tab or call phase transition API.",
+                  "file": "apps/core/frontend/src/components/chat/ChatPanel.tsx",
+                  "status": "pending"
+                }
+              ]
+            },
+            {
+              "id": "5.4.4",
+              "title": "Update chat API client for answer endpoint",
+              "file_path": "apps/core/frontend/src/lib/chat-api.ts",
+              "description": "Add sendAnswer() function for submitting AskUserQuestion answers to the backend.",
+              "status": "pending",
+              "context": {
+                "read_before": [
+                  {
+                    "file": "apps/core/frontend/src/lib/chat-api.ts",
+                    "lines": "1-60",
+                    "purpose": "Existing chat API client"
+                  }
+                ],
+                "related_files": []
+              },
+              "depends_on": [],
+              "actions": [
+                {
+                  "id": "5.4.4.1",
+                  "command": "CREATE FUNCTION sendAnswer(sessionSlug: string, toolUseId: string, answers: Record<string, string>): Promise<ChatSendResponse> — POST to ${BACKEND_URL}/chat/answer with JSON body { session_slug: sessionSlug, tool_use_id: toolUseId, answers }. Parse and return as ChatSendResponse.",
+                  "file": "apps/core/frontend/src/lib/chat-api.ts",
+                  "status": "pending"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

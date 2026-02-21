@@ -62,11 +62,12 @@ Each piece of data has ONE authoritative source. The other location is a cache/m
 │                                                                             │
 │   DATABASE OWNS (Execution state, relationships)                            │
 │   ───────────────────────────────────────────────                           │
-│   • agent runs        - Individual agent invocations                        │
-│   • agent_logs        - Hook events, tool calls, timing                     │
-│   • costs/tokens      - Aggregated usage                                    │
-│   • project_id FK     - Which project this session belongs to               │
-│   • sdk_session_id    - Claude SDK session for resumption                   │
+│   • agent runs            - Individual agent invocations                    │
+│   • agent_logs            - Hook events, tool calls, timing                 │
+│   • interactive_messages  - Block-level chat for spec/plan UI               │
+│   • costs/tokens          - Aggregated usage                                │
+│   • project_id FK         - Which project this session belongs to           │
+│   • sdk_session_id        - Claude SDK session for resumption               │
 │                                                                             │
 │   SHARED (Exists in both, needs sync strategy)                              │
 │   ────────────────────────────────────────────                              │
@@ -472,6 +473,99 @@ Agent execution data is **database-owned** because:
 
 ---
 
+## Two-Channel Data Model: Interactive Chat vs Agent Logs
+
+> **Added**: 2026-02-19 session `connect-spec-plan-build-to-frontend`
+
+The system maintains two distinct data channels for agent communication, serving different purposes:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     TWO-CHANNEL DATA MODEL                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   CHANNEL 1: Interactive Chat (interactive_messages table)                  │
+│   ─────────────────────────────────────────────────────                     │
+│   PURPOSE: Render the user-facing conversation panel                        │
+│   PHASES:  spec, plan (interactive phases only)                             │
+│   SCOPE:   Top-level chat agent blocks only (not background agents)         │
+│   GRAIN:   Per-block (TextBlock, ToolUseBlock, etc.)                        │
+│   QUERY:   WHERE session_id=X AND phase=Y ORDER BY turn_index, block_index │
+│                                                                             │
+│   CHANNEL 2: Agent Logs (agent_logs table)                                  │
+│   ────────────────────────────────────────                                  │
+│   PURPOSE: Execution observability across ALL agents                        │
+│   PHASES:  All phases (spec, plan, build, docs)                             │
+│   SCOPE:   Every agent (top-level + background + sub-agents)                │
+│   GRAIN:   Per-event (hooks, response blocks, phase transitions)            │
+│   QUERY:   WHERE session_id=X ORDER BY timestamp DESC                       │
+│                                                                             │
+│   WHY SEPARATE:                                                             │
+│   • Different query patterns (chat rendering vs execution timeline)         │
+│   • Different scope (user-visible conversation vs all agent activity)       │
+│   • Different consumers (chat panel vs agent timeline/debugging)            │
+│   • Content is double-stored — acceptable tradeoff for clean separation     │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Phase-Dependent Interaction Modes
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   INTERACTIVE PHASES (spec, plan)          AUTONOMOUS PHASES (build, docs)  │
+│   ────────────────────────────────         ──────────────────────────────── │
+│                                                                             │
+│   User <-> Chat Agent (back-and-forth)     Agent runs autonomously          │
+│   Chat panel renders conversation          User monitors via agent timeline │
+│   interactive_messages is primary UI       agent_logs is primary UI         │
+│   agent_logs runs in parallel              No interactive_messages written  │
+│                                                                             │
+│   Data sources:                            Data sources:                    │
+│   • interactive_messages -> chat panel     • agent_logs -> agent timeline   │
+│   • agent_logs -> background detail        • state.json -> progress/status │
+│   • artifacts (polling) -> spec/plan view  • artifacts -> build output     │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Frontend Chat Panel Data Flow
+
+```
+User types message
+      |
+      v
+Frontend -> POST /chat/send {session_slug, message, phase}
+      |
+      v
+Backend: SpecAgentService.send_message()
+      |
+      |---> ClaudeSDKClient.query(message)
+      |         |
+      |         v
+      |    receive_response() yields blocks
+      |         |
+      |         |---> Write each block to interactive_messages table
+      |         |---> Hooks write to agent_logs table (parallel)
+      |         +---> Stream blocks back to frontend response
+      |
+      |---> AskUserQuestion detected?
+      |         |
+      |         v
+      |    Return with pending_tool_use flag
+      |    Frontend renders structured UI (select/multi-select)
+      |    User responds -> POST /chat/respond {tool_use_id, result}
+      |
+      +---> Frontend updates chat panel with rendered blocks
+                |
+                v
+           Frontend polls artifact file (spec.md) independently
+           Hash comparison -- only re-render on change
+```
+
+---
+
 ## Summary: What Lives Where
 
 ```
@@ -502,6 +596,9 @@ Agent execution data is **database-owned** because:
 │                                                                             │
 │   agent_logs                                                                │
 │   └── (all fields)    ◄── DATABASE ONLY: hook events, observability         │
+│                                                                             │
+│   interactive_messages                                                      │
+│   └── (all fields)    ◄── DATABASE ONLY: chat UI for spec/plan phases       │
 │                                                                             │
 │   SYNC STRATEGY: Hybrid                                                     │
 │   ─────────────────────                                                     │
@@ -572,6 +669,34 @@ Located at `apps/core/backend/mcp_tools/session_tools.py`. These tools wrap Stat
   }
 }
 ```
+
+### SpecAgentService (Backend → Frontend Chat Bridge)
+
+> **Added**: 2026-02-19 session `connect-spec-plan-build-to-frontend`
+
+Located at `apps/core/backend/src/agent/spec_agent_service.py`. Wraps `ClaudeSDKClient` for interactive spec interviews driven from the frontend UI.
+
+**Key responsibilities:**
+- Creates/resumes `ClaudeSDKClient` instances with `setting_sources=["project"]` for skill loading
+- Routes messages between frontend chat API and SDK `client.query()`
+- Writes response blocks to `interactive_messages` table
+- Fires hooks for `agent_logs` observability
+- Handles `AskUserQuestion` tool interception — returns pending state to frontend, accepts user selection as tool result
+- Manages SDK session lifecycle (connect, query, disconnect per phase)
+
+**API routes** (`apps/core/backend/src/routers/chat.py`):
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /chat/send` | Send user message, get agent response blocks |
+| `GET /chat/history` | Load chat history for session/phase |
+| `POST /chat/respond` | Submit user response to AskUserQuestion |
+
+**Frontend integration** (`apps/core/frontend/src/lib/chat-api.ts`, `src/components/chat/`):
+- `ChatPanel` renders the conversation with block-level rendering
+- `MessageBubble` for text blocks, `ToolActivity` for tool call indicators
+- `AskUserQuestion` component for structured select/multi-select UI
+- Artifact polling via `SpecView` with content hash comparison
 
 ### Filesystem → Database Sync
 
@@ -664,5 +789,6 @@ The v2 schema is minimal and programmatically-managed:
 
 ---
 
+*Updated 2026-02-20 - Added two-channel data model (interactive chat vs agent logs), SpecAgentService, frontend chat integration*
 *Updated 2026-02-16 - Added implementation details*
 *Draft v1 - 2026-02-14*

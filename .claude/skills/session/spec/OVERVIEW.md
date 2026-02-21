@@ -128,4 +128,4 @@ When spec is complete and approved by user:
 ## Templates
 
 - [spec.md](templates/spec.md) - Specification template
-- [state.json](templates/state.json) - Session state template
+- [state.json](../templates/state.json) - Session state template

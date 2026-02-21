@@ -71,6 +71,22 @@ export async function getSession(id: string): Promise<Session> {
 }
 
 /**
+ * Delete a session by ID.
+ *
+ * Removes all DB records (messages, logs, agents, session) and filesystem folder.
+ */
+export async function deleteSession(id: string): Promise<void> {
+  const response = await fetch(`/api/sessions/id/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.error || `Failed to delete session: ${response.statusText}`);
+  }
+}
+
+/**
  * Fetch a single session by slug.
  *
  * Uses local Next.js API route with direct Drizzle database access.

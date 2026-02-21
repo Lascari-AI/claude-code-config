@@ -8,8 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { db, projects } from "@/db";
-import { eq, and, ne } from "drizzle-orm";
+import { db, projects, sessions, agents, agentLogs, interactiveMessages } from "@/db";
+import { eq, and, ne, inArray } from "drizzle-orm";
 import type { Project, ProjectUpdate } from "@/types/project";
 
 interface RouteParams {
@@ -161,35 +161,50 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 /**
  * DELETE /api/projects/[id]
  *
- * Delete a project by ID.
+ * Delete a project and all dependent records (cascade).
+ * Deletes: interactiveMessages → agentLogs → agents → sessions → project
+ * Filesystem files are left untouched.
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
 
   try {
-    const result = await db
-      .delete(projects)
+    // Check project exists
+    const existing = await db
+      .select({ id: projects.id })
+      .from(projects)
       .where(eq(projects.id, id))
-      .returning({ id: projects.id });
+      .limit(1);
 
-    if (result.length === 0) {
+    if (existing.length === 0) {
       return NextResponse.json(
         { error: `Project ${id} not found` },
         { status: 404 }
       );
     }
 
+    // Get all session IDs for this project
+    const projectSessions = await db
+      .select({ id: sessions.id })
+      .from(sessions)
+      .where(eq(sessions.projectId, id));
+
+    const sessionIds = projectSessions.map((s) => s.id);
+
+    // Cascade delete dependent records in FK order
+    if (sessionIds.length > 0) {
+      await db.delete(interactiveMessages).where(inArray(interactiveMessages.sessionId, sessionIds));
+      await db.delete(agentLogs).where(inArray(agentLogs.sessionId, sessionIds));
+      await db.delete(agents).where(inArray(agents.sessionId, sessionIds));
+      await db.delete(sessions).where(inArray(sessions.id, sessionIds));
+    }
+
+    // Delete the project
+    await db.delete(projects).where(eq(projects.id, id));
+
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Error deleting project:", error);
-    // Check for foreign key constraint violation
-    const errorMessage = error instanceof Error ? error.message : "";
-    if (errorMessage.includes("foreign key") || errorMessage.includes("violates")) {
-      return NextResponse.json(
-        { error: "Cannot delete project with existing sessions" },
-        { status: 409 }
-      );
-    }
     return NextResponse.json(
       { error: "Failed to delete project" },
       { status: 500 }

@@ -4,6 +4,7 @@
  * Components for displaying session workflows in swimlane view.
  */
 
+export { DeleteSessionDialog } from "./DeleteSessionDialog";
 export { PhaseIndicator } from "./PhaseIndicator";
 export { SessionLane } from "./SessionLane";
 export { Swimlane } from "./Swimlane";

@@ -19,6 +19,7 @@ interface SessionsState {
   fetchProjectSessions: (projectId: string) => Promise<void>;
   fetchSession: (id: string) => Promise<void>;
   fetchSessionBySlug: (slug: string) => Promise<void>;
+  deleteSession: (id: string) => Promise<void>;
   setCurrentSession: (session: Session | null) => void;
   clearError: () => void;
 }
@@ -76,6 +77,32 @@ export const useSessionsStore = create<SessionsState>((set, get) => ({
           error instanceof Error ? error.message : "Failed to fetch session",
         isLoading: false,
       });
+    }
+  },
+
+  deleteSession: async (id: string) => {
+    try {
+      await sessionsApi.deleteSession(id);
+
+      // Remove from sessionsByProject map
+      set((state) => {
+        const newMap = new Map(state.sessionsByProject);
+        for (const [projectId, sessions] of newMap.entries()) {
+          const filtered = sessions.filter((s) => s.id !== id);
+          if (filtered.length !== sessions.length) {
+            newMap.set(projectId, filtered);
+          }
+        }
+
+        // Clear currentSession if it matches
+        const currentSession =
+          state.currentSession?.id === id ? null : state.currentSession;
+
+        return { sessionsByProject: newMap, currentSession };
+      });
+    } catch (error) {
+      // Re-throw for dialog display
+      throw error;
     }
   },
 

@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# drizzle-kit pull artifacts (schema.ts and relations.ts are kept)
+src/db/meta/
+src/db/*.sql

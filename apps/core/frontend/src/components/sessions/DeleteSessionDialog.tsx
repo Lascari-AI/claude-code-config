@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * DeleteProjectDialog Component
+ * DeleteSessionDialog Component
  *
- * Confirmation dialog for deleting a project.
- * Warns users about the irreversible action.
+ * Confirmation dialog for deleting a session.
+ * Warns users about irreversible DB + filesystem deletion.
  */
 
 import { useState, useCallback } from "react";
@@ -18,29 +18,29 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useProjectsStore } from "@/store";
-import type { ProjectSummary } from "@/types/project";
+import { useSessionsStore } from "@/store";
+import type { Session } from "@/types/session";
 
-interface DeleteProjectDialogProps {
-  project: ProjectSummary;
+interface DeleteSessionDialogProps {
+  session: Session;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
 }
 
 /**
- * Confirmation dialog for deleting a project.
+ * Confirmation dialog for deleting a session.
  */
-export function DeleteProjectDialog({
-  project,
+export function DeleteSessionDialog({
+  session,
   open,
   onOpenChange,
   onSuccess,
-}: DeleteProjectDialogProps) {
+}: DeleteSessionDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { deleteProject } = useProjectsStore();
+  const { deleteSession } = useSessionsStore();
 
   // Handle delete confirmation
   const handleDelete = useCallback(async () => {
@@ -48,24 +48,24 @@ export function DeleteProjectDialog({
     setError(null);
 
     try {
-      await deleteProject(project.id);
+      await deleteSession(session.id);
       onOpenChange(false);
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete project");
+      setError(err instanceof Error ? err.message : "Failed to delete session");
     } finally {
       setIsDeleting(false);
     }
-  }, [project.id, deleteProject, onOpenChange, onSuccess]);
+  }, [session.id, deleteSession, onOpenChange, onSuccess]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-destructive">Delete Project</DialogTitle>
+          <DialogTitle className="text-destructive">Delete Session</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &ldquo;{project.name}&rdquo;? This action cannot be
-            undone.
+            Are you sure you want to delete &ldquo;{session.title || session.session_slug}&rdquo;?
+            This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -76,10 +76,18 @@ export function DeleteProjectDialog({
               <div className="text-sm">
                 <p className="font-medium text-destructive">Warning</p>
                 <p className="text-muted-foreground mt-1">
-                  This will permanently delete the project and all its sessions, agents, and
-                  logs from the database. Your files on disk (specs, plans, code) will not be
-                  affected.
+                  This will permanently delete the session and all its agents, logs, and messages
+                  from the database.
                 </p>
+                {session.session_dir && (
+                  <p className="text-muted-foreground mt-2">
+                    The filesystem folder will also be removed:
+                    <br />
+                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded mt-1 inline-block break-all">
+                      {session.session_dir}
+                    </code>
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -113,7 +121,7 @@ export function DeleteProjectDialog({
                 Deleting...
               </>
             ) : (
-              "Delete Project"
+              "Delete Session"
             )}
           </Button>
         </DialogFooter>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  startChat,
   sendMessage,
   sendAnswer,
   getChatHistory,
@@ -79,10 +80,12 @@ export function ChatPanel({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [isAutoStarting, setIsAutoStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnIndex, setTurnIndex] = useState(0);
   const [pendingQuestion, setPendingQuestion] = useState<PendingQuestion | null>(null);
   const scrollEndRef = useRef<HTMLDivElement>(null);
+  const hasAutoStarted = useRef(false);
 
   // ─── Load chat history on mount ──────────────────────────────────────────
   useEffect(() => {
@@ -120,6 +123,47 @@ export function ChatPanel({
       cancelled = true;
     };
   }, [sessionSlug]);
+
+  // ─── Auto-start: agent speaks first on empty session ─────────────────────
+  useEffect(() => {
+    if (isLoadingHistory || messages.length > 0 || isLoading || hasAutoStarted.current) return;
+    hasAutoStarted.current = true;
+
+    async function autoStart() {
+      setIsAutoStarting(true);
+      setIsLoading(true);
+      try {
+        const response = await startChat(sessionSlug);
+
+        // If idempotency check returned empty, nothing to add
+        if (response.blocks.length === 0) return;
+
+        const assistantMessages: ChatMessage[] = response.blocks
+          .filter((block: ChatBlock) => block.content)
+          .map((block: ChatBlock) => ({
+            role: "assistant" as const,
+            content: block.content!,
+            timestamp: new Date().toISOString(),
+            block_type: (block.block_type as ChatMessage["block_type"]) || "text",
+            tool_name: block.tool_name ?? null,
+          }));
+
+        setMessages((prev) => [...prev, ...assistantMessages]);
+        setTurnIndex(1);
+
+        if (response.pending_question) {
+          setPendingQuestion(response.pending_question);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to start interview");
+      } finally {
+        setIsLoading(false);
+        setIsAutoStarting(false);
+      }
+    }
+
+    autoStart();
+  }, [isLoadingHistory, messages.length, isLoading, sessionSlug]);
 
   // ─── Auto-scroll to bottom on new messages ───────────────────────────────
   useEffect(() => {
@@ -215,7 +259,7 @@ export function ChatPanel({
   };
 
   return (
-    <div className={cn("flex flex-col h-[500px] border rounded-lg", className)}>
+    <div className={cn("flex flex-col h-full border rounded-lg", className)}>
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {/* Loading history spinner */}
@@ -228,10 +272,17 @@ export function ChatPanel({
           </div>
         )}
 
-        {/* Empty state */}
-        {!isLoadingHistory && messages.length === 0 && !isLoading && (
+        {/* Empty state / auto-start spinner */}
+        {!isLoadingHistory && messages.length === 0 && (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-            Start the spec interview by sending a message.
+            {isAutoStarting ? (
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+                Starting interview...
+              </div>
+            ) : (
+              !isLoading && "Waiting for agent..."
+            )}
           </div>
         )}
 

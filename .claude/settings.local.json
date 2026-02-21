@@ -6,7 +6,11 @@
       "Bash(git push)",
       "Bash(cat:*)",
       "Bash(gh pr view:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__browsermcp__browser_snapshot",
+      "mcp__browsermcp__browser_click",
+      "mcp__browsermcp__browser_screenshot",
+      "Bash(uv sync:*)"
     ]
   },
   "outputStyle": "YAML Structured"

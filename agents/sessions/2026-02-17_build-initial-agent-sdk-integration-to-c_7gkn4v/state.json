@@ -1,0 +1,37 @@
+{
+  "$schema": "Session state manifest v2 - programmatic updates only",
+  "session_id": "2026-02-17_build-initial-agent-sdk-integration-to-c_7gkn4v",
+  "topic": "build initial agent sdk integration to core apps",
+  "description": "",
+  "session_type": "full",
+  "created_at": "2026-02-17T23:04:35+00:00",
+  "updated_at": "2026-02-17T23:04:35+00:00",
+  "current_phase": "spec",
+  "status": "active",
+  "phase_history": {
+    "spec_started_at": "2026-02-17T23:04:35+00:00",
+    "spec_completed_at": null,
+    "plan_started_at": null,
+    "plan_completed_at": null,
+    "build_started_at": null,
+    "build_completed_at": null,
+    "docs_started_at": null,
+    "docs_completed_at": null
+  },
+  "build_progress": {
+    "checkpoints_total": null,
+    "checkpoints_completed": [],
+    "current_checkpoint": null
+  },
+  "git": {
+    "branch": "main",
+    "worktree": null,
+    "base_branch": null
+  },
+  "commits": [],
+  "artifacts": {
+    "spec": "spec.md",
+    "plan": "plan.json",
+    "plan_readable": "plan.md"
+  }
+}

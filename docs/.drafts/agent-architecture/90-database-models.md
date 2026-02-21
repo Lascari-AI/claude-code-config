@@ -25,11 +25,13 @@ Pydantic models for the session management system. These models track execution 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           DATABASE (SQLite)                                  │
 │                                                                             │
-│   sessions           ← Workflow tracking, quick queries                      │
-│   agents             ← Agent instances, SDK session IDs for resume          │
-│   agent_logs         ← All hook events, observability                        │
+│   sessions              ← Workflow tracking, quick queries                   │
+│   agents                ← Agent instances, SDK session IDs for resume       │
+│   agent_logs            ← All hook events, observability                    │
+│   interactive_messages  ← Block-level chat for spec/plan UI rendering       │
 │                                                                             │
-│   SOURCE OF TRUTH for: Execution events, timing, costs, agent state         │
+│   SOURCE OF TRUTH for: Execution events, timing, costs, agent state,       │
+│                         interactive chat history                            │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -625,6 +627,119 @@ class AgentLog(BaseModel):
 
 ---
 
+### InteractiveMessage
+
+Block-level chat messages for interactive phases (spec, plan). Each row represents one block from the conversation — a user text submission, an agent text response, a tool use/result, or a thinking block. This table is the rendering source for the frontend chat panel.
+
+**Relationship to AgentLog**: Content is double-stored. AgentLog captures all agent activity (including background agents) for observability. InteractiveMessage stores only the chat-visible blocks for the interactive conversation thread. Different query patterns, different rendering needs.
+
+```python
+"""
+InteractiveMessage Model
+
+Block-level chat storage for interactive session phases.
+Each row is one block: TextBlock, ToolUseBlock, ToolResultBlock, etc.
+
+Used by the frontend chat panel to render the conversation.
+Ordered by (turn_index, block_index) for chronological display.
+"""
+
+class InteractiveMessage(SQLModel, table=True):
+    """
+    Block-level chat message for interactive phases.
+
+    Maps to: interactive_messages table
+
+    Each row represents one block from the conversation:
+    - User text submissions (role='user', block_type='text')
+    - Agent text responses (role='assistant', block_type='text')
+    - Tool use blocks (role='tool_use', block_type='tool_use')
+    - Tool result blocks (role='tool_result', block_type='tool_result')
+    - Thinking blocks (role='assistant', block_type='thinking')
+
+    Ordered by (turn_index, block_index) for chronological rendering.
+    """
+
+    __tablename__ = "interactive_messages"
+
+    # ─── Identity ───────────────────────────────────────────────────────────────
+    id: UUID = Field(primary_key=True, description="Unique message block identifier")
+    session_id: UUID = Field(
+        foreign_key="sessions.id",
+        index=True,
+        description="Parent session FK"
+    )
+    agent_id: Optional[UUID] = Field(
+        default=None,
+        foreign_key="agents.id",
+        index=True,
+        description="Agent that generated this block (null for user messages)"
+    )
+
+    # ─── Phase Context ──────────────────────────────────────────────────────────
+    phase: str = Field(
+        index=True,
+        description="Workflow phase: spec or plan"
+    )
+
+    # ─── Message Classification ─────────────────────────────────────────────────
+    role: str = Field(description="Message role: user, assistant, tool_use, or tool_result")
+    block_type: str = Field(description="Block type: text, tool_use, tool_result, or thinking")
+
+    # ─── Content ────────────────────────────────────────────────────────────────
+    content: Optional[str] = Field(
+        default=None,
+        description="Text content or JSON for tool blocks"
+    )
+    tool_name: Optional[str] = Field(
+        default=None,
+        index=True,
+        description="Tool name (for tool_use/tool_result blocks)"
+    )
+
+    # ─── Sequence Tracking ──────────────────────────────────────────────────────
+    turn_index: int = Field(description="Turn number within the conversation (groups blocks)")
+    block_index: int = Field(description="Block order within a turn")
+
+    # ─── Timing ─────────────────────────────────────────────────────────────────
+    timestamp: datetime = Field(index=True, description="When the block was created")
+
+    # ─── Relationships ──────────────────────────────────────────────────────────
+    session: Optional["Session"] = Relationship(...)
+    agent: Optional["Agent"] = Relationship(...)
+```
+
+**DTOs:**
+
+```python
+class InteractiveMessageCreate(SQLModel):
+    """DTO for creating a new interactive message block."""
+    session_id: UUID
+    agent_id: Optional[UUID] = None
+    phase: str
+    role: str
+    block_type: str
+    content: Optional[str] = None
+    tool_name: Optional[str] = None
+    turn_index: int
+    block_index: int
+
+
+class InteractiveMessageSummary(SQLModel):
+    """Lightweight message block for chat panel rendering."""
+    id: UUID
+    session_id: UUID
+    role: str
+    block_type: str
+    content: Optional[str]
+    tool_name: Optional[str]
+    turn_index: int
+    block_index: int
+    timestamp: datetime
+```
+
+---
+
 ### Supporting Models
 
 Additional models for specific use cases.
@@ -835,6 +950,7 @@ __all__ = [
     "Session",
     "Agent",
     "AgentLog",
+    "InteractiveMessage",
 
     # Summary models
     "SessionSummary",
@@ -847,6 +963,8 @@ __all__ = [
     "AgentCreate",
     "AgentUpdate",
     "AgentLogCreate",
+    "InteractiveMessageCreate",
+    "InteractiveMessageSummary",
 ]
 ```
 
@@ -897,6 +1015,26 @@ __all__ = [
 │  │ payload (JSONB)                                                        │ │
 │  │ timestamp (TIMESTAMPTZ)                                                │ │
 │  │ ...                                                                    │ │
+│  └────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                                    │
+                                    │ 1:N (via session_id)
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         interactive_messages                                 │
+│  ┌────────────────────────────────────────────────────────────────────────┐ │
+│  │ id (UUID) PK                                                           │ │
+│  │ session_id (UUID) FK → sessions.id                                     │ │
+│  │ agent_id (UUID) FK → agents.id (nullable)                              │ │
+│  │ phase (TEXT) → spec | plan                                             │ │
+│  │ role (TEXT) → user | assistant | tool_use | tool_result                 │ │
+│  │ block_type (TEXT) → text | tool_use | tool_result | thinking           │ │
+│  │ content (TEXT)                                                         │ │
+│  │ tool_name (TEXT)                                                       │ │
+│  │ turn_index (INT)                                                       │ │
+│  │ block_index (INT)                                                      │ │
+│  │ timestamp (TIMESTAMPTZ)                                                │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -985,6 +1123,21 @@ CREATE TABLE IF NOT EXISTS agent_logs (
     duration_ms INTEGER
 );
 
+-- Interactive messages table (chat UI rendering for spec/plan phases)
+CREATE TABLE IF NOT EXISTS interactive_messages (
+    id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    agent_id TEXT REFERENCES agents(id) ON DELETE SET NULL,
+    phase TEXT NOT NULL CHECK (phase IN ('spec', 'plan')),
+    role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'tool_use', 'tool_result')),
+    block_type TEXT NOT NULL CHECK (block_type IN ('text', 'tool_use', 'tool_result', 'thinking')),
+    content TEXT,
+    tool_name TEXT,
+    turn_index INTEGER NOT NULL,
+    block_index INTEGER NOT NULL,
+    timestamp TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_sessions_status ON sessions(status);
 CREATE INDEX IF NOT EXISTS idx_sessions_created ON sessions(created_at DESC);
@@ -995,6 +1148,11 @@ CREATE INDEX IF NOT EXISTS idx_logs_agent ON agent_logs(agent_id);
 CREATE INDEX IF NOT EXISTS idx_logs_session ON agent_logs(session_id);
 CREATE INDEX IF NOT EXISTS idx_logs_timestamp ON agent_logs(timestamp DESC);
 CREATE INDEX IF NOT EXISTS idx_logs_category_type ON agent_logs(event_category, event_type);
+CREATE INDEX IF NOT EXISTS idx_messages_session ON interactive_messages(session_id);
+CREATE INDEX IF NOT EXISTS idx_messages_agent ON interactive_messages(agent_id);
+CREATE INDEX IF NOT EXISTS idx_messages_phase ON interactive_messages(phase);
+CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON interactive_messages(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_messages_tool ON interactive_messages(tool_name);
 ```
 
 ---

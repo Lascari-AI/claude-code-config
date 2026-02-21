@@ -5,8 +5,10 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { SpecView, PlanView, BuildView, DocsView } from "@/components/phases";
 import { ChatPanel } from "@/components/chat";
+import { DeleteSessionDialog } from "@/components/sessions";
 import { Breadcrumbs, LoadingSpinner, ErrorMessage } from "@/components/shared";
 import { getSessionBySlug } from "@/lib/sessions-api";
 import { cn, getSessionStatusColor, getPhaseStatusColor } from "@/lib/utils";
@@ -30,6 +32,7 @@ export default function SessionDetailPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Get active tab from URL or default to current phase
   const urlPhase = searchParams.get("phase") as SessionPhase | null;
@@ -101,54 +104,59 @@ export default function SessionDetailPage() {
   const phases: SessionPhase[] = ["spec", "plan", "build", "docs"];
 
   return (
-    <div className="space-y-6">
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: "Projects", href: "/projects" },
-          { label: projectSlug, href: `/projects/${projectSlug}` },
-          { label: session.title || session.session_slug },
-        ]}
-      />
+    <div className="flex h-[calc(100vh-theme(spacing.6)*2)] flex-col">
+      {/* Header bar */}
+      <div className="shrink-0 space-y-2 pb-4">
+        <Breadcrumbs
+          items={[
+            { label: "Projects", href: "/projects" },
+            { label: projectSlug, href: `/projects/${projectSlug}` },
+            { label: session.title || session.session_slug },
+          ]}
+        />
 
-      {/* Header */}
-      <div>
-        {/* Title and status */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="text-xl font-bold truncate">
               {session.title || session.session_slug}
             </h1>
-            {session.description && (
-              <p className="text-muted-foreground mt-1">{session.description}</p>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
             <StatusBadge status={session.status} />
             <Badge variant="outline">{session.session_type}</Badge>
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="flex items-center gap-6 mt-4 text-sm text-muted-foreground">
-          {session.checkpoints_total > 0 && (
-            <span>
-              {session.checkpoints_completed}/{session.checkpoints_total} checkpoints
-            </span>
-          )}
-          {session.total_cost > 0 && <span>${session.total_cost.toFixed(2)} cost</span>}
-          <span>
-            Created {new Date(session.created_at).toLocaleDateString()}
-          </span>
+          <div className="flex items-center gap-4 shrink-0 text-sm text-muted-foreground">
+            {session.checkpoints_total > 0 && (
+              <span>
+                {session.checkpoints_completed}/{session.checkpoints_total} checkpoints
+              </span>
+            )}
+            {session.total_cost > 0 && <span>${session.total_cost.toFixed(2)}</span>}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              title="Delete session"
+            >
+              <TrashIcon className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Three-column content: artifacts (center) | chat (right) */}
-      <div className="flex gap-6">
-        {/* Artifact tabs — takes remaining space */}
-        <div className="flex-1 min-w-0">
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+      {/* Delete Session Dialog */}
+      <DeleteSessionDialog
+        session={session}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onSuccess={() => router.push(`/projects/${projectSlug}`)}
+      />
+
+      {/* Main content: artifact panel + chat — fills remaining height */}
+      <div className="flex min-h-0 flex-1 gap-6">
+        {/* Artifact tabs — scrollable interior */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="flex min-h-0 flex-1 flex-col">
+            <TabsList className="grid w-full shrink-0 grid-cols-4">
               {phases.map((phase) => {
                 const status = getPhaseStatus(phase, session.status);
                 return (
@@ -164,7 +172,7 @@ export default function SessionDetailPage() {
               })}
             </TabsList>
 
-            <div className="mt-6">
+            <div className="mt-4 min-h-0 flex-1 overflow-y-auto rounded-lg border bg-card p-6">
               <TabsContent value="spec" className="mt-0">
                 <SpecView sessionSlug={sessionSlug} />
               </TabsContent>
@@ -184,9 +192,9 @@ export default function SessionDetailPage() {
           </Tabs>
         </div>
 
-        {/* Chat panel — fixed width, sticky positioning */}
-        <div className="w-[400px] shrink-0 sticky top-24 self-start max-h-[calc(100vh-8rem)] overflow-hidden border-l border-border/50 pl-6">
-          <ChatPanel sessionSlug={sessionSlug} />
+        {/* Chat panel — wider, fills full height */}
+        <div className="w-[480px] shrink-0 border-l border-border/50 pl-6">
+          <ChatPanel sessionSlug={sessionSlug} className="h-full" />
         </div>
       </div>
     </div>
@@ -209,5 +217,23 @@ function PhaseStatusDot({ status }: { status: "pending" | "in_progress" | "compl
     <div
       className={cn("w-2 h-2 rounded-full", getPhaseStatusColor(status))}
     />
+  );
+}
+
+function TrashIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+      />
+    </svg>
   );
 }

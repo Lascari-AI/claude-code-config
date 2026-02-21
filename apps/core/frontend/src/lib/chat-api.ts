@@ -70,6 +70,26 @@ export interface ChatHistoryResponse {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
+ * Start the spec interview — triggers agent to send the first message.
+ *
+ * Posts to the FastAPI backend /chat/start endpoint.
+ * Idempotent: returns empty blocks if the chat has already started.
+ *
+ * @param sessionSlug - Session identifier
+ * @returns Agent greeting blocks and turn index
+ */
+export async function startChat(
+  sessionSlug: string
+): Promise<ChatSendResponse> {
+  return fetchApi<ChatSendResponse>("/chat/start", {
+    method: "POST",
+    body: JSON.stringify({
+      session_slug: sessionSlug,
+    }),
+  });
+}
+
+/**
  * Send a message to the spec interview agent.
  *
  * Posts to the FastAPI backend /chat/send endpoint.
